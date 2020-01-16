@@ -30,7 +30,7 @@ public class AjaxResponse {
         resultBean.setIsok(true);
         resultBean.setIsempty(true);
         resultBean.setCode(200);
-        resultBean.setMessage("success");
+        resultBean.setMessage("成功");
         return resultBean;
     }
 
@@ -39,7 +39,26 @@ public class AjaxResponse {
         resultBean.setIsok(true);
         resultBean.setIsempty(true);
         resultBean.setCode(200);
-        resultBean.setMessage("success");
+        resultBean.setMessage("成功");
+        resultBean.setData(data);
+        return resultBean;
+    }
+
+    public static AjaxResponse isfalse() {
+        AjaxResponse resultBean = new AjaxResponse();
+        resultBean.setIsok(false);
+        resultBean.setIsempty(true);
+        resultBean.setCode(400);
+        resultBean.setMessage("用户不存在");
+        return resultBean;
+    }
+
+    public static AjaxResponse isfalse(Object data) {
+        AjaxResponse resultBean = new AjaxResponse();
+        resultBean.setIsok(false);
+        resultBean.setIsempty(false);
+        resultBean.setCode(400);
+        resultBean.setMessage("密码错误");
         resultBean.setData(data);
         return resultBean;
     }
@@ -49,7 +68,7 @@ public class AjaxResponse {
         resultBean.setIsok(false);
         resultBean.setIsempty(false);
         resultBean.setCode(400);
-        resultBean.setMessage("false");
+        resultBean.setMessage("用户已存在");
         return resultBean;
     }
 
@@ -58,7 +77,7 @@ public class AjaxResponse {
         resultBean.setIsok(false);
         resultBean.setIsempty(false);
         resultBean.setCode(400);
-        resultBean.setMessage("false");
+        resultBean.setMessage("用户已存在");
         resultBean.setData(data);
         return resultBean;
     }

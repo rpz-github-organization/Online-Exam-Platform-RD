@@ -15,6 +15,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.Optional;
 
+
+/*
+教室表的增删改查
+仅作参考
+ */
 @Slf4j
 @Controller
 @RequestMapping("/rest")
