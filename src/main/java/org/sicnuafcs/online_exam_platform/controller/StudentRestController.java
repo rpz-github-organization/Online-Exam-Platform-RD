@@ -5,12 +5,15 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.sicnuafcs.online_exam_platform.dao.Student;
+import org.sicnuafcs.online_exam_platform.dao.StudentRepository;
 import org.sicnuafcs.online_exam_platform.model.AjaxResponse;
 import org.sicnuafcs.online_exam_platform.service.StudentRestService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Optional;
 
 @Slf4j
 @Controller
@@ -19,6 +22,9 @@ public class StudentRestController {
 
     @Resource(name = "studentRestServiceImpl")
     StudentRestService studentRestService;
+
+    @Autowired
+    StudentRepository studentRepository;
 
     @ApiOperation(value = "添加学生",tags = "Student",httpMethod = "POST")
     @ApiResponses({
@@ -29,9 +35,15 @@ public class StudentRestController {
 
     @PostMapping("/student")
     public @ResponseBody AjaxResponse saveStudent(@RequestBody Student student){
-          log.info("saveStudent :{}",student);
-          log.info("studentRestService return :"+studentRestService.saveStudent(student));
-          return AjaxResponse.success(student);
+        String id=student.getStu_id();
+        Optional<Student> studentList=studentRepository.findById(id);
+        if(studentList.isPresent()==false){
+            studentRestService.saveStudent(student);
+            return AjaxResponse.success(student);
+        }
+        else {
+            return AjaxResponse.isEmpty();
+        }
     }
 
     @DeleteMapping("/student/{stu_id}")
@@ -42,6 +54,9 @@ public class StudentRestController {
         return AjaxResponse.success(stu_id);
     }
 
+    /*
+    修改信息的时候要检查是否存在
+     */
     @PutMapping("/student/{stu_id}")
     public @ResponseBody AjaxResponse updateArticle(@PathVariable String stu_id,@RequestBody Student student){
         student.setStu_id(stu_id);
@@ -56,39 +71,4 @@ public class StudentRestController {
 
         return AjaxResponse.success(studentRestService.getStudent(stu_id));
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

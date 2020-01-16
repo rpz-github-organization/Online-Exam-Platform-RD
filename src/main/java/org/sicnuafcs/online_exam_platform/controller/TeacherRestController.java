@@ -5,12 +5,15 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.sicnuafcs.online_exam_platform.dao.Teacher;
+import org.sicnuafcs.online_exam_platform.dao.TeacherRepository;
 import org.sicnuafcs.online_exam_platform.model.AjaxResponse;
 import org.sicnuafcs.online_exam_platform.service.TeacherRestService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Optional;
 
 @Slf4j
 @Controller
@@ -20,6 +23,9 @@ public class TeacherRestController {
     @Resource(name = "teacherRestServiceImpl")
     TeacherRestService teacherRestService;
 
+    @Autowired
+    TeacherRepository teacherRepository;
+
     @ApiOperation(value = "添加老师",tags = "Teacher",httpMethod = "POST")
     @ApiResponses({
             @ApiResponse(code=200,message="成功",response= AjaxResponse.class),
@@ -28,10 +34,15 @@ public class TeacherRestController {
     })
 
     @PostMapping("/teacher")
-    public @ResponseBody AjaxResponse saveTeacher(@RequestBody Teacher teacher){
-          log.info("saveTeacher :{}",teacher);
-          log.info("teacherRestService return :"+teacherRestService.saveTeacher(teacher));
-          return AjaxResponse.success(teacher);
+    public @ResponseBody AjaxResponse saveTeacher(@RequestBody Teacher teacher) {
+        String id = teacher.getTea_id();
+        Optional<Teacher> teacherList = teacherRepository.findById(id);
+        if (teacherList.isPresent() == false) {
+            teacherRestService.saveTeacher(teacher);
+            return AjaxResponse.success(teacher);
+        } else {
+            return AjaxResponse.isEmpty();
+        }
     }
 
     @DeleteMapping("/teacher/{tea_id}")
