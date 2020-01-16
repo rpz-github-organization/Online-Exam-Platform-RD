@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.sicnuafcs.online_exam_platform.dao.Student;
 import org.sicnuafcs.online_exam_platform.model.AjaxResponse;
-import org.sicnuafcs.online_exam_platform.service.StudentRestServiceImpl;
 import org.sicnuafcs.online_exam_platform.service.StudentRestService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

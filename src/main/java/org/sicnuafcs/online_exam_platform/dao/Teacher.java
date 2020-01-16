@@ -12,8 +12,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "student")
-public class Student {
+@Table(name = "teacher")
+public class Teacher {
     public static enum Sex{
         male,
         female;
@@ -21,18 +21,12 @@ public class Student {
 
     @Id
     @Column(length = 16,nullable = false)
-    private String stu_id;
+    private String tea_id;
 
-    @Column(length = 32,nullable = false)
+    @Column
     private String name;
-    @Column(length = 8,nullable = false)
-    private String class_id;
-    @Column(length = 8)
-    private String major_id;
     @Column
-    private Integer grade;
-    @Column
-    private String institute_id;
+    private String dept;
 
     @Column
     @Enumerated(EnumType.STRING)
