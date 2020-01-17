@@ -48,13 +48,13 @@ public class RegisterController {
     public @ResponseBody AjaxResponse saveStudent(@RequestBody Student student){
         String id=student.getStu_id();
         Optional<Student> studentList=studentRepository.findById(id);
-        if(studentList.isPresent()==false){
+        if(studentList.isPresent()==false){   //如果数据库里不存在，则新建
             Student student1=dozerMapper.map(student,Student.class);
             studentRestService.saveStudent(student1);
-            return AjaxResponse.success(student1);
+            return AjaxResponse.success();   //注册成功，返回提示信息；
         }
         else {
-            return AjaxResponse.isEmpty();
+            return AjaxResponse.hasexist();   //否则报错提示
         }
     }
 
@@ -65,9 +65,9 @@ public class RegisterController {
         if (teacherList.isPresent() == false) {
             Teacher teacher1=dozerMapper.map(teacher,Teacher.class);
             teacherRestService.saveTeacher(teacher);
-            return AjaxResponse.success(teacher);
+            return AjaxResponse.success();
         } else {
-            return AjaxResponse.isEmpty();
+            return AjaxResponse.hasexist();
         }
     }
 

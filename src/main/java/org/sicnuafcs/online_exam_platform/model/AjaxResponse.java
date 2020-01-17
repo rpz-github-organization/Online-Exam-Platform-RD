@@ -14,71 +14,67 @@ import lombok.Data;
 public class AjaxResponse {
 
     @ApiModelProperty("是否请求成功")
-    private boolean isempty;
+    private boolean isexist;
     private boolean isok;
     private int code;
     private String message;
     private Object data;
 
     private AjaxResponse() {
-        isempty=true;
-        isok=false;
+        this.isexist=false;
+        this.isok=false;
     }
 
     public static AjaxResponse success() {
         AjaxResponse resultBean = new AjaxResponse();
         resultBean.setIsok(true);
-        resultBean.setIsempty(true);
+        resultBean.setIsexist(false);
         resultBean.setCode(200);
         resultBean.setMessage("成功");
         return resultBean;
     }
 
+    /*
+    便于调试 不实际使用
+     */
     public static AjaxResponse success(Object data) {
         AjaxResponse resultBean = new AjaxResponse();
         resultBean.setIsok(true);
-        resultBean.setIsempty(true);
+        resultBean.setIsexist(false);
         resultBean.setCode(200);
         resultBean.setMessage("成功");
         resultBean.setData(data);
         return resultBean;
     }
 
-    public static AjaxResponse isfalse() {
+
+    //注册失败时返回
+    public static AjaxResponse hasexist(){
         AjaxResponse resultBean = new AjaxResponse();
         resultBean.setIsok(false);
-        resultBean.setIsempty(true);
+        resultBean.setIsexist(true);
         resultBean.setCode(400);
-        resultBean.setMessage("用户不存在");
+        resultBean.setMessage("用户已存在");
         return resultBean;
     }
 
-    public static AjaxResponse isfalse(Object data) {
+    //登录失败时返回
+    public static AjaxResponse passworderror(Object data) {
         AjaxResponse resultBean = new AjaxResponse();
         resultBean.setIsok(false);
-        resultBean.setIsempty(false);
+        resultBean.setIsexist(true);
         resultBean.setCode(400);
         resultBean.setMessage("密码错误");
-        resultBean.setData(data);
         return resultBean;
     }
 
-    public static AjaxResponse isEmpty(){
+    //登录失败时返回
+    public static AjaxResponse nouser() {
         AjaxResponse resultBean = new AjaxResponse();
         resultBean.setIsok(false);
-        resultBean.setIsempty(false);
+        resultBean.setIsexist(false);
         resultBean.setCode(400);
-        resultBean.setMessage("用户已存在");
-        return resultBean;
-    }
-
-    public static AjaxResponse isEmpty(Object data) {
-        AjaxResponse resultBean = new AjaxResponse();
-        resultBean.setIsok(false);
-        resultBean.setIsempty(false);
-        resultBean.setCode(400);
-        resultBean.setMessage("用户已存在");
-        resultBean.setData(data);
+        resultBean.setMessage("用户不存在");
         return resultBean;
     }
 }

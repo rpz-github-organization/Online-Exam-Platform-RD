@@ -18,7 +18,8 @@ import java.util.Optional;
 
 /*
 学生表的增删改查
-仅作参考
+仅作参考 可以调试
+跟实际项目无关
  */
 @Slf4j
 @Controller
@@ -40,15 +41,10 @@ public class StudentRestController {
 
     @PostMapping("/student")
     public @ResponseBody AjaxResponse saveStudent(@RequestBody Student student){
-        String id=student.getStu_id();
-        Optional<Student> studentList=studentRepository.findById(id);
-        if(studentList.isPresent()==false){
-            studentRestService.saveStudent(student);
-            return AjaxResponse.success(student);
-        }
-        else {
-            return AjaxResponse.isEmpty();
-        }
+        log.info("saveStudent :{}",student);
+        log.info("studentRestService return :"+studentRestService.saveStudent(student));
+        return AjaxResponse.success(student);
+
     }
 
     @DeleteMapping("/student/{stu_id}")

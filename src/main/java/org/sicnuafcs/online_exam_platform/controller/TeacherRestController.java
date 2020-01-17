@@ -17,8 +17,9 @@ import java.util.Optional;
 
 
 /*
-教室表的增删改查
-仅作参考
+教师表的增删改查
+仅作参考 可以调试
+跟实际项目无关
  */
 @Slf4j
 @Controller
@@ -40,14 +41,9 @@ public class TeacherRestController {
 
     @PostMapping("/teacher")
     public @ResponseBody AjaxResponse saveTeacher(@RequestBody Teacher teacher) {
-        String id = teacher.getTea_id();
-        Optional<Teacher> teacherList = teacherRepository.findById(id);
-        if (teacherList.isPresent() == false) {
-            teacherRestService.saveTeacher(teacher);
-            return AjaxResponse.success(teacher);
-        } else {
-            return AjaxResponse.isEmpty();
-        }
+        log.info("saveTeacher :{}",teacher);
+        log.info("teacherRestService return :"+teacherRestService.saveTeacher(teacher));
+        return AjaxResponse.success(teacher);
     }
 
     @DeleteMapping("/teacher/{tea_id}")
