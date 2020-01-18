@@ -4,7 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.dozer.Mapper;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomException;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomExceptionType;
-import org.sicnuafcs.online_exam_platform.model.Register;
+import org.sicnuafcs.online_exam_platform.dao.CheckRepository;
+import org.sicnuafcs.online_exam_platform.model.Check;
 import org.sicnuafcs.online_exam_platform.model.Student;
 import org.sicnuafcs.online_exam_platform.dao.StudentRepository;
 import org.sicnuafcs.online_exam_platform.model.Teacher;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.persistence.Table;
 import javax.validation.Valid;
 import java.util.Optional;
 
@@ -28,9 +28,6 @@ import static org.sicnuafcs.online_exam_platform.util.VerCodeGenerateUtil.genera
 @Controller
 @RequestMapping("/register")
 public class RegisterController {
-    private String checkCode=null;
-    private String checkEmail=null;
-
     @Resource(name = "studentRestServiceImpl")
     StudentRestService studentRestService;
     @Resource(name = "teacherRestServiceImpl")
@@ -43,7 +40,8 @@ public class RegisterController {
     StudentRepository studentRepository;
     @Autowired
     TeacherRepository teacherRepository;
-
+    @Autowired
+    CheckRepository checkRepository;
 
     @Autowired
     EmailService emailService;
@@ -95,8 +93,13 @@ public class RegisterController {
         //假设其他验证做完
 
         //教师端邮箱验证
+        Optional<Check> checks=checkRepository.findByCheckEmail(teacher.getEmail());
+        if(checks.isPresent()==false){
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"信息为空");
+        }
+        Check check=checks.get();
         teacher.setStatus(0);
-        if(!(teacher.getEmail().equals(checkEmail)&&teacher.getCode().equals(checkCode))&&(!checkCode.equals(null)&&(!checkEmail.equals(null)))){
+        if(!(teacher.getEmail().equals(check.getCheckEmail())&&teacher.getCode().equals(check.getCheckCode()))&&(!check.getCheckEmail().equals(null)&&(!check.getCheckCode().equals(null)))){
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"验证码不正确");
         }
         Teacher teacher1=dozerMapper.map(teacher,Teacher.class);
@@ -114,33 +117,30 @@ public class RegisterController {
         }
 
         /**
-         * 判断该邮箱是否存在
+         * 判断该邮箱在teacher表里是否存在
          */
-        //第一种方法
-//        Register register=dozerMapper.map(teacherRepository.findByEmail(receiver),Register.class);
-//        if (!register.equals(null)){
-//            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"email已存在");
-//        }
 
-          //第二种方法
-//        if(teacherRepository.findByEmail(receiver).equals(null)){
-//            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"email已存在");
-//        }
+        if(teacherRepository.findByEmail(receiver).isPresent()==true){
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"email已存在");
+        }
 
         //如果该邮箱不存在
-        checkEmail=new String(receiver);
-        if(true){
+        //判断邮箱在email_code表里是否存在 因为可能重复验证 要更新表里面的code和email的对应关系
+        if(!receiver.equals(null)){
+            Check check=new Check();
+            check.setCheckEmail(receiver);
             try {
-                checkCode=new String(generateVerCode());
-                emailService.sendEmailVerCode(receiver,checkCode);
+                check.setCheckCode(generateVerCode());
+                emailService.sendEmailVerCode(check.getCheckEmail(),check.getCheckCode());
             }catch (Exception e){
                 throw new CustomException(CustomExceptionType.SYSTEM_ERROR,"email发送失败");
             }
+            checkRepository.save(check);
         }
         else{
-            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"email已存在");
+            throw new CustomException(CustomExceptionType.SYSTEM_ERROR,"email为空");
         }
-        //更改message
+
         return AjaxResponse.success();
     }
 
