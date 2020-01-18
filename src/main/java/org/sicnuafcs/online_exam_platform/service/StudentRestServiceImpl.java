@@ -1,7 +1,7 @@
 package org.sicnuafcs.online_exam_platform.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.sicnuafcs.online_exam_platform.dao.Student;
+import org.sicnuafcs.online_exam_platform.model.Student;
 import org.sicnuafcs.online_exam_platform.dao.StudentRepository;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ public class StudentRestServiceImpl implements StudentRestService {
 
     @Override
     public Student saveStudent(Student student){
-        Student student1=new Student(student.getStu_id(),student.getName(),student.getClass_id(),student.getMajor_id(),student.getGrade(),student.getInstitute_id(),student.getSex(),student.getPassword(),student.getQq(),student.getWeixin(),student.getEmail(),student.getTelephone());
+        Student student1=new Student(student.getStu_id(),student.getName(),student.getClass_id(),student.getMajor_id(),student.getGrade(),student.getInstitute_id(),student.getSex(),student.getPassword(),student.getQq(),student.getWeixin(),student.getEmail(),student.getTelephone(),student.getStatus(),student.getCode());
         studentRepository.save(student1);
 
         return student1;
@@ -32,7 +32,7 @@ public class StudentRestServiceImpl implements StudentRestService {
 
     @Override
     public void updateStudent(Student student){
-        Student student1=new Student(student.getStu_id(),student.getName(),student.getClass_id(),student.getMajor_id(),student.getGrade(),student.getInstitute_id(),student.getSex(),student.getPassword(),student.getQq(),student.getWeixin(),student.getEmail(),student.getTelephone());
+        Student student1=new Student(student.getStu_id(),student.getName(),student.getClass_id(),student.getMajor_id(),student.getGrade(),student.getInstitute_id(),student.getSex(),student.getPassword(),student.getQq(),student.getWeixin(),student.getEmail(),student.getTelephone(),student.getStatus(),student.getCode());
         studentRepository.save(student1);
     }
 

@@ -1,7 +1,7 @@
 package org.sicnuafcs.online_exam_platform.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.sicnuafcs.online_exam_platform.dao.Teacher;
+import org.sicnuafcs.online_exam_platform.model.Teacher;
 import org.sicnuafcs.online_exam_platform.dao.TeacherRepository;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ public class TeacherRestServiceImpl implements TeacherRestService {
 
     @Override
     public Teacher saveTeacher(Teacher teacher){
-        Teacher teacher1=new Teacher(teacher.getTea_id(),teacher.getName(),teacher.getDept(),teacher.getSex(),teacher.getPassword(),teacher.getQq(),teacher.getWeixin(),teacher.getEmail(),teacher.getTelephone());
+        Teacher teacher1=new Teacher(teacher.getTea_id(),teacher.getName(),teacher.getDept(),teacher.getSex(),teacher.getPassword(),teacher.getQq(),teacher.getWeixin(),teacher.getEmail(),teacher.getTelephone(),teacher.getStatus(),teacher.getCode());
         teacherRepository.save(teacher1);
 
         return teacher1;
@@ -32,7 +32,7 @@ public class TeacherRestServiceImpl implements TeacherRestService {
 
     @Override
     public void updateTeacher(Teacher teacher){
-        Teacher teacher1=new Teacher(teacher.getTea_id(),teacher.getName(),teacher.getDept(),teacher.getSex(),teacher.getPassword(),teacher.getQq(),teacher.getWeixin(),teacher.getEmail(),teacher.getTelephone());
+        Teacher teacher1=new Teacher(teacher.getTea_id(),teacher.getName(),teacher.getDept(),teacher.getSex(),teacher.getPassword(),teacher.getQq(),teacher.getWeixin(),teacher.getEmail(),teacher.getTelephone(),teacher.getStatus(),teacher.getCode());
 
         teacherRepository.save(teacher1);
     }

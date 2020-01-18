@@ -4,16 +4,15 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
-import org.sicnuafcs.online_exam_platform.dao.Teacher;
+import org.sicnuafcs.online_exam_platform.model.Teacher;
 import org.sicnuafcs.online_exam_platform.dao.TeacherRepository;
-import org.sicnuafcs.online_exam_platform.model.AjaxResponse;
+import org.sicnuafcs.online_exam_platform.config.exception.AjaxResponse;
 import org.sicnuafcs.online_exam_platform.service.TeacherRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.Optional;
 
 
 /*

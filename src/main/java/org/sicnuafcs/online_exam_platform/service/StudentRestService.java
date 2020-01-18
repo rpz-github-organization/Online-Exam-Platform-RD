@@ -1,6 +1,6 @@
 package org.sicnuafcs.online_exam_platform.service;
 
-import org.sicnuafcs.online_exam_platform.dao.Student;
+import org.sicnuafcs.online_exam_platform.model.Student;
 
 import java.util.Optional;
 

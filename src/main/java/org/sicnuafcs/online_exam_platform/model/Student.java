@@ -1,11 +1,16 @@
-package org.sicnuafcs.online_exam_platform.dao;
+package org.sicnuafcs.online_exam_platform.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.imageio.spi.ImageInputStreamSpi;
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor
@@ -21,12 +26,16 @@ public class Student {
 
     @Id
     @Column(length = 16,nullable = false)
+    @NotBlank(message = "stu_id不能为空")
     private String stu_id;
 
     @Column(length = 32,nullable = false)
+    @NotBlank(message = "name不能为空")
     private String name;
-    @Column(length = 8,nullable = false)
+
+    @Column(length = 8)
     private String class_id;
+
     @Column(length = 8)
     private String major_id;
     @Column
@@ -39,15 +48,35 @@ public class Student {
     private Sex sex=null;
 
     @Column
+    @NotBlank(message = "password不能为空")
     private String password;
+
     @Column
     private String qq;
     @Column
     private String weixin;
+
     @Column
+    @Email(message = "email格式不正确")
+    @NotBlank(message = "email不能为空")
     private String email;
+
     @Column
+    @NotBlank(message = "telephone不能为空")
     private String telephone;
+
+    //邮件码
+    /**
+     * 状态：0代表未激活，1代表激活
+     */
+    @Column
+    private Integer status;
+
+    /**
+     * 生成一段数字，发送到用户邮箱
+     */
+    @Column
+    private String code;
 
     public Sex getSex(){
         return sex;

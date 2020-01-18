@@ -14,9 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 @JsonPropertyOrder
 public class Register {
 
-    private String stu_id;
-    private String tea_id;
-    private String email;
-    private String telephone;
-    private String password;
+    private String stu_id=null;
+    private String tea_id=null;
+    private String email=null;
+    private String telephone=null;
+    private String password=null;
+    private String code=null;
 }
