@@ -65,18 +65,6 @@ public class Student {
     @NotBlank(message = "telephone不能为空")
     private String telephone;
 
-    //邮件码
-    /**
-     * 状态：0代表未激活，1代表激活
-     */
-    @Column
-    private Integer status;
-
-    /**
-     * 生成一段数字，发送到用户邮箱
-     */
-    @Column
-    private String code;
 
     public Sex getSex(){
         return sex;

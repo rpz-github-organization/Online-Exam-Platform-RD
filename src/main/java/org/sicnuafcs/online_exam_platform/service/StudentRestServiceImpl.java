@@ -19,7 +19,7 @@ public class StudentRestServiceImpl implements StudentRestService {
 
     @Override
     public Student saveStudent(Student student){
-        Student student1=new Student(student.getStu_id(),student.getName(),student.getClass_id(),student.getMajor_id(),student.getGrade(),student.getInstitute_id(),student.getSex(),student.getPassword(),student.getQq(),student.getWeixin(),student.getEmail(),student.getTelephone(),student.getStatus(),student.getCode());
+        Student student1=new Student(student.getStu_id(),student.getName(),student.getClass_id(),student.getMajor_id(),student.getGrade(),student.getInstitute_id(),student.getSex(),student.getPassword(),student.getQq(),student.getWeixin(),student.getEmail(),student.getTelephone());
         studentRepository.save(student1);
 
         return student1;
@@ -32,7 +32,7 @@ public class StudentRestServiceImpl implements StudentRestService {
 
     @Override
     public void updateStudent(Student student){
-        Student student1=new Student(student.getStu_id(),student.getName(),student.getClass_id(),student.getMajor_id(),student.getGrade(),student.getInstitute_id(),student.getSex(),student.getPassword(),student.getQq(),student.getWeixin(),student.getEmail(),student.getTelephone(),student.getStatus(),student.getCode());
+        Student student1=new Student(student.getStu_id(),student.getName(),student.getClass_id(),student.getMajor_id(),student.getGrade(),student.getInstitute_id(),student.getSex(),student.getPassword(),student.getQq(),student.getWeixin(),student.getEmail(),student.getTelephone());
         studentRepository.save(student1);
     }
 

@@ -14,6 +14,7 @@ spring:
     username: 3530077842@qq.com #QQ邮箱
     password: gycvhdmjgohiciac #客户端授权码
     protocol: smtp #发送邮件协议
+    properties.smtp.ssl.enable: true  #开启ssl安全连接
     properties.mail.smtp.auth: true
     properties.mail.smtp.port: 465 #端口号465或587
     properties.mail.display.sendmail: Javen #可以任意
