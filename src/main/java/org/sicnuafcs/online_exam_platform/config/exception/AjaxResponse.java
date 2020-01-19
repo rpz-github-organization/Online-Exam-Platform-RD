@@ -38,7 +38,7 @@ public class AjaxResponse {
         AjaxResponse resultBean = new AjaxResponse();
         resultBean.setIsok(true);
         resultBean.setCode(200);
-        resultBean.setMessage("success");
+        resultBean.setMessage("操作成功");
         return resultBean;
     }
 
@@ -47,7 +47,7 @@ public class AjaxResponse {
         AjaxResponse resultBean = new AjaxResponse();
         resultBean.setIsok(true);
         resultBean.setCode(200);
-        resultBean.setMessage("success");
+        resultBean.setMessage("操作成功");
         resultBean.setData(data);
         return resultBean;
     }

@@ -79,6 +79,14 @@ public class RegisterController {
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该电话已被注册");
         }
 
+        //学号长度固定为10位 密码不少于8位
+        if(student.getStu_id().length()!=10){
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"学号位数错误");
+        }
+        if(student.getPassword().length()<8){
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"密码位数过少");
+        }
+
         //假设其他验证做完
 
         Student student1=dozerMapper.map(student,Student.class);
@@ -108,6 +116,13 @@ public class RegisterController {
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该电话已被注册");
         }
 
+        //学号长度固定为10位 密码不少于8位
+        if(teacher.getTea_id().length()!=10){
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"工号位数错误");
+        }
+        if(teacher.getPassword().length()<8){
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"密码位数过少");
+        }
         //假设其他验证做完
 
         //教师端邮箱验证：验证码和邮箱是否一致；
