@@ -7,6 +7,7 @@ import org.sicnuafcs.online_exam_platform.config.exception.CustomException;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomExceptionType;
 import org.sicnuafcs.online_exam_platform.model.Login;
 import org.sicnuafcs.online_exam_platform.service.Impl.LoginServiceImpl;
+import org.sicnuafcs.online_exam_platform.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +25,7 @@ import java.util.HashMap;
 public class LoginController {
 
     @Autowired
-    LoginServiceImpl loginService;
+    LoginService loginService;
 
     //学号或者工号加密码
     @PostMapping("/id")

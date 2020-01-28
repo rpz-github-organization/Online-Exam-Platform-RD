@@ -2,7 +2,6 @@ package org.sicnuafcs.online_exam_platform.service.Impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.mindrot.jbcrypt.BCrypt;
-import org.sicnuafcs.online_exam_platform.config.exception.AjaxResponse;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomException;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomExceptionType;
 import org.sicnuafcs.online_exam_platform.dao.StudentRepository;
@@ -10,22 +9,22 @@ import org.sicnuafcs.online_exam_platform.dao.TeacherRepository;
 import org.sicnuafcs.online_exam_platform.model.Login;
 import org.sicnuafcs.online_exam_platform.model.Student;
 import org.sicnuafcs.online_exam_platform.model.Teacher;
+import org.sicnuafcs.online_exam_platform.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
 @Service
-public class LoginServiceImpl {
+public class LoginServiceImpl implements LoginService {
     @Autowired
     StudentRepository studentRepository;
     @Autowired
     TeacherRepository teacherRepository;
 
     //学号或者工号加密码
+    @Override
     public Login LoginId(Login login) {
         //因为学号/工号/手机号没分开 所以需要校验学号位数
         if (login.getKeyword().length() != 10) {
@@ -63,6 +62,7 @@ public class LoginServiceImpl {
     }
 
     //手机号加密码
+    @Override
     public Login loginPhone(Login login) {
         Optional<Teacher> teacherList = teacherRepository.findByTelephone(login.getKeyword());
         Optional<Student> studentList = studentRepository.findByTelephone(login.getKeyword());
