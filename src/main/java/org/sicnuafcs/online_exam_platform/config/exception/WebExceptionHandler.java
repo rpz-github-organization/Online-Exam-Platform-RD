@@ -1,8 +1,5 @@
 package org.sicnuafcs.online_exam_platform.config.exception;
 
-import org.sicnuafcs.online_exam_platform.config.exception.AjaxResponse;
-import org.sicnuafcs.online_exam_platform.config.exception.CustomException;
-import org.sicnuafcs.online_exam_platform.config.exception.CustomExceptionType;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;

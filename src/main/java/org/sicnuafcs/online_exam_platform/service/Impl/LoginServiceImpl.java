@@ -43,6 +43,7 @@ public class LoginServiceImpl implements LoginService {
                     return login;
                 }
                 else {
+                    log.info("用户名/密码错误");
                     throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "用户名/密码错误");     //密码错误
                 }
             }
@@ -54,10 +55,12 @@ public class LoginServiceImpl implements LoginService {
                     return login;
                 }
                 else {
+                    log.info("用户名/密码错误");
                     throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "用户名/密码错误");     //密码错误
                 }
             }
         }
+        log.info("用户不存在");
         throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "用户不存在");
     }
 
@@ -76,6 +79,7 @@ public class LoginServiceImpl implements LoginService {
                     return login;
 
                 } else {
+                    log.info("用户名/密码错误");
                     throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "用户名/密码错误");     //密码错误
                 }
             }
@@ -86,10 +90,12 @@ public class LoginServiceImpl implements LoginService {
                     login.setAuthority(teacherList.get().getAuthority());
                     return login;
                 } else {
+                    log.info("用户名/密码错误");
                     throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "用户名/密码错误");     //密码错误
                 }
             }
         }
+        log.info("用户不存在");
         throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "用户不存在");      //用户不存在
     }
 

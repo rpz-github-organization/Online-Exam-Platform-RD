@@ -117,6 +117,7 @@
             <version>2.3</version>
         </dependency>
 
+        <!--Bcrypt加密-->
         <dependency>
             <groupId>org.mindrot</groupId>
             <artifactId>jbcrypt</artifactId>

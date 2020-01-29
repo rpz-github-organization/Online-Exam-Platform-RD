@@ -3,7 +3,6 @@ package org.sicnuafcs.online_exam_platform.service.Impl;
 import lombok.extern.slf4j.Slf4j;
 import org.dozer.Mapper;
 import org.mindrot.jbcrypt.BCrypt;
-import org.sicnuafcs.online_exam_platform.config.exception.AjaxResponse;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomException;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomExceptionType;
 import org.sicnuafcs.online_exam_platform.dao.StudentRepository;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -34,7 +32,7 @@ public class RegisterServiceImpl implements RegisterService {
 
 
     @Override
-    public Student saveStudent(Student student) throws Exception {
+    public void saveStudent(Student student) throws Exception {
         Optional<Student> stuIdList = studentRepository.findById(student.getStu_id());
         //用户已存在
         if (stuIdList.isPresent()) {
@@ -92,11 +90,10 @@ public class RegisterServiceImpl implements RegisterService {
         student.setAuthority(0);
         studentRepository.save(student);
 
-        return student;
     }
 
     @Override
-    public Teacher saveTeacher(Teacher teacher) throws Exception {
+    public void saveTeacher(Teacher teacher) throws Exception {
         Optional<Teacher> teacherList = teacherRepository.findById(teacher.getTea_id());
         if (teacherList.isPresent()) {
             log.info("用户已存在");
@@ -152,11 +149,10 @@ public class RegisterServiceImpl implements RegisterService {
         teacher.setAuthority(1);
         teacherRepository.save(teacher);       //存入数据库
 
-        return teacher;
     }
 
     @Override
-    public boolean sendTeacherEmail(String receiver) throws Exception {
+    public void sendTeacherEmail(String receiver) throws Exception {
         //如果邮箱格式不正确（正则表达式验证）
         String result = receiver.substring(receiver.length()-13,receiver.length());
         if (!(receiver.matches("[\\w\\.\\-]+@([\\w\\-]+\\.)+[\\w\\-]+") && result.equals("@sicnu.edu.cn"))) {
@@ -173,11 +169,10 @@ public class RegisterServiceImpl implements RegisterService {
         //向该邮箱发送验证码邮件
         sendMailService.sendEmail(receiver);
 
-        return true;
     }
 
     @Override
-    public  boolean sendStudentEmail(String receiver) throws Exception {
+    public  void sendStudentEmail(String receiver) throws Exception {
         //如果邮箱格式不正确（正则表达式验证）
         if (!(receiver.matches("[\\w\\.\\-]+@([\\w\\-]+\\.)+[\\w\\-]+"))) {
             log.info("邮箱格式不正确");
@@ -192,7 +187,5 @@ public class RegisterServiceImpl implements RegisterService {
 
         //向该邮箱发送验证码邮件
         sendMailService.sendEmail(receiver);
-
-        return true;
     }
 }

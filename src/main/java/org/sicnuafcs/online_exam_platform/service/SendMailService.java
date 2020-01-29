@@ -1,7 +1,6 @@
 package org.sicnuafcs.online_exam_platform.service;
 
 import org.springframework.mail.MailSendException;
-import org.springframework.scheduling.annotation.Async;
 
 public interface SendMailService {
 
