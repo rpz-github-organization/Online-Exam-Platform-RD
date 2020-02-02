@@ -12,13 +12,14 @@ public class LoginConfig implements WebMvcConfigurer {
         registry.addInterceptor(new LoginInterceptor())
                 .addPathPatterns("/**")
                 .excludePathPatterns("/error")
-                .excludePathPatterns("/login/id")
-                .excludePathPatterns("/login/phone")
-                .excludePathPatterns("/login/get/session")
-                .excludePathPatterns("/login/logout")
-                .excludePathPatterns("/register/student")
-                .excludePathPatterns("/register/teacher")
-                .excludePathPatterns("/register/email/student")
-                .excludePathPatterns("/register/email/teacher");
+                .excludePathPatterns("/api/login/id")
+                .excludePathPatterns("/api/login/phone")
+                .excludePathPatterns("/api/login/get/session")
+                .excludePathPatterns("/api/login/get/All/session")
+                .excludePathPatterns("/api/login/logout")
+                .excludePathPatterns("/api/register/student")
+                .excludePathPatterns("/api/register/teacher")
+                .excludePathPatterns("/api/register/email/student")
+                .excludePathPatterns("/api/register/email/teacher");
     }
 }

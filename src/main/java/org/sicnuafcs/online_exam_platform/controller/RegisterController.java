@@ -17,7 +17,7 @@ import java.util.Map;
 
 @Slf4j
 @Controller
-@RequestMapping("/register")
+@RequestMapping("/api/register")
 public class RegisterController {
 
     @Autowired

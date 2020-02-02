@@ -20,7 +20,7 @@ import java.util.Map;
 
 @Slf4j
 @Controller
-@RequestMapping("/login")
+@RequestMapping("/api/login")
 public class LoginController {
 
     @Autowired
@@ -67,6 +67,11 @@ public class LoginController {
         Map<String, Object> map1 = new HashMap<>();
         map1.put(id, sessionId);
         return AjaxResponse.success(map1);
+    }
+
+    @PostMapping("/get/All/session")
+    public @ResponseBody AjaxResponse getAll(HttpServletRequest request) {
+        return AjaxResponse.success(request.getSession(false));
     }
 
     @PostMapping("/logout")
