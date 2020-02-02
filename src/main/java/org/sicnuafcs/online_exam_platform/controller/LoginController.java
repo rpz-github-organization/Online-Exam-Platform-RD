@@ -32,13 +32,17 @@ public class LoginController {
     AjaxResponse loginId(@Valid @RequestBody Login login, HttpServletRequest request) {
         Login login1 = loginService.LoginId(login);
 
-        //添加数据到session
-        request.getSession().setAttribute(login.getId(), request.getSession().getId());
+//        //添加数据到session
+//        request.getSession().setAttribute("session", request.getSession().getId());
 
         //添加sessionID到map
         Map<String, Object> map = new HashMap<>();
-        map.put(login.getId(), request.getSession().getId());
+        map.put("id", login1.getId());
+        map.put("session", request.getSession().getId());
+        map.put("authority", login1.getAuthority());
 
+        //添加数据到session
+        request.getSession().setAttribute("userInfo", map);
         return AjaxResponse.success(map);
     }
 
@@ -47,52 +51,46 @@ public class LoginController {
     public @ResponseBody AjaxResponse loginPhone(@Valid @RequestBody Login login, HttpServletRequest request) {
         Login login1 = loginService.loginPhone(login);
 
-        //添加数据到session(保存到session和redis)
-
-        request.getSession().setAttribute(login.getId(), request.getSession().getId());
 
         //添加sessionID到map（传给前端）
         Map<String, Object> map = new HashMap<>();
-        map.put(login.getId(), request.getSession().getId());
+        map.put("id", login1.getId());
+        map.put("session", request.getSession().getId());
+        map.put("authority", login1.getAuthority());
+
+        //添加数据到session(保存到session和redis)
+        request.getSession().setAttribute("userInfo", map);
 
         return AjaxResponse.success(map);
     }
 
-    @PostMapping("/get/session")
-    public @ResponseBody AjaxResponse get(@RequestBody Map map, HttpServletRequest request) {
-        //从map中获取id
-        String id = map.values().toString().substring(1,map.values().toString().length()-1);
+    @PostMapping("/get/userInfo")
+    public @ResponseBody AjaxResponse get(HttpServletRequest request) {
         //获取session数据(sessionId)
-        Object sessionId = request.getSession().getAttribute(id);
+        Object userInfo = request.getSession().getAttribute("userInfo");
 
-        Map<String, Object> map1 = new HashMap<>();
-        map1.put(id, sessionId);
-        return AjaxResponse.success(map1);
+        return AjaxResponse.success(userInfo);
     }
 
     @PostMapping("/logout")
-    public @ResponseBody AjaxResponse logout(@RequestBody Map map, HttpServletRequest request) {
-        //从map中获取id
-        String id = map.values().toString().substring(1,map.values().toString().length()-1);
+    public @ResponseBody AjaxResponse logout(HttpServletRequest request) {
         //登出前先检查用户是否已登录
-        Object sessionId = request.getSession().getAttribute(id);
-        if (sessionId == null) {
+        Object userInfo = request.getSession().getAttribute("userInfo");
+        if (userInfo == null) {
             log.info("用户未登录");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "用户未登录");
         }
-        Object sessionId1 = sessionId;
+        Object userInfo1 = userInfo;
 
         //销毁session
-        request.getSession().removeAttribute(id);
-        sessionId = request.getSession().getAttribute(id);
-        if (sessionId != null) {
+        request.getSession().removeAttribute("userInfo");
+        userInfo = request.getSession().getAttribute("userInfo");
+        if (userInfo != null) {
             log.info("登出失败");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "登出失败");
         }
         log.info("登出成功");
-        Map<String, Object> map1 = new HashMap<>();
-        map1.put(id, sessionId1);
-        return AjaxResponse.success(map1);
+        return AjaxResponse.success(userInfo1);
     }
 
 }

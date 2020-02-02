@@ -14,7 +14,7 @@ public class LoginConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/error")
                 .excludePathPatterns("/login/id")
                 .excludePathPatterns("/login/phone")
-                .excludePathPatterns("/login/get/session")
+                .excludePathPatterns("/login/get/userInfo")
                 .excludePathPatterns("/login/logout")
                 .excludePathPatterns("/register/student")
                 .excludePathPatterns("/register/teacher")
