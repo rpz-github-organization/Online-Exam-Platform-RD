@@ -5,6 +5,7 @@ spring:
 #    password: rpz2020^
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
+    initialization-mode: always
   jpa:
     hibernate:
       ddl-auto: update

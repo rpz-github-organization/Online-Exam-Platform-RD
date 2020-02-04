@@ -1,9 +1,6 @@
 package org.sicnuafcs.online_exam_platform.interceptor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.sicnuafcs.online_exam_platform.config.exception.AjaxResponse;
-import org.sicnuafcs.online_exam_platform.config.exception.CustomException;
-import org.sicnuafcs.online_exam_platform.config.exception.CustomExceptionType;
 import org.springframework.lang.Nullable;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -13,8 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+
 
 @Slf4j
 @EnableRedisHttpSession
@@ -24,29 +20,21 @@ public class LoginInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
 
         log.info("登录状态拦截+++");
-
         HttpSession session = request.getSession();
         log.info("userInfo:"+session.getAttribute("userInfo"));
-
         //获取用户信息 如果没有用户信息就提示没有登录
         Object userInfo = session.getAttribute("userInfo");
         if (userInfo == null) {
             log.info("没有登录");
 //            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "没有登录或登录失败");
-
-
             response.sendError(400,"没有登录或登陆失败");
-
             //重定向到登录页面
 //            response.sendRedirect(request.getContextPath() + loginUrl);
             return false;
-        }
-        else {
+        }else {
             log.info("已登录，用户信息："+userInfo);
-
             return true;
         }
-
 //        return false;
     }
 
