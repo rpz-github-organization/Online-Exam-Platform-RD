@@ -27,6 +27,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public Login LoginId(Login login) {
         //因为学号/工号/手机号没分开 所以需要校验学号位数
+
         if (login.getKeyword().length() != 10) {
             log.info("学号/工号位数问题");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "学号/工号位数问题");
@@ -35,8 +36,10 @@ public class LoginServiceImpl implements LoginService {
         Optional<Teacher> teacherList = teacherRepository.findById(login.getKeyword());
         Optional<Student> studentList = studentRepository.findById(login.getKeyword());
         if (studentList.isPresent() || teacherList.isPresent()) {
+
             if (studentList.isPresent()) {  //如果为学号
-                if (BCrypt.checkpw(login.getPassword(),studentList.get().getPassword())) { //如果密码正确
+                if (login.getPassword().equals(studentList.get().getPassword())) {
+//                if (BCrypt.checkpw(login.getPassword(),studentList.get().getPassword())) { //如果密码正确
                     log.info("学生登录验证成功");
                     login.setId(studentList.get().getStu_id());
                     login.setAuthority(studentList.get().getAuthority());
@@ -48,13 +51,16 @@ public class LoginServiceImpl implements LoginService {
                 }
             }
             else if (teacherList.isPresent()) { //如果为工号
-                if (BCrypt.checkpw(login.getPassword(),teacherList.get().getPassword())) {
+                if (login.getPassword().equals(teacherList.get().getPassword())) {
+//                if (BCrypt.checkpw(login.getPassword(),teacherList.get().getPassword())) {
                     log.info("教师登录验证成功");
                     login.setId(teacherList.get().getTea_id());
                     login.setAuthority(teacherList.get().getAuthority());
                     return login;
                 }
+
                 else {
+                    System.out.println("6");
                     log.info("用户名/密码错误");
                     throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "用户名/密码错误");     //密码错误
                 }

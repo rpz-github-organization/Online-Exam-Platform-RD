@@ -23,7 +23,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
 
-        log.info("登录状态拦截");
+        log.info("登录状态拦截+++");
 
         HttpSession session = request.getSession();
         log.info("userInfo:"+session.getAttribute("userInfo"));

@@ -18,5 +18,6 @@ public class Login {
     private String password;
 
     private String id = null;
+
     private int authority;
 }
