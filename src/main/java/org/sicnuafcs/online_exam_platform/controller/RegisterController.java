@@ -41,6 +41,7 @@ public class RegisterController {
     public @ResponseBody AjaxResponse sendTeacherEmail(@RequestBody Map map) throws Exception {
         //从map中获取邮箱号
         String receiver = map.values().toString().substring(1,map.values().toString().length()-1);
+        registerService.checkTeacherRepeat(receiver);
         registerService.sendTeacherEmail(receiver);
         log.info("发送邮件成功");
         return AjaxResponse.success();
@@ -50,6 +51,7 @@ public class RegisterController {
     public @ResponseBody AjaxResponse sendStudentEmail(@RequestBody Map map) throws Exception {
         //从map中获取邮箱号
         String receiver = map.values().toString().substring(1,map.values().toString().length()-1);
+        registerService.checkStudentRepeat(receiver);
         registerService.sendStudentEmail(receiver);
         log.info("发送邮件成功");
         return AjaxResponse.success();

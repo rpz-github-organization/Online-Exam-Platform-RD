@@ -8,7 +8,11 @@ public interface RegisterService {
 
     void saveTeacher(Teacher teacher) throws Exception;
 
+    void checkTeacherRepeat(String email);
+
     void sendTeacherEmail(String receiver) throws Exception;
+
+    void checkStudentRepeat(String email);
 
     void sendStudentEmail(String receiver) throws Exception;
 }

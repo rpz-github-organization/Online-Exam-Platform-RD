@@ -152,6 +152,14 @@ public class RegisterServiceImpl implements RegisterService {
     }
 
     @Override
+    public void checkTeacherRepeat(String email) {
+        //如果邮箱在teacher表里已存在
+        if (teacherRepository.findByEmail(email).isPresent()) {
+            log.info("该邮箱已存在");
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱已存在");
+        }
+    }
+    @Override
     public void sendTeacherEmail(String receiver) throws Exception {
         //如果邮箱格式不正确（正则表达式验证）
         String result = receiver.substring(receiver.length()-13,receiver.length());
@@ -160,30 +168,25 @@ public class RegisterServiceImpl implements RegisterService {
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"邮箱格式不正确");
         }
 
-        //如果邮箱在teacher表里已存在
-        if (teacherRepository.findByEmail(receiver).isPresent()) {
-            log.info("该邮箱已存在");
-            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱已存在");
-        }
-
         //向该邮箱发送验证码邮件
         sendMailService.sendEmail(receiver);
 
     }
 
     @Override
+    public void checkStudentRepeat(String email) {
+        //如果邮箱在student表里已存在
+        if (studentRepository.findByEmail(email).isPresent()) {
+            log.info("该邮箱已存在");
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱已存在");
+        }
+    }
+    @Override
     public  void sendStudentEmail(String receiver) throws Exception {
         //如果邮箱格式不正确（正则表达式验证）
         if (!(receiver.matches("[\\w\\.\\-]+@([\\w\\-]+\\.)+[\\w\\-]+"))) {
             log.info("邮箱格式不正确");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"邮箱格式不正确");
-        }
-
-        //如果邮箱在student表里已存在
-//        Student student = studentRepository.findByEmail(receiver).get();
-        if (studentRepository.findByEmail(receiver).isPresent()  ) {
-            log.info("该邮箱已存在");
-            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱已存在");
         }
 
         //向该邮箱发送验证码邮件
