@@ -20,6 +20,7 @@ public class Question {
     public static enum Type {
         Single,
         MultipleChoice,
+        Judge,
         FillInTheBlank,
         Discussion,
         Program;
@@ -27,7 +28,7 @@ public class Question {
 
     @Id
     @Column(length = 16, nullable = false)
-    private int question_id;
+    private long question_id;
 
     @Column(length = 16, nullable = false)
     @NotBlank(message = "教师id不为空")
@@ -35,7 +36,7 @@ public class Question {
 
     @Column(length = 16, nullable = false)
     @NotBlank(message = "题目不为空")
-    private String questions;
+    private String question;
 
     @Column(length = 128, nullable = false)
     @NotBlank(message = "标签不为空")

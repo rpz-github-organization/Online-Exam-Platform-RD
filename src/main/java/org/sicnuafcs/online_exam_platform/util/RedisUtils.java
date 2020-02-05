@@ -3,6 +3,7 @@ package org.sicnuafcs.online_exam_platform.util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
+import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
@@ -14,6 +15,7 @@ import java.util.concurrent.TimeUnit;
  * @create 2020/2/5 17:44
  */
 
+@Component
 public class RedisUtils {
 
     @Autowired
