@@ -8,7 +8,9 @@ spring:
     initialization-mode: always
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
+#      ddl-auto: validate
+#      ddl-auto: update
     database: mysql
     show-sql: true
   mail:

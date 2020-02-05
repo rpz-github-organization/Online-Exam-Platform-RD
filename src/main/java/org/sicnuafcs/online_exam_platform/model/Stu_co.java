@@ -17,14 +17,14 @@ import java.io.Serializable;
 @Table(name = "stu_co")
 public class Stu_co {
     @Id
-    @Column
+    @Column(length = 32,nullable = false)
     private String co_id;
 
     @Id
-    @Column
+    @Column(length = 32,nullable = false)
     private String tea_id;
 
     @Id
-    @Column
+    @Column(length = 32,nullable = false)
     private String stu_id;
 }

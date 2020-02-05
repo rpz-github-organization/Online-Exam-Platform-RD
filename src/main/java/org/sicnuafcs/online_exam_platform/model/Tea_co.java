@@ -16,10 +16,10 @@ import javax.persistence.*;
 @Table(name = "tea_co")
 public class Tea_co {
     @Id
-    @Column
+    @Column(length = 32,nullable = false)
     private String co_id;
 
     @Id
-    @Column
+    @Column(length = 32,nullable = false)
     private String tea_id;
 }

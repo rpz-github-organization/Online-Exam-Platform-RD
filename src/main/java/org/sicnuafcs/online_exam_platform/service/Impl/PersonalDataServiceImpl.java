@@ -1,6 +1,7 @@
 package org.sicnuafcs.online_exam_platform.service.Impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.mindrot.jbcrypt.BCrypt;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomException;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomExceptionType;
 import org.sicnuafcs.online_exam_platform.dao.StudentRepository;
@@ -8,6 +9,7 @@ import org.sicnuafcs.online_exam_platform.dao.TeacherRepository;
 import org.sicnuafcs.online_exam_platform.model.Student;
 import org.sicnuafcs.online_exam_platform.model.Teacher;
 import org.sicnuafcs.online_exam_platform.service.PersonalDataService;
+import org.sicnuafcs.online_exam_platform.service.RegisterService;
 import org.sicnuafcs.online_exam_platform.service.SendMailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +27,8 @@ public class PersonalDataServiceImpl implements PersonalDataService {
     StudentRepository studentRepository;
     @Autowired
     SendMailService sendMailService;
-
+    @Autowired
+    RegisterService registerService;
     @Override
     public Optional<Teacher> getTeacherData(String ID) {
         Optional<Teacher> teacherList = teacherRepository.findById(ID);
@@ -49,39 +52,56 @@ public class PersonalDataServiceImpl implements PersonalDataService {
         String newPassword = (String) params.get("newPassword"),
                 newEmail= (String) params.get("newEmail"),
                 newTelephone = (String) params.get("newTelephone"),
-                code = (String) params.get("code");;
+                code = (String) params.get("code");
+
 
         //邮箱验证：验证码和邮箱是否一致；
         if (!sendMailService.verification(teacher.getEmail(), code)) {
             log.info("邮箱验证不一致");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"邮箱验证失败");
         }
-        //位数不够前端 检测
+
         //这里只是检测是否重复
 
-        if(teacher.getPassword().equals(newPassword)){
-            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "和原始密码相同");
+        if (newPassword.length() < 8) {
+            log.info("密码位数过少");
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"密码位数过少");
         }
-        //格式不正确前端检测
-//        String result = teacher.getEmail().substring(teacher.getEmail().length()-13,teacher.getEmail().length());
-//        if (!(teacher.getEmail().matches("[\\w\\.\\-]+@([\\w\\-]+\\.)+[\\w\\-]+") && result.equals("@sicnu.edu.cn"))) {
-//            log.info("邮箱格式不正确");
-//            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"邮箱格式不正确");
+//        if(teacher.getPassword().equals(newPassword)){
+//            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "和原始密码相同");
 //        }
+        //格式不正确前端检测
+        String result = newEmail.substring(newEmail.length()-13,newEmail.length());
+        if (!(newEmail.matches("[\\w\\.\\-]+@([\\w\\-]+\\.)+[\\w\\-]+") && result.equals("@sicnu.edu.cn"))) {
+            log.info("邮箱格式不正确");
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"邮箱格式不正确");
+        }
         Optional<Teacher> emailList = teacherRepository.findByEmail(newEmail);
-        if (emailList.isPresent()) {
+        if (emailList.isPresent() && !emailList.get().getTea_id().equals(ID)) {
             log.info("该邮箱已被注册");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱已被注册");
         }
-        Optional<Student> studentPhoneList = studentRepository.findByTelephone(newTelephone);
+//        Optional<Student> studentPhoneList = studentRepository.findByTelephone(newTelephone);
         Optional<Teacher> teacherPhoneList = teacherRepository.findByTelephone(newTelephone);
-        if (studentPhoneList.isPresent() || teacherPhoneList.isPresent()) {
+        if ( teacherPhoneList.isPresent() && !teacherPhoneList.get().getTea_id().equals(ID)) {
             log.info("该电话已被注册");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该电话已被注册");
         }
+
+//        try {
+//            teacher.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+//            log.info("密码加密成功");
+//        }catch (Exception e) {
+//            log.info("密码加密失败");
+//            throw new CustomException(CustomExceptionType.SYSTEM_ERROR,"密码加密失败");
+//        }
+
         teacher.setPassword(newPassword);
-        teacher.setEmail(newEmail);
-        teacher.setTelephone(newTelephone);
+        if(newEmail!=null)
+            teacher.setEmail(newEmail);
+        if(newTelephone!=null)
+            teacher.setTelephone(newTelephone);
+
         Teacher newTeacherData = teacherRepository.save(teacher);
             log.info(String.valueOf(newTeacherData));
         newTeacherData.setPassword(null);
@@ -101,23 +121,49 @@ public class PersonalDataServiceImpl implements PersonalDataService {
             log.info("邮箱验证不一致");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"邮箱验证失败");
         }
+
+        if (newPassword.length() < 8) {
+            log.info("密码位数过少");
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"密码位数过少");
+        }
         if(student.getPassword().equals(newPassword)){
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "和原始密码相同");
         }
-        Optional<Teacher> emailList = teacherRepository.findByEmail(newEmail);
-        if (emailList.isPresent()) {
+
+        if (!(newEmail.matches("[\\w\\.\\-]+@([\\w\\-]+\\.)+[\\w\\-]+"))) {
+            log.info("邮箱格式不正确");
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"邮箱格式不正确");
+        }
+
+        Optional<Student> emailList = studentRepository.findByEmail(newEmail);
+        if (emailList.isPresent() && !emailList.get().getStu_id().equals(ID)) {
             log.info("该邮箱已被注册");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱已被注册");
         }
-        Optional<Student> studentPhoneList = studentRepository.findByTelephone(newTelephone);
-        Optional<Teacher> teacherPhoneList = teacherRepository.findByTelephone(newTelephone);
-        if (studentPhoneList.isPresent() || teacherPhoneList.isPresent()) {
-            log.info("该电话已被注册");
-            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该电话已被注册");
+//        Optional<Student> studentPhoneList = studentRepository.findByTelephone(newTelephone);
+        Optional<Student> studentPhoneList = studentRepository.findByEmail(newEmail);
+        if ( studentPhoneList.isPresent() && !studentPhoneList.get().getStu_id().equals(ID)) {
+                log.info("该电话已被注册");
+                throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该电话已被注册");
         }
+
+//        try {
+//            student.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+//            log.info("密码加密成功");
+//        }catch (Exception e) {
+//            log.info("密码加密失败");
+//            throw new CustomException(CustomExceptionType.SYSTEM_ERROR,"密码加密失败");
+//        }
+
         student.setPassword(newPassword);
-        student.setEmail(newEmail);
-        student.setTelephone(newTelephone);
+        if(newEmail!=null){
+            student.setEmail(newEmail);
+        }
+        if(newTelephone!=null){
+            student.setTelephone(newTelephone);
+        }
+
+
         Student newStudentData = studentRepository.save(student);
             log.info(String.valueOf(newStudentData));
         newStudentData.setPassword(null);
@@ -131,7 +177,6 @@ public class PersonalDataServiceImpl implements PersonalDataService {
         Teacher teacher = teacherRepository.findById(ID).get();
 
         teacher.setName(newTeacherData.getName());
-        teacher.setInstitute_id(newTeacherData.getInstitute_id());
         teacher.setQq(newTeacherData.getQq());
         teacher.setWeixin(newTeacherData.getWeixin());
         teacher.setSex(newTeacherData.getSex());
@@ -146,10 +191,6 @@ public class PersonalDataServiceImpl implements PersonalDataService {
     public Student editStudentBaseData(String ID,Student newStudentData) {
         Student student = studentRepository.findById(ID).get();
 
-//        student.setClass_id(newStudentData.getClass_id());
-//        student.setGrade(newStudentData.getGrade());
-//        student.setInstitute_id(newStudentData.getInstitute_id());
-//        student.setMajor_id(newStudentData.getMajor_id());
         student.setName(newStudentData.getName());
         student.setQq(newStudentData.getQq());
         student.setSex(newStudentData.getSex());
@@ -158,5 +199,25 @@ public class PersonalDataServiceImpl implements PersonalDataService {
         student1.setPassword(null);
         student1.setCode(null);
         return student1;
+    }
+
+    @Override
+    public void checkStudentEmail(String ID) {
+        Student student = studentRepository.findById(ID).get();
+        try {
+            registerService.sendStudentEmail(student.getEmail());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    @Override
+    public void checkTeacherEmail(String ID) {
+        Teacher teacher = teacherRepository.findById(ID).get();
+        try {
+//            registerService.sendTeacherEmail(teacher.getEmail());
+            registerService.sendStudentEmail(teacher.getEmail());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

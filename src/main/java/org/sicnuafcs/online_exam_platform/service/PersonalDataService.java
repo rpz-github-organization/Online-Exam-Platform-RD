@@ -13,4 +13,6 @@ public interface PersonalDataService {
      Student updateStudentData(String ID,Map<String, Object> params);
      Teacher editTeacherBaseData(String ID,Teacher newTeacherData);
      Student editStudentBaseData(String ID,Student newStudentData);
+     void checkTeacherEmail(String ID);
+     void checkStudentEmail(String ID);
 }
