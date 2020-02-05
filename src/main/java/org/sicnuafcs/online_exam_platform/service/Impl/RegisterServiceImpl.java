@@ -180,7 +180,8 @@ public class RegisterServiceImpl implements RegisterService {
         }
 
         //如果邮箱在student表里已存在
-        if (studentRepository.findByEmail(receiver).isPresent()) {
+//        Student student = studentRepository.findByEmail(receiver).get();
+        if (studentRepository.findByEmail(receiver).isPresent()  ) {
             log.info("该邮箱已存在");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱已存在");
         }

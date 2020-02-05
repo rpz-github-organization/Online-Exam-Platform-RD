@@ -32,7 +32,7 @@ public class Teacher implements Serializable {
     @NotBlank(message = "姓名不能为空")
     private String name;
     @Column
-    private String dept;
+    private String institute_id;
 
     @Column
     @Enumerated(EnumType.STRING)

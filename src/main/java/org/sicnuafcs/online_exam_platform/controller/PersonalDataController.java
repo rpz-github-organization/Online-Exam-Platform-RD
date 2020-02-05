@@ -45,32 +45,32 @@ public class PersonalDataController {
         }
 
 
-        @PutMapping("/updateTeacherPassword")
+        @PostMapping("/updateTeacherData")
         public AjaxResponse updataTeacherPassword(HttpServletRequest request ,@RequestBody Map<String, Object> params){
             Map m = (Map) request.getSession().getAttribute("userInfo");
             String ID = (String) m.get("id");
-            String newPassword = (String) params.get("newPassword");
-
-
-            Teacher newTeacherData = personalDataService.updataTeacherPassword(ID, newPassword);
-           if(newTeacherData!=null)
-                return AjaxResponse.success(newTeacherData);
-            else
-                return AjaxResponse.error(new CustomException(CustomExceptionType.USER_INPUT_ERROR, "与原始密码相同，修改密码中断"));//返回500
+            Teacher newTeacherData = personalDataService.updateTeacherData(ID, params);
+            return AjaxResponse.success(newTeacherData);
         }
-        @PutMapping("/updateStudentPassword")
+        @PostMapping("/updateStudentData")
         public AjaxResponse updataStudentPassword(HttpServletRequest request ,@RequestBody Map<String, Object> params){
-        Map m = (Map) request.getSession().getAttribute("userInfo");
-        String ID = (String) m.get("id");
-        String newPassword = (String) params.get("newPassword");
-
-
-        Student newStudentData = personalDataService.updataStudentPassword(ID, newPassword);
-        if(newStudentData!=null)
+            Map m = (Map) request.getSession().getAttribute("userInfo");
+            String ID = (String) m.get("id");
+            Student newStudentData = personalDataService.updateStudentData(ID, params);
             return AjaxResponse.success(newStudentData);
-        else
-            return AjaxResponse.error(new CustomException(CustomExceptionType.USER_INPUT_ERROR, "与原始密码相同，修改密码中断"));
         }
 
-
+        @PostMapping("/editTeacherBaseData")
+        public AjaxResponse editTeacherBaseData(HttpServletRequest request,@RequestBody Teacher newTeacherData){
+            Map m = (Map) request.getSession().getAttribute("userInfo");
+            String ID = (String) m.get("id");
+            return AjaxResponse.success(personalDataService.editTeacherBaseData(ID,newTeacherData));
+        }
+        @PostMapping("/editStudentBaseData")
+        public AjaxResponse editStudentBaseData(HttpServletRequest request,@RequestBody Student newStudentData){
+            Map m = (Map) request.getSession().getAttribute("userInfo");
+            String ID = (String) m.get("id");
+            return AjaxResponse.success(personalDataService.editStudentBaseData(ID,newStudentData));
+        }
 }
+
