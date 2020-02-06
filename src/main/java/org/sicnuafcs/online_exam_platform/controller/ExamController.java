@@ -35,7 +35,7 @@ public class ExamController {
     @PostMapping("/addExam")
     public @ResponseBody
     AjaxResponse saveToExam(@Valid @RequestBody Exam exam) throws Exception {
-        examService.savetoExam(exam);
+        examService.saveToExam(exam);
         log.info("添加/更新 试卷成功");
         return AjaxResponse.success();
     }

@@ -18,11 +18,11 @@ public class ExamServiceImpl implements ExamService {
     @Autowired
     ExamRepository examRepository;
     @Override
-    public void savetoExam(Exam exam) throws Exception {
-        if (exam.getCo_id() == "") {
+    public void saveToExam(Exam exam) throws Exception {
+        if (exam.getCo_id().equals("")) {
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"需要课程id！");
         }
-        if (exam.getTea_id() == "") {
+        if (exam.getTea_id().equals("")) {
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"需要教师id！");
         }
         examRepository.save(exam);
