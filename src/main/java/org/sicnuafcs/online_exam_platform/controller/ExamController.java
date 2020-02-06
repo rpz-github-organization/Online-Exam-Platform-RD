@@ -18,21 +18,21 @@ import javax.validation.Valid;
 
 @Slf4j
 @Controller
-@RequestMapping("/question")
-public class QuestionController {
+@RequestMapping("/exam")
+public class ExamController {
     @Autowired
     QuestionService questionService;
     @Autowired
     ExamService examService;
 
-    @PostMapping("/add")
+    @PostMapping("/addQuestion")
     public @ResponseBody
     AjaxResponse saveStudent(@Valid @RequestBody Question question) throws Exception {
         Long question_id = questionService.saveQuestion(question);
         log.info("题目添加成功");
         return AjaxResponse.success(question_id);
     }
-    @PostMapping("/addToExam")
+    @PostMapping("/addQuestionToExam")
     public @ResponseBody
     AjaxResponse saveToExam(@Valid @RequestBody Exam exam) throws Exception {
         examService.savetoExam(exam);
