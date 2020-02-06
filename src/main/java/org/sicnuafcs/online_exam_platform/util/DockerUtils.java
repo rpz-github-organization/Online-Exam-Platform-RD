@@ -9,8 +9,8 @@ import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.jaxrs.JerseyDockerCmdExecFactory;
-import net.sf.json.JSONArray;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.boot.configurationprocessor.json.JSONArray;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -219,8 +219,8 @@ public class DockerUtils {
         try {
             String containerId = "";
             Object object = DockerUtils.listContainersCmd();
-            JSONArray jsonArray = JSONArray.fromObject(object);
-            for (int i = 0; i < jsonArray.size(); i++) {
+            JSONArray jsonArray = new JSONArray(object);
+            for (int i = 0; i < jsonArray.length(); i++) {
                 String name = jsonArray.getJSONObject(i).getString("names");
                 name = name.replace("[\"/", "").replace("\"]", "");
                 if (!StringUtils.isEmpty(name) && name.equals(containerName)) {
