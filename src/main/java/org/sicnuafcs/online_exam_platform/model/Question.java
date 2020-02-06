@@ -16,7 +16,9 @@ import javax.validation.constraints.NotBlank;
 @Entity
 @Table(name = "Question")
 
-public class Question {
+public class
+
+Question {
     public static enum Type {
         Single,
         MultipleChoice,
@@ -48,4 +50,7 @@ public class Question {
 
     @Enumerated(EnumType.STRING)
     private Type type = null;
+
+    private String input;   //编程题示例输入
+    private String output;  //编程题示例输出
 }
