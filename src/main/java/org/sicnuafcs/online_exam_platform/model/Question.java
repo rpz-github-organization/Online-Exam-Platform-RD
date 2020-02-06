@@ -35,22 +35,17 @@ public class Question {
     private  String tea_id;
 
     @Column(length = 16, nullable = false)
-    @NotBlank(message = "题目不为空")
     private String question;
 
     @Column(length = 128, nullable = false)
-    @NotBlank(message = "标签不为空")
     private String tag;
 
     @Column(length = 256)
     private  String options;
 
     @Column(nullable = false)
-    @NotBlank(message = "答案不为空")
     private String answer;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    @NotBlank(message = "类型不为空")
-    private Type type;
+    private Type type = null;
 }
