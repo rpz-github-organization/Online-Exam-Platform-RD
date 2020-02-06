@@ -53,4 +53,10 @@ public class Question {
     @Column(nullable = false)
     @NotBlank(message = "类型不为空")
     private Type type;
+
+    @Column
+    private String input;
+
+    @Column
+    private String output;
 }
