@@ -27,16 +27,16 @@ public class ExamController {
 
     @PostMapping("/addQuestion")
     public @ResponseBody
-    AjaxResponse saveStudent(@Valid @RequestBody Question question) throws Exception {
+    AjaxResponse saveQuestion(@Valid @RequestBody Question question) throws Exception {
         Long question_id = questionService.saveQuestion(question);
         log.info("题目添加成功");
         return AjaxResponse.success(question_id);
     }
-    @PostMapping("/addQuestionToExam")
+    @PostMapping("/addExam")
     public @ResponseBody
     AjaxResponse saveToExam(@Valid @RequestBody Exam exam) throws Exception {
         examService.savetoExam(exam);
-        log.info("题目添加到试卷成功");
+        log.info("添加/更新 试卷成功");
         return AjaxResponse.success();
     }
 }
