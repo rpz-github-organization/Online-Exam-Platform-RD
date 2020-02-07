@@ -20,10 +20,10 @@ public class ExamServiceImpl implements ExamService {
     ExamRepository examRepository;
     @Override
     public void saveToExam(Exam exam) throws Exception {
-        if (exam.getCo_id().equals("")) {
+        if (exam.getCo_id().equals("") || exam.getCo_id() == null) {
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"需要课程id！");
         }
-        if (exam.getTea_id().equals("")) {
+        if (exam.getTea_id().equals("") || exam.getTea_id() == null) {
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"需要教师id！");
         }
         examRepository.save(exam);

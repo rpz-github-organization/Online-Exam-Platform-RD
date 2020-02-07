@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @Data
 @AllArgsConstructor
@@ -19,10 +20,12 @@ public class Exam {
     }
     @Id
     @Column
+    @NotBlank(message = "课程号不能为空")
     private String co_id; //课程id
 
     @Id
     @Column
+    @NotBlank(message = "工号不能为空")
     private String tea_id; //教师id
 
     @Id
