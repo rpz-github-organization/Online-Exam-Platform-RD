@@ -23,8 +23,8 @@ public class PersonalDataController {
 
         @Resource
         PersonalDataService personalDataService;
-//        @Autowired
-//        RegisterService registerService;
+        @Autowired
+        RegisterService registerService;
         @Autowired
         SendMailService sendMailService;
         @GetMapping("/getTeacher")
@@ -50,50 +50,55 @@ public class PersonalDataController {
             return AjaxResponse.error(new CustomException(CustomExceptionType.SYSTEM_ERROR, "查找个人资料错误"));//返回500
         }
 
-        //此处的邮箱验证 是否是本人操作
-        @GetMapping("/checkTeacherEmail")
-        public @ResponseBody AjaxResponse sendTeacherEmail(HttpServletRequest request) throws Exception {
-            Map m = (Map) request.getSession().getAttribute("userInfo");
-            String ID = (String) m.get("id");
-            personalDataService.checkTeacherEmail(ID);
+        //此处的邮箱验证 是否是教师操作
+        @PostMapping("/checkTeacherEmail")
+        public @ResponseBody AjaxResponse sendTeacherEmail(@RequestBody Map<String, Object> params) throws Exception {
+          String email = (String) params.get("email");
+            personalDataService.checkTeacherEmail(email);
             log.info("发送邮件成功");
             return AjaxResponse.success();
          }
-
-        @GetMapping("/checkStudentEmail")
-        public @ResponseBody AjaxResponse sendStudentEmail(HttpServletRequest request) throws Exception {
-            Map m = (Map) request.getSession().getAttribute("userInfo");
-            String ID = (String) m.get("id");
-            personalDataService.checkStudentEmail(ID);
+         //此处的邮箱验证 是否是本人操作
+        @PostMapping("/checkStudentEmail")
+        public @ResponseBody AjaxResponse sendStudentEmail(@RequestBody Map<String, Object> params) throws Exception {
+            String email = (String) params.get("email");
+            personalDataService.checkStudentEmail(email);
             log.info("发送邮件成功");
             return AjaxResponse.success();
 
         }
-//        //看某个邮箱否在使用，
-//        @PostMapping("/checkNewEmail")
-//        public @ResponseBody AjaxResponse sendNewEmail(@RequestBody Map<String, Object> params) throws Exception {
-//            String newEmail = (String) params.get("newEamil");
-////            personalDataService.checkTeacherEmail(newEmail);
-////            registerService.sendStudentEmail(newEmail);
-//            sendMailService.sendEmail(newEmail);
-//            log.info("发送邮件成功");
-//            return AjaxResponse.success();
-//        }
+        //更新教师邮箱
+        @PostMapping("/updateTeacherNewEmail")
+        public @ResponseBody AjaxResponse updateTeacherNewEmail(HttpServletRequest request,@RequestBody Map<String, Object> params) throws Exception {
+            Map m = (Map) request.getSession().getAttribute("userInfo");
+            String ID = (String) m.get("id");
+            personalDataService.updateTeacherEmail(ID,params);
+            return AjaxResponse.success();
+        }
+        //更新邮箱
+        @PostMapping("/updateStudentNewEmail")
+        public @ResponseBody AjaxResponse updateStudentNewEmail(HttpServletRequest request,@RequestBody Map<String, Object> params) throws Exception {
+            Map m = (Map) request.getSession().getAttribute("userInfo");
+            String ID = (String) m.get("id");
+            personalDataService.updateStudentEmail(ID,params);
+            return AjaxResponse.success();
+        }
 
 
-
-        @PostMapping("/updateTeacherData")
+        //更新密码
+        @PostMapping("/updateTeacherPassword")
         public AjaxResponse updataTeacherPassword(HttpServletRequest request ,@RequestBody Map<String, Object> params){
             Map m = (Map) request.getSession().getAttribute("userInfo");
             String ID = (String) m.get("id");
-            Teacher newTeacherData = personalDataService.updateTeacherData(ID, params);
+            Teacher newTeacherData = personalDataService.updateTeacherPassword(ID, params);
             return AjaxResponse.success(newTeacherData);
         }
-        @PostMapping("/updateStudentData")
+        //更新密码
+        @PostMapping("/updateStudentPassword")
         public AjaxResponse updataStudentPassword(HttpServletRequest request ,@RequestBody Map<String, Object> params){
             Map m = (Map) request.getSession().getAttribute("userInfo");
             String ID = (String) m.get("id");
-            Student newStudentData = personalDataService.updateStudentData(ID, params);
+            Student newStudentData = personalDataService.updateStudentPassword(ID, params);
             return AjaxResponse.success(newStudentData);
         }
 
@@ -109,5 +114,6 @@ public class PersonalDataController {
             String ID = (String) m.get("id");
             return AjaxResponse.success(personalDataService.editStudentBaseData(ID,newStudentData));
         }
+
 }
 
