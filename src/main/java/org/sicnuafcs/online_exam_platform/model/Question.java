@@ -30,7 +30,7 @@ Question {
 
     @Id
     @Column(length = 16, nullable = false)
-    private Long question_id;
+    private long question_id;
 
     @Column(length = 16, nullable = false)
     @NotBlank(message = "教师id不为空")

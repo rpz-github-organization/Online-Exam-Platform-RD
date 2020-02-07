@@ -1,9 +1,9 @@
 package org.sicnuafcs.online_exam_platform.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.asm.internal.ProgramElement;
 import org.sicnuafcs.online_exam_platform.config.exception.AjaxResponse;
 import org.sicnuafcs.online_exam_platform.model.Exam;
+import org.sicnuafcs.online_exam_platform.model.ExamQuestion;
 import org.sicnuafcs.online_exam_platform.model.Program;
 import org.sicnuafcs.online_exam_platform.model.Question;
 import org.sicnuafcs.online_exam_platform.service.ExamService;
@@ -34,7 +34,7 @@ public class ExamController {
     @PostMapping("/addQuestion")
     public @ResponseBody
     AjaxResponse saveQuestion(@Valid @RequestBody Question question) throws Exception {
-        if (question.getQuestion_id() != null) {
+        if (question.getQuestion_id() != 0) {
             log.info("更新题目操作");
         }
         Long question_id = questionService.saveQuestion(question);
@@ -57,5 +57,12 @@ public class ExamController {
         return AjaxResponse.success(json);
     }
 
+    @PostMapping("/addQuestionToExam")
+    public @ResponseBody
+    AjaxResponse saveQuestionToExam(@Valid @RequestBody ExamQuestion examQuestion) throws Exception {
+        examService.saveQuestionToExam(examQuestion);
+        log.info("添加/编辑 试题到试卷成功");
+        return AjaxResponse.success();
+    }
 }
 
