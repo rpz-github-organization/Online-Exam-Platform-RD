@@ -27,11 +27,16 @@ public class QuestionServiceImpl implements QuestionService {
 //        if(question.getType().equals(Question.Type.Single) && question.getOptions().equals("")) {
 //            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"选择题选项为空！");
 //        }
+        if (question.getQuestion_id() != null) {
+            questionRepository.save(question);
+            return question.getQuestion_id();
 
-        long question_id = redisUtils.incr("question_id");
-        System.out.println(question_id);
-        question.setQuestion_id(question_id);
-        questionRepository.save(question);
-        return question_id;
+        } else {
+            long question_id = redisUtils.incr("question_id");
+            System.out.println(question_id);
+            question.setQuestion_id(question_id);
+            questionRepository.save(question);
+            return question_id;
+        }
     }
 }

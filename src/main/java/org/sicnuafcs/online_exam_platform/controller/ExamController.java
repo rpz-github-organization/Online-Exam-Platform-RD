@@ -28,8 +28,11 @@ public class ExamController {
     @PostMapping("/addQuestion")
     public @ResponseBody
     AjaxResponse saveQuestion(@Valid @RequestBody Question question) throws Exception {
+        if (question.getQuestion_id() != null) {
+            log.info("更新题目操作");
+        }
         Long question_id = questionService.saveQuestion(question);
-        log.info("题目添加成功");
+        log.info("题目 添加/更新 成功");
         return AjaxResponse.success(question_id);
     }
     @PostMapping("/addExam")
@@ -39,5 +42,6 @@ public class ExamController {
         log.info("添加/更新 试卷成功");
         return AjaxResponse.success();
     }
+
 }
 

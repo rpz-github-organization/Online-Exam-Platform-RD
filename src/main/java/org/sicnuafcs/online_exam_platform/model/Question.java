@@ -30,7 +30,7 @@ Question {
 
     @Id
     @Column(length = 16, nullable = false)
-    private long question_id;
+    private Long question_id;
 
     @Column(length = 16, nullable = false)
     @NotBlank(message = "教师id不为空")
@@ -53,4 +53,5 @@ Question {
 
     private String input;   //编程题示例输入
     private String output;  //编程题示例输出
+    private String tip; //提示
 }
