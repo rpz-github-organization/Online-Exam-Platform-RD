@@ -1,12 +1,16 @@
 package org.sicnuafcs.online_exam_platform.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.asm.internal.ProgramElement;
 import org.sicnuafcs.online_exam_platform.config.exception.AjaxResponse;
 import org.sicnuafcs.online_exam_platform.model.Exam;
+import org.sicnuafcs.online_exam_platform.model.Program;
 import org.sicnuafcs.online_exam_platform.model.Question;
 import org.sicnuafcs.online_exam_platform.service.ExamService;
+import org.sicnuafcs.online_exam_platform.service.JudgeService;
 import org.sicnuafcs.online_exam_platform.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +28,8 @@ public class ExamController {
     QuestionService questionService;
     @Autowired
     ExamService examService;
+    @Autowired
+    JudgeService judgeService;
 
     @PostMapping("/addQuestion")
     public @ResponseBody
@@ -41,6 +47,14 @@ public class ExamController {
         examService.saveToExam(exam);
         log.info("添加/更新 试卷成功");
         return AjaxResponse.success();
+    }
+
+    @PostMapping("/judgeProgram")
+    public @ResponseBody
+    AjaxResponse judge(@Valid @RequestBody Program program) throws Exception {
+        JSONObject json = judgeService.judge(program.getCode(), program.getLanguage());
+        log.info("判题成功");
+        return AjaxResponse.success(json);
     }
 
 }
