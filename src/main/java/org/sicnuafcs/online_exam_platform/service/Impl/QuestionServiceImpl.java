@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Slf4j
 @EnableAsync
 @Service
@@ -37,5 +39,15 @@ public class QuestionServiceImpl implements QuestionService {
             questionRepository.save(question);
             return question_id;
         }
+    }
+
+    public String getAnswerByQuestionId(long question_id) {
+        Optional<Question> question = questionRepository.findById(question_id);
+        if (!question.isPresent()) {
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"没有找到该题目");
+        }
+
+        return question.get().getAnswer();
+
     }
 }
