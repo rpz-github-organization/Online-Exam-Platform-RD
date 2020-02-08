@@ -30,6 +30,10 @@ public class ExamServiceImpl implements ExamService {
     StuExamRepository stuExamRepository;
     @Autowired
     StudentRepository studentRepository;
+    @Autowired
+    QuestionServiceImpl questionServiceImpl;
+    @Autowired
+    QuestionRepository questionRepository;
 
     @Override
     public long saveToExam(Exam exam) throws Exception {
@@ -71,9 +75,25 @@ public class ExamServiceImpl implements ExamService {
                 stuExamRepository.save(stuExam);
             }
         }
-
     }
-    public static void randomCommon(ArrayList<ExamQuestion> questionsList) {
+    //选择题判断题 自动判分
+    public void judgeGeneralQuestion(long exma_id) throws Exception {
+        ArrayList<StuExam> stuExams = stuExamRepository.getByExamId(exma_id);
+        for (StuExam stuExam : stuExams) {
+            if (stuExam.getType() != Question.Type.Single || stuExam.getType() != Question.Type.Judge) {
+                continue;
+            }
+            long question_id = stuExam.getQuestion_id();
+            if (stuExam.getAnswer().equals(questionRepository.findAnswerById(question_id))){
+                stuExam.setScore(examQuestionRepository.findScoreById(question_id, exma_id));
+            } else {
+                stuExam.setScore(0);
+            }
+        }
+    }
+
+    //打乱题目顺序
+    public  void randomCommon(ArrayList<ExamQuestion> questionsList) {
         int n = questionsList.size();
         int count = 0;
         while (count < n) {

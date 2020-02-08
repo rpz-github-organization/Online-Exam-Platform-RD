@@ -26,4 +26,10 @@ public class StuExam {
     @Column
     @NotBlank(message = "question_id 不为空")
     private long question_id;
+
+    private Question.Type type;
+
+    private int score;
+
+    private String answer;
 }

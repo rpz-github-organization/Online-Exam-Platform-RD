@@ -41,13 +41,4 @@ public class QuestionServiceImpl implements QuestionService {
         }
     }
 
-    public String getAnswerByQuestionId(long question_id) {
-        Optional<Question> question = questionRepository.findById(question_id);
-        if (!question.isPresent()) {
-            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"没有找到该题目");
-        }
-
-        return question.get().getAnswer();
-
-    }
 }
