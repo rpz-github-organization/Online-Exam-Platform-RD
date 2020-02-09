@@ -151,7 +151,6 @@ public class JudgeConfig {
                     .Env(PY3Env)
                     .build();
         }
-
     }
 
 }
