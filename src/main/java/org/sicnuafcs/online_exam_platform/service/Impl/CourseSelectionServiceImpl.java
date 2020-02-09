@@ -37,12 +37,12 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
 
     @Override
     public String getClass_id(String stu_id) {
-        Optional<Student> student = studentRepository.findById(stu_id);
-        if (!student.isPresent()) {
+        Student stu = studentRepository.findStudentByStu_id(stu_id);
+        if (stu == null) {
             log.info("用户不存在");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "用户不存在");
         }
-        String class_id = student.get().getClass_id();
+        String class_id = stu.getClass_id();
         if (class_id == null) {
             log.info("该用户未填写班级信息");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "该用户未填写班级信息");
@@ -52,12 +52,12 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
 
     @Override
     public String getMajor_id(String stu_id) {
-        Optional<Student> student = studentRepository.findById(stu_id);
-        if (!student.isPresent()) {
+        Student stu = studentRepository.findStudentByStu_id(stu_id);
+        if (stu == null) {
             log.info("用户不存在");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "用户不存在");
         }
-        String class_id = student.get().getMajor_id();
+        String class_id = stu.getMajor_id();
         if (class_id == null) {
             log.info("该用户未填写专业信息");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "该用户未填写专业信息");
@@ -66,6 +66,7 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
     }
 
     @Override
+    //在course表里获取(major_list)专业major_id对应的全部课程co_id
     public ArrayList<String> getAllCourse_id(String major_id) {
         ArrayList<String> course = new ArrayList<>();   //可选的课程
         List<Course> courses = courseRepository.findAll();  //所有课程
@@ -79,25 +80,24 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
     }
 
     @Override
+    //在stu_co表里根据stu_id 获取学生 已经选择 的课程和老师，co_id和tea_id;
     public Map<String, String> getChosenCoId_TeaId(String stu_id) {
         Map<String, String> coId_teaId = new IdentityHashMap<>();
-        List<Stu_co> stu_cos = stu_coRepository.findAll();
+        List<Stu_co> stu_cos = stu_coRepository.getStu_coByStu_id(stu_id);
         for (int i = 0; i < stu_cos.size(); i++) {
-            if (stu_cos.get(i).getStu_id().equals(stu_id)) {
-                String id = new String(stu_cos.get(i).getCo_id());
-                coId_teaId.put(id, stu_cos.get(i).getTea_id());
-            }
+            String id = new String(stu_cos.get(i).getCo_id());
+            coId_teaId.put(id, stu_cos.get(i).getTea_id());
         }
         return coId_teaId;
     }
 
     @Override
+    //key(co_id)到course中得到name  value(tea_id)到teacher中得到name
     public Map<String, String> getName(Map<String, String> coId_TeaId) {
         Map<String, String> co_Tea = new IdentityHashMap<>();
-        //key(co_id)到course中得到name  value(tea_id)到teacher中得到name
         for (Map.Entry<String, String> m : coId_TeaId.entrySet()) {
-            String course = new String(courseRepository.findById(m.getKey()).get().getName());
-            String teacher = new String(teacherRepository.findById(m.getValue()).get().getName());
+            String course = new String(courseRepository.getNameByCo_id(m.getKey()));
+            String teacher = new String(teacherRepository.getNameByTea_id(m.getValue()));
             co_Tea.put(course, teacher);
         }
 
@@ -105,23 +105,22 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
     }
 
     @Override
-    public Map<String, String> getAllCoId_TeaId(ArrayList<String> course_id) {
+    //在tea_co类中 根据co_id获取tea_id，与co_id(地址)对应成map
+    public Map<String, String> getAllCoId_TeaId(ArrayList<String> course_id) {  //course_id从course表里已读取出来
         Map<String, String> coId_teaId = new IdentityHashMap<>();
-        List<Tea_co> tea_cos = tea_coRepository.findAll();
         for (String co_id : course_id) {
-            for (int i = 0; i < tea_cos.size(); i++) {
-                if (tea_cos.get(i).getCo_id().equals(co_id)) {
+            List<String> tea_ids = tea_coRepository.getTea_idByCo_id(co_id);
+            for (int i = 0; i < tea_ids.size(); i++) {
                     String id = new String(co_id);
-                    coId_teaId.put(id, tea_cos.get(i).getTea_id());
+                    coId_teaId.put(id, tea_ids.get(i));
                 }
             }
-        }
         return coId_teaId;
     }
 
     @Override
     public String getMajorName(String major_id) {
-        return majorRepository.findById(major_id).get().getName();
+        return majorRepository.getNameByMajor_id(major_id);
     }
 
     @Override

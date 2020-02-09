@@ -69,7 +69,7 @@ public class CourseSelectionController {
             return AjaxResponse.success(courseSelectionService.getName(chosenCoId_TeaId));
         }
         else if (getCourse.getOption() == 0) {
-            ArrayList<String> allCourse_id = courseSelectionService.getAllCourse_id(major_id);  //在course表里获取专业对应的全部课程co_id
+            ArrayList<String> allCourse_id = courseSelectionService.getAllCourse_id(major_id);  //在course表里获取专业major_id对应的全部课程co_id
             Map<String, String> allCoId_TeaId = courseSelectionService.getAllCoId_TeaId(allCourse_id);  //在tea_co类中 全部课程 获取tea_id，与co_id(地址)对应成map
 
             Set<String> chosenCourseList = new HashSet<>(chosenCoId_TeaId.keySet());    //不能去掉HashSet（但是本身里面也不可能有重复的） 原理？？？
@@ -82,16 +82,6 @@ public class CourseSelectionController {
         throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "选项错误");
     }
 
-
-    /**
-     * 需要：id，课程
-     * @return
-     */
-    @RequestMapping("/add/chosenCourse")
-    public @ResponseBody AjaxResponse addChosenCourse() {
-
-        return AjaxResponse.success();
-    }
 
     @RequestMapping("/add")
     public @ResponseBody AjaxResponse add(@RequestBody Course course) {
