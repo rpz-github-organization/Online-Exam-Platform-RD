@@ -66,7 +66,7 @@ public class JudgeServiceImpl implements JudgeService {
         body.add("max_cpu_time", 1000);
         body.add("max_memory", 134217728);
         body.add("test_case_id", "normal");
-        body.add("output", false);
+        body.add("output", true);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Judge-Server-Token", "b82fd881d1303ba9794e19b7f4a5e2b79231d065f744e72172ad9ee792909126");
