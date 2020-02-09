@@ -29,6 +29,7 @@ public class StuExam {
 
     private Question.Type type;
 
+    private int num;
     private int score;
 
     private String answer;

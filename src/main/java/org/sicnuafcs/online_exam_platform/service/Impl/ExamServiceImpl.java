@@ -77,15 +77,15 @@ public class ExamServiceImpl implements ExamService {
         }
     }
     //选择题判断题 自动判分
-    public void judgeGeneralQuestion(long exma_id) throws Exception {
-        ArrayList<StuExam> stuExams = stuExamRepository.getByExamId(exma_id);
+    public void judgeGeneralQuestion(long exam_id) throws Exception {
+        ArrayList<StuExam> stuExams = stuExamRepository.getByExam_id(exam_id);
         for (StuExam stuExam : stuExams) {
             if (stuExam.getType() != Question.Type.Single || stuExam.getType() != Question.Type.Judge) {
                 continue;
             }
             long question_id = stuExam.getQuestion_id();
             if (stuExam.getAnswer().equals(questionRepository.findAnswerById(question_id))){
-                stuExam.setScore(examQuestionRepository.findScoreById(question_id, exma_id));
+                stuExam.setScore(examQuestionRepository.findScoreById(question_id, exam_id));
             } else {
                 stuExam.setScore(0);
             }
@@ -100,13 +100,13 @@ public class ExamServiceImpl implements ExamService {
             int num = (int) (Math.random() * (n - 1)) + 1;
             boolean flag = true;
             for (int j = 0; j < n; j++) {
-                if (num == questionsList.get(j).getNumber()) {
+                if (num == questionsList.get(j).getNum()) {
                     flag = false;
                     break;
                 }
             }
             if (flag) {
-                questionsList.get(count).setNumber(num);
+                questionsList.get(count).setNum(num);
                 count++;
             }
         }

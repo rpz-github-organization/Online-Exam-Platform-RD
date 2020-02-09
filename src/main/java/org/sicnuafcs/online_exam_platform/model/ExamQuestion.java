@@ -16,7 +16,7 @@ import javax.validation.constraints.NotBlank;
 public class ExamQuestion {
     @Id
     @Column
-    @NotBlank(message = "examid 不为空！")
+    @NotBlank(message = "exam_id 不为空！")
     private long exam_id;
     @Id
     @Column
@@ -24,7 +24,7 @@ public class ExamQuestion {
     private long question_id;
 
     @NotBlank(message = "题号不为空")
-    private int number;
+    private int num;
     @NotBlank(message = "题目类型不为空")
     private Question.Type type;
     @NotBlank(message = "题目分数不为空")
