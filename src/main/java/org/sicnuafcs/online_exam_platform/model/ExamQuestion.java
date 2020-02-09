@@ -16,20 +16,15 @@ import javax.validation.constraints.NotBlank;
 public class ExamQuestion {
     @Id
     @Column
-    @NotBlank(message = "exam_id 不为空！")
-    private long exam_id;
+    private Long exam_id;
     @Id
     @Column
-    @NotBlank(message = "question_id 不为空！")
-    private long question_id;
+    private Long question_id;
 
-    @NotBlank(message = "题号不为空")
     private int num;
 
-    @NotBlank(message = "题目类型不为空")
     @Enumerated(EnumType.STRING)
-    private Question.Type type;
+    private Question.Type type = null;
 
-    @NotBlank(message = "题目分数不为空")
     private int score;
 }

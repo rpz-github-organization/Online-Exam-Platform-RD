@@ -34,9 +34,9 @@ public class ExamController {
     @PostMapping("/addQuestion")
     public @ResponseBody
     AjaxResponse saveQuestion(@Valid @RequestBody Question question) throws Exception {
-        if (question.getQuestion_id() != 0) {
-            log.info("更新题目操作");
-        }
+//        if (question.getQuestion_id() != 0) {
+//            log.info("更新题目操作");
+//        }
         Long question_id = questionService.saveQuestion(question);
         log.info("题目 添加/更新 成功");
         return AjaxResponse.success(question_id);

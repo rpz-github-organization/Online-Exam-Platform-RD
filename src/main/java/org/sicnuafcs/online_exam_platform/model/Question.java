@@ -14,7 +14,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "Question")
+@Table(name = "question")
 
 public class
 
@@ -29,7 +29,7 @@ Question {
     }
 
     @Id
-    @Column(length = 16, nullable = false)
+    @Column
     private Long question_id;
 
     @Column(length = 16, nullable = false)
