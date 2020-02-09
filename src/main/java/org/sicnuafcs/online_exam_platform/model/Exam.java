@@ -28,10 +28,10 @@ public class Exam {
 
     @Id
     @Column
-    private long exam_id;
+    private Long exam_id;
 
     private ProgressStatus progress_status; //状态
     private String name;
-    private long begin_time;//时间戳
+    private Long begin_time;//时间戳
     private int last_time; //持续时间
 }

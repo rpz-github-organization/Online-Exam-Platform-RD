@@ -38,7 +38,7 @@ public class ExamServiceImpl implements ExamService {
     @Override
     public long saveToExam(Exam exam) throws Exception {
         //编辑试卷信息
-        if (exam.getExam_id() != 0) {
+        if (exam.getExam_id() != null) {
             examRepository.save(exam);
             return exam.getExam_id();
         } else {
