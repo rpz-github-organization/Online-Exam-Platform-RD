@@ -25,8 +25,11 @@ public class ExamQuestion {
 
     @NotBlank(message = "题号不为空")
     private int num;
+
     @NotBlank(message = "题目类型不为空")
+    @Enumerated(EnumType.STRING)
     private Question.Type type;
+
     @NotBlank(message = "题目分数不为空")
     private int score;
 }

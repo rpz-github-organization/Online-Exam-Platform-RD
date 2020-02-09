@@ -27,6 +27,7 @@ public class StuExam {
     @NotBlank(message = "question_id 不为空")
     private long question_id;
 
+    @Enumerated(EnumType.STRING)
     private Question.Type type;
 
     private int num;
