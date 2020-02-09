@@ -17,7 +17,7 @@ public class StuExam {
     @Id
     @Column
     @NotBlank(message = "exam_id 不为空")
-    private long exam_id;
+    private Long exam_id;
     @Id
     @Column
     @NotBlank(message = "stu_id 不为空")
@@ -25,7 +25,7 @@ public class StuExam {
     @Id
     @Column
     @NotBlank(message = "question_id 不为空")
-    private long question_id;
+    private Long question_id;
 
     @Enumerated(EnumType.STRING)
     private Question.Type type;

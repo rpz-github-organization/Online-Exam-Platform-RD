@@ -29,7 +29,7 @@ Question {
     }
 
     @Id
-    @Column(length = 16, nullable = false)
+    @Column(length = 16)
     private Long question_id;
 
     @Column(length = 16, nullable = false)
