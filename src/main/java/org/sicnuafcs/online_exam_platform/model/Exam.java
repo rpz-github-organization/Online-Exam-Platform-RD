@@ -32,6 +32,6 @@ public class Exam {
 
     private ProgressStatus progress_status; //状态
     private String name;
-    private String begin_time;
+    private long begin_time;//时间戳
     private int last_time; //持续时间
 }
