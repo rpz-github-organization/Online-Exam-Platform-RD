@@ -1,19 +1,24 @@
 package org.sicnuafcs.online_exam_platform.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
-
+import java.sql.Timestamp;
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Entity
-
 @Table(name = "course")
-
 public class Course {
 
     @Id
-
+    @Column
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-
     private String co_id;
-
     @Column
     private String name;
     @Column
@@ -27,9 +32,9 @@ public class Course {
     @Column
     private String exam_proportion;//卷面比例
     @Column
-    private int end_time;
+    private Timestamp end_time;
     @Column
-    private Long begin_time;
+    private Timestamp begin_time;
 
     public String getName() {
         return name;

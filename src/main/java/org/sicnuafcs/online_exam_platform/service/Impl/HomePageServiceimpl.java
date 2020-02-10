@@ -20,7 +20,7 @@ public class HomePageServiceimpl implements HomePageService {
     @Autowired
     private StudentRepository studentRepository;
     @Autowired
-    private Stu_examRepository stu_examRepository;
+    private StuExamRepository stu_examRepository;
     @Autowired
     private ExamRepository examRepository;
     @Autowired
