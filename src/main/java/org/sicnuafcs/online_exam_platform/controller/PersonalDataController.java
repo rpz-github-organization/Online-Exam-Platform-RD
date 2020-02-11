@@ -37,7 +37,7 @@ public class PersonalDataController {
             if(teacherData.isPresent())
                 return AjaxResponse.success(teacherData);//返回teacher类Data
             else
-                return AjaxResponse.error(new CustomException(CustomExceptionType.SYSTEM_ERROR, "查找个人资料错误"));//返回500
+                throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "查找个人资料错误");//返回500
         }
         @GetMapping("/getStudent")
          public AjaxResponse getStudentData(HttpServletRequest request){
@@ -47,7 +47,7 @@ public class PersonalDataController {
         if(studentData.isPresent())
             return AjaxResponse.success(studentData);//返回teacher类
         else
-            return AjaxResponse.error(new CustomException(CustomExceptionType.SYSTEM_ERROR, "查找个人资料错误"));//返回500
+            throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "查找个人资料错误");//返回500
         }
 
         //此处的邮箱验证 是否是教师操作
