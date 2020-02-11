@@ -13,8 +13,6 @@ import org.sicnuafcs.online_exam_platform.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Slf4j
 @Service
 public class LoginServiceImpl implements LoginService {
@@ -27,21 +25,19 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public Login LoginId(Login login) {
         //因为学号/工号/手机号没分开 所以需要校验学号位数
-
         if (login.getKeyword().length() != 10) {
             log.info("学号/工号位数问题");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "学号/工号位数问题");
         }
 
-        Optional<Teacher> teacherList = teacherRepository.findById(login.getKeyword());
-        Optional<Student> studentList = studentRepository.findById(login.getKeyword());
-        if (studentList.isPresent() || teacherList.isPresent()) {
-
-            if (studentList.isPresent()) {  //如果为学号
-                if (BCrypt.checkpw(login.getPassword(),studentList.get().getPassword())) { //如果密码正确
+        Teacher tea = teacherRepository.findTeacherByTea_id(login.getKeyword());
+        Student stu = studentRepository.findStudentByStu_id(login.getKeyword());
+        if (tea != null || stu != null) {
+            if (stu != null) {  //如果为学号
+                if (BCrypt.checkpw(login.getPassword(),stu.getPassword())) { //如果密码正确
                     log.info("学生登录验证成功");
-                    login.setId(studentList.get().getStu_id());
-                    login.setAuthority(studentList.get().getAuthority());
+                    login.setId(stu.getStu_id());
+                    login.setAuthority(stu.getAuthority());
                     return login;
                 }
                 else {
@@ -49,16 +45,14 @@ public class LoginServiceImpl implements LoginService {
                     throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "用户名/密码错误");     //密码错误
                 }
             }
-            else if (teacherList.isPresent()) { //如果为工号
-                if (BCrypt.checkpw(login.getPassword(),teacherList.get().getPassword())) {
+            else { //如果为工号
+                if (BCrypt.checkpw(login.getPassword(),tea.getPassword())) {
                     log.info("教师登录验证成功");
-                    login.setId(teacherList.get().getTea_id());
-                    login.setAuthority(teacherList.get().getAuthority());
+                    login.setId(tea.getTea_id());
+                    login.setAuthority(tea.getAuthority());
                     return login;
                 }
-
                 else {
-                    System.out.println("6");
                     log.info("用户名/密码错误");
                     throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "用户名/密码错误");     //密码错误
                 }
@@ -71,15 +65,15 @@ public class LoginServiceImpl implements LoginService {
     //手机号加密码
     @Override
     public Login loginPhone(Login login) {
-        Optional<Teacher> teacherList = teacherRepository.findByTelephone(login.getKeyword());
-        Optional<Student> studentList = studentRepository.findByTelephone(login.getKeyword());
-        if (studentList.isPresent() || teacherList.isPresent()) {      //如果数据库里面已存在
-            if(studentList.isPresent()) {
-                if (BCrypt.checkpw(login.getPassword(), studentList.get().getPassword())) {
+        Teacher tea = teacherRepository.findTeacherByTelephone(login.getKeyword());
+        Student stu = studentRepository.findStudentByTelephone(login.getKeyword());
+        if (tea != null || stu != null) {      //如果数据库里面已存在
+            if(stu != null) {
+                if (BCrypt.checkpw(login.getPassword(), stu.getPassword())) {
 
                     log.info("学生登录验证成功");
-                    login.setId(studentList.get().getStu_id());
-                    login.setAuthority(studentList.get().getAuthority());
+                    login.setId(stu.getStu_id());
+                    login.setAuthority(stu.getAuthority());
                     return login;
 
                 } else {
@@ -87,11 +81,11 @@ public class LoginServiceImpl implements LoginService {
                     throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "用户名/密码错误");     //密码错误
                 }
             }
-            else if (teacherList.isPresent()) {
-                if (BCrypt.checkpw(login.getPassword(), teacherList.get().getPassword())) {
+            else {
+                if (BCrypt.checkpw(login.getPassword(), tea.getPassword())) {
                     log.info("教师登录验证成功");
-                    login.setId(teacherList.get().getTea_id());
-                    login.setAuthority(teacherList.get().getAuthority());
+                    login.setId(tea.getTea_id());
+                    login.setAuthority(tea.getAuthority());
                     return login;
                 } else {
                     log.info("用户名/密码错误");

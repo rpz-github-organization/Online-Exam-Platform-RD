@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -33,9 +32,9 @@ public class RegisterServiceImpl implements RegisterService {
 
     @Override
     public void saveStudent(Student student) throws Exception {
-        Optional<Student> stuIdList = studentRepository.findById(student.getStu_id());
+        Student stu = studentRepository.findStudentByStu_id(student.getStu_id());
         //用户已存在
-        if (stuIdList.isPresent()) {
+        if (stu != null) {
             log.info("用户已存在");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"用户已存在");
         }
@@ -57,15 +56,15 @@ public class RegisterServiceImpl implements RegisterService {
         }
 
         //验证手机号（老师学生表里是否唯一） 电子邮箱是否存在
-        Optional<Student> emailList = studentRepository.findByEmail(student.getEmail());
-        if (emailList.isPresent()) {
+        Student stu1 = studentRepository.findStudentByEmail(student.getEmail());
+        if (stu1 != null) {
             log.info("该邮箱已被注册");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱已被注册");
         }
 
-        Optional<Student> studentPhoneList = studentRepository.findByTelephone(student.getTelephone());
-        Optional<Teacher> teacherPhoneList = teacherRepository.findByTelephone(student.getTelephone());
-        if (studentPhoneList.isPresent() || teacherPhoneList.isPresent()) {
+        Student stu2 = studentRepository.findStudentByTelephone(student.getTelephone());
+        Teacher tea2 = teacherRepository.findTeacherByTelephone(student.getTelephone());
+        if (stu2 != null || tea2 != null) {
             log.info("该电话已被注册");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该电话已被注册");
         }
@@ -94,8 +93,8 @@ public class RegisterServiceImpl implements RegisterService {
 
     @Override
     public void saveTeacher(Teacher teacher) throws Exception {
-        Optional<Teacher> teacherList = teacherRepository.findById(teacher.getTea_id());
-        if (teacherList.isPresent()) {
+        Teacher tea = teacherRepository.findTeacherByTea_id(teacher.getTea_id());
+        if (tea != null) {
             log.info("用户已存在");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"用户已存在");
         }
@@ -118,14 +117,14 @@ public class RegisterServiceImpl implements RegisterService {
         }
 
         //验证手机号(老师学生表里唯一) 电子邮箱等是否存在
-        Optional<Teacher> emailList = teacherRepository.findByEmail(teacher.getEmail());
-        if (emailList.isPresent()) {
+        Teacher tea1 = teacherRepository.findTeacherByEmail(teacher.getEmail());
+        if (tea1 != null) {
             log.info("该邮箱已被注册");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱已被注册");
         }
-        Optional<Student> studentPhoneList = studentRepository.findByTelephone(teacher.getTelephone());
-        Optional<Teacher> teacherPhoneList = teacherRepository.findByTelephone(teacher.getTelephone());
-        if (studentPhoneList.isPresent() || teacherPhoneList.isPresent()) {
+        Student stu2 = studentRepository.findStudentByTelephone(teacher.getTelephone());
+        Teacher tea2 = teacherRepository.findTeacherByTelephone(teacher.getTelephone());
+        if (stu2 != null || tea2 != null) {
             log.info("该电话已被注册");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该电话已被注册");
         }
@@ -154,7 +153,7 @@ public class RegisterServiceImpl implements RegisterService {
     @Override
     public void checkTeacherRepeat(String email) {
         //如果邮箱在teacher表里已存在
-        if (teacherRepository.findByEmail(email).isPresent()) {
+        if (teacherRepository.findTeacherByEmail(email) != null) {
             log.info("该邮箱已存在");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱已存在");
         }
@@ -176,7 +175,7 @@ public class RegisterServiceImpl implements RegisterService {
     @Override
     public void checkStudentRepeat(String email) {
         //如果邮箱在student表里已存在
-        if (studentRepository.findByEmail(email).isPresent()) {
+        if (studentRepository.findStudentByEmail(email) != null) {
             log.info("该邮箱已存在");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱已存在");
         }

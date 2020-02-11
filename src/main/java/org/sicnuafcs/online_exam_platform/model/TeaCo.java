@@ -11,15 +11,16 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Builder
 @Entity
+@IdClass(TeaCoPK.class)
 @Table(name = "tea_co")
 public class TeaCo {
+    @Id
     @Column
-    String co_id;
+    private String co_id;
 
     @Id
     @Column
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-
     String tea_id;
 
 }

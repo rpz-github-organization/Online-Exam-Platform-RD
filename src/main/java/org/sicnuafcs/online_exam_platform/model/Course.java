@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -37,6 +39,6 @@ public class Course {
     private Timestamp begin_time;
 
     @Column
-    private String major_list;
+    private ArrayList major_list;
 
 }

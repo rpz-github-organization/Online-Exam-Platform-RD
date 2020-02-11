@@ -30,8 +30,9 @@ public class StuExam {
     @Enumerated(EnumType.STRING)
     private Question.Type type;
 
-    private int num;
-    private int score;
+    private Integer num;
+
+    private Integer score;
 
     private String answer;
 }
