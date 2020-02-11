@@ -39,5 +39,6 @@ public class StuExam {
     private Integer score;
 
     private String answer;
+    @Enumerated(EnumType.STRING)
     private Status status;
 }
