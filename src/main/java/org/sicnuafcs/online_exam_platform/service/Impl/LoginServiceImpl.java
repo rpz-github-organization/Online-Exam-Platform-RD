@@ -38,8 +38,7 @@ public class LoginServiceImpl implements LoginService {
         if (studentList.isPresent() || teacherList.isPresent()) {
 
             if (studentList.isPresent()) {  //如果为学号
-                if (login.getPassword().equals(studentList.get().getPassword())) {
-//                if (BCrypt.checkpw(login.getPassword(),studentList.get().getPassword())) { //如果密码正确
+                if (BCrypt.checkpw(login.getPassword(),studentList.get().getPassword())) { //如果密码正确
                     log.info("学生登录验证成功");
                     login.setId(studentList.get().getStu_id());
                     login.setAuthority(studentList.get().getAuthority());
@@ -51,8 +50,7 @@ public class LoginServiceImpl implements LoginService {
                 }
             }
             else if (teacherList.isPresent()) { //如果为工号
-                if (login.getPassword().equals(teacherList.get().getPassword())) {
-//                if (BCrypt.checkpw(login.getPassword(),teacherList.get().getPassword())) {
+                if (BCrypt.checkpw(login.getPassword(),teacherList.get().getPassword())) {
                     log.info("教师登录验证成功");
                     login.setId(teacherList.get().getTea_id());
                     login.setAuthority(teacherList.get().getAuthority());

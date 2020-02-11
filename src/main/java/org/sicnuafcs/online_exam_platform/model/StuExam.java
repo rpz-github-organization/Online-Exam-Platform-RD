@@ -15,15 +15,15 @@ import javax.validation.constraints.NotBlank;
 @IdClass(StuExamPK.class)
 public class StuExam {
     @Id
-    @Column
+    @Column(length = 32,nullable = false)
     @NotBlank(message = "exam_id 不为空")
     private Long exam_id;
     @Id
-    @Column
+    @Column(length = 32,nullable = false)
     @NotBlank(message = "stu_id 不为空")
     private String stu_id;
     @Id
-    @Column
+    @Column(length = 32,nullable = false)
     @NotBlank(message = "question_id 不为空")
     private Long question_id;
 
