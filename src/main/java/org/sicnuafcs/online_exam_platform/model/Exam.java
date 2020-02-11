@@ -14,6 +14,7 @@ import javax.validation.constraints.NotBlank;
 @Table(name = "exam")
 public class Exam {
     public static enum ProgressStatus {
+        WILL,
         ING,
         DONE
     }
