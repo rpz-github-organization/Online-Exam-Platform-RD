@@ -10,5 +10,5 @@ import java.util.ArrayList;
 public interface ExamQuestionRepository extends JpaRepository<ExamQuestion, String> {
     ArrayList<ExamQuestion> findByType(Question.Type type);
     @Query("select score from ExamQuestion where question_id = ?1 and exam_id = ?2")
-    int findScoreById(long question_id, long exam_id);
+    int findScoreById(Long question_id, Long exam_id);
 }

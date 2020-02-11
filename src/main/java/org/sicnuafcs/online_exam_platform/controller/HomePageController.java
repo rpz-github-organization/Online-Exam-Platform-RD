@@ -34,10 +34,7 @@ public class HomePageController {
     @RequestMapping("/stu/id")
     public @ResponseBody
     AjaxResponse findStuById(@PathVariable String stu_id,@PathVariable String status) {
-
-        Map json = homePageService.findStuById(stu_id,status);
-        return AjaxResponse.success(json);
-
+        return AjaxResponse.success(homePageService.findStuById(stu_id,status));
     }
 
 
@@ -46,9 +43,7 @@ public class HomePageController {
     @RequestMapping("/stu/phone")
     public @ResponseBody
     AjaxResponse findStuByPhone(@PathVariable String phone,@PathVariable String status) {
-
-        Map json = homePageService.findStuByPhone(phone,status);
-        return AjaxResponse.success(json);
+        return AjaxResponse.success(homePageService.findStuByPhone(phone,status));
 
     }
 
@@ -59,9 +54,7 @@ public class HomePageController {
     @RequestMapping("/tea/id")
     public @ResponseBody
     AjaxResponse findTeaById(@PathVariable String tea_id) {
-
-        Map json = homePageService.findTeaById(tea_id);
-        return AjaxResponse.success(json);
+        return AjaxResponse.success(homePageService.findTeaById(tea_id));
 
     }
 
@@ -72,9 +65,7 @@ public class HomePageController {
     @RequestMapping("/tea/phone")//通过教师id
     public @ResponseBody
     AjaxResponse findTeaByPhone(@PathVariable String phone) {
-
-        Map json = homePageService.findTeaByPhone(phone);
-        return AjaxResponse.success(json);
+        return AjaxResponse.success(homePageService.findTeaByPhone(phone));
 
     }
 }

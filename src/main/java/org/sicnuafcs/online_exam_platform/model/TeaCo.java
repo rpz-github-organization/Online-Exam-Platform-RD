@@ -12,9 +12,7 @@ import javax.persistence.*;
 @Builder
 @Entity
 @Table(name = "tea_co")
-public class Tea_co {
-
-
+public class TeaCo {
     @Column
     String co_id;
 

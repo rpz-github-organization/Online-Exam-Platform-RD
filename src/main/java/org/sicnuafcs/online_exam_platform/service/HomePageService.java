@@ -1,13 +1,17 @@
 package org.sicnuafcs.online_exam_platform.service;
 
+import org.sicnuafcs.online_exam_platform.model.Course;
+import org.sicnuafcs.online_exam_platform.model.Exam;
+
+import java.util.List;
 import java.util.Map;
 
 public interface HomePageService {
-    public Map findStuById(String stu_id, String status) ;
+    public List<Exam> findStuById(String stu_id, String status) ;
 
-    public Map findStuByPhone(String Phone,String status);
+    public List<Exam> findStuByPhone(String telephone,String status);
 
-    public Map findTeaById(String tea_id);
+    public List<Course> findTeaById(String tea_id);
 
-    public Map findTeaByPhone(String Phone);
+    public List<Course> findTeaByPhone(String Phone);
 }

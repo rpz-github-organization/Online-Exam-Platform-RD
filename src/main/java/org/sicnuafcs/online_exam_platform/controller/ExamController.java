@@ -2,10 +2,9 @@ package org.sicnuafcs.online_exam_platform.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.sicnuafcs.online_exam_platform.config.exception.AjaxResponse;
-import org.sicnuafcs.online_exam_platform.model.Exam;
-import org.sicnuafcs.online_exam_platform.model.ExamQuestion;
-import org.sicnuafcs.online_exam_platform.model.Program;
-import org.sicnuafcs.online_exam_platform.model.Question;
+import org.sicnuafcs.online_exam_platform.dao.QuestionRepository;
+import org.sicnuafcs.online_exam_platform.dao.StuExamRepository;
+import org.sicnuafcs.online_exam_platform.model.*;
 import org.sicnuafcs.online_exam_platform.service.ExamService;
 import org.sicnuafcs.online_exam_platform.service.JudgeService;
 import org.sicnuafcs.online_exam_platform.service.QuestionService;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 
 
 @Slf4j
@@ -30,6 +30,10 @@ public class ExamController {
     ExamService examService;
     @Autowired
     JudgeService judgeService;
+    @Autowired
+    StuExamRepository stuExamRepository;
+    @Autowired
+    QuestionRepository questionRepository;
 
     @PostMapping("/addQuestion")
     public @ResponseBody
@@ -63,6 +67,24 @@ public class ExamController {
         examService.saveQuestionToExam(examQuestion);
         log.info("添加/编辑 试题到试卷成功");
         return AjaxResponse.success();
+    }
+
+    @PostMapping("/getStuExam")
+    public @ResponseBody
+    AjaxResponse getStuExam(@Valid @RequestBody Long exma_id, String stu_id) throws Exception {
+        ArrayList<StuExam> stuExamArrayList;
+        stuExamArrayList = stuExamRepository.getByExam_idAndStu_id(exma_id, stu_id);
+        log.info("获取学号为：" + stu_id + "同学的试卷成功");
+        return AjaxResponse.success(stuExamArrayList);
+    }
+
+    @PostMapping("/getQuestion")
+    public @ResponseBody
+    AjaxResponse getQuestion(@Valid @RequestBody Long question_id) throws Exception {
+        Question question;
+        question = questionRepository.findById(question_id).get();
+        log.info("获取questionid为：" + question_id + "的题目成功");
+        return AjaxResponse.success(question);
     }
 }
 
