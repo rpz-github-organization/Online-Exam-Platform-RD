@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.sicnuafcs.online_exam_platform.dao.*;
 import org.sicnuafcs.online_exam_platform.model.Course;
 import org.sicnuafcs.online_exam_platform.model.Exam;
+import org.sicnuafcs.online_exam_platform.model.StuExam;
 import org.sicnuafcs.online_exam_platform.model.Student;
 import org.sicnuafcs.online_exam_platform.service.HomePageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,25 +34,25 @@ public class HomePageServiceimpl implements HomePageService {
 
         List<Exam> exams = new ArrayList<>();
         if(status == 0){
-            String stuExam_status = "WILL";
-            String exam_status = "ING";
-            List<Long> exam_idList = stuExamRepository.findExam_idByStu_Id(stu_id, stuExam_status);
-            exams = examRepository.findExamsByExam_id(exam_idList,exam_status);
+            StuExam.Status stuExam_status = StuExam.Status.WILL;
+            Exam.ProgressStatus exam_status = Exam.ProgressStatus.ING;
+            List<Long> exam_idList = stuExamRepository.findExam_idByStu_IdAAndStatus(stu_id, stuExam_status);
+            exams = examRepository.findExamsByExam_idAAndProgress_status(exam_idList,exam_status);
         }else if(status == 1){
-            String stuExam_status = "DONE";
-            String exam_status = "ING";
-            List<Long> exam_idList = stuExamRepository.findExam_idByStu_Id(stu_id, stuExam_status);
-            exams = examRepository.findExamsByExam_id(exam_idList,exam_status);
+            StuExam.Status stuExam_status = StuExam.Status.DONE;
+            Exam.ProgressStatus exam_status = Exam.ProgressStatus.ING;
+            List<Long> exam_idList = stuExamRepository.findExam_idByStu_IdAAndStatus(stu_id, stuExam_status);
+            exams = examRepository.findExamsByExam_idAAndProgress_status(exam_idList,exam_status);
         }else if(status == 2){
-            String stuExam_status = "DONE";
-            String exam_status = "DONE";
-            List<Long> exam_idList = stuExamRepository.findExam_idByStu_Id(stu_id, stuExam_status);
-            exams = examRepository.findExamsByExam_id(exam_idList,exam_status);
+            StuExam.Status stuExam_status = StuExam.Status.DONE;
+            Exam.ProgressStatus exam_status = Exam.ProgressStatus.DONE;
+            List<Long> exam_idList = stuExamRepository.findExam_idByStu_IdAAndStatus(stu_id, stuExam_status);
+            exams = examRepository.findExamsByExam_idAAndProgress_status(exam_idList,exam_status);
         }else if (status == 3){
-            String stuExam_status = "WILL";
-            String exam_status = "DONE";
-            List<Long> exam_idList = stuExamRepository.findExam_idByStu_Id(stu_id, stuExam_status);
-            exams = examRepository.findExamsByExam_id(exam_idList,exam_status);
+            StuExam.Status stuExam_status = StuExam.Status.WILL;
+            Exam.ProgressStatus exam_status = Exam.ProgressStatus.DONE;
+            List<Long> exam_idList = stuExamRepository.findExam_idByStu_IdAAndStatus(stu_id, stuExam_status);
+            exams = examRepository.findExamsByExam_idAAndProgress_status(exam_idList,exam_status);
         }
 
         return exams;

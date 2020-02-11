@@ -11,6 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ExamRepository extends JpaRepository<Exam, String> {
-    @Query(value = "select u from Exam u where u.exam_id in (:examIdList) and u.progress_status = ?2", nativeQuery = true)
-    List<Exam> findExamsByExam_id(List<Long> examIdList,String status);
+    @Query("select u from Exam u where u.exam_id in (:examIdList) and u.progress_status = (:status)")
+    List<Exam> findExamsByExam_idAAndProgress_status(List<Long> examIdList,Exam.ProgressStatus status);
 }
