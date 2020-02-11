@@ -36,11 +36,7 @@ public class Course {
     @Column
     private Timestamp begin_time;
 
-    public String getName() {
-        return name;
-    }
+    @Column
+    private String major_list;
 
-    public void setName(String name) {
-        this.name = name;
-    }
 }

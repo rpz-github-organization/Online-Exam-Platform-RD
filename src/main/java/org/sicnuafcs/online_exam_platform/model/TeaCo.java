@@ -22,7 +22,5 @@ public class TeaCo {
 
     String tea_id;
 
-
-
 }
 

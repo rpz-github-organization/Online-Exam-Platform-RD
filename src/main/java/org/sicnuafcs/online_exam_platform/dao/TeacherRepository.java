@@ -1,6 +1,9 @@
 package org.sicnuafcs.online_exam_platform.dao;
 
 import org.sicnuafcs.online_exam_platform.model.Teacher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -16,5 +19,6 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
     @Query(value = "SELECT name FROM teacher WHERE tea_id = ?", nativeQuery = true)
     String findNameById(String tea_id);
 
+    Page<Teacher> findAll(Specification spec, Pageable pageable);
 
 }
