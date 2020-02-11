@@ -1,8 +1,6 @@
 package org.sicnuafcs.online_exam_platform.service.Impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.sicnuafcs.online_exam_platform.config.exception.CustomException;
-import org.sicnuafcs.online_exam_platform.config.exception.CustomExceptionType;
 import org.sicnuafcs.online_exam_platform.dao.QuestionRepository;
 import org.sicnuafcs.online_exam_platform.model.Question;
 import org.sicnuafcs.online_exam_platform.service.QuestionService;
@@ -10,8 +8,6 @@ import org.sicnuafcs.online_exam_platform.util.RedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Slf4j
 @EnableAsync
