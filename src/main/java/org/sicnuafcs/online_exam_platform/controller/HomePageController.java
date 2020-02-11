@@ -1,5 +1,6 @@
 package org.sicnuafcs.online_exam_platform.controller;
 
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 
 import org.sicnuafcs.online_exam_platform.config.exception.AjaxResponse;
@@ -37,48 +38,25 @@ public class HomePageController {
     //学号登录获取信息
     @RequestMapping("/stu/id")
     public @ResponseBody
-    AjaxResponse findStuById(@PathVariable String stu_id,@PathVariable String status) {
-
+    AjaxResponse findStuById(@PathVariable String str) {
+        //Long exam_id, String stu_id
+        String stu_id = JSON.parseObject(str).get("stu_id").toString();
+        Integer status = JSON.parseObject(str).get("status").hashCode();
         List<Exam> json = homePageService.findStuById(stu_id,status);
         return AjaxResponse.success(json);
 
     }
 
 
-
-    //学生手机号码登录获取信息
-    @RequestMapping("/stu/phone")
-    public @ResponseBody
-    AjaxResponse findStuByPhone(@PathVariable String phone,@PathVariable String status) {
-
-        List<Exam> json = homePageService.findStuByPhone(phone,status);
-        return AjaxResponse.success(json);
-
-    }
-
-
-
     /*教师首页*/
     //工号号登录获取信息
     @RequestMapping("/tea/id")
     public @ResponseBody
-    AjaxResponse findTeaById(@PathVariable String tea_id) {
-
+    AjaxResponse findTeaById(@PathVariable String str) {
+        String tea_id = JSON.parseObject(str).get("tea_id").toString();
         List<Course> json = homePageService.findTeaById(tea_id);
         return AjaxResponse.success(json);
 
     }
 
-
-
-
-    //教师手机号码登录获取信息
-    @RequestMapping("/tea/phone")//通过教师id
-    public @ResponseBody
-    AjaxResponse findTeaByPhone(@PathVariable String phone) {
-
-        List<Course> json = homePageService.findTeaByPhone(phone);
-        return AjaxResponse.success(json);
-
-    }
 }

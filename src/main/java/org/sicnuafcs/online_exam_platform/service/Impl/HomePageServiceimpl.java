@@ -29,25 +29,25 @@ public class HomePageServiceimpl implements HomePageService {
 
 
     @Override
-    public List<Exam> findStuById(String stu_id, String status) {
+    public List<Exam> findStuById(String stu_id, int status) {
 
         List<Exam> exams = new ArrayList<>();
-        if(status.equals("0")){
+        if(status == 0){
             String stuExam_status = "WILL";
             String exam_status = "ING";
             List<Long> exam_idList = stuExamRepository.findExam_idByStu_Id(stu_id, stuExam_status);
             exams = examRepository.findExamsByExam_id(exam_idList,exam_status);
-        }else if(status.equals("1")){
+        }else if(status == 1){
             String stuExam_status = "DONE";
             String exam_status = "ING";
             List<Long> exam_idList = stuExamRepository.findExam_idByStu_Id(stu_id, stuExam_status);
             exams = examRepository.findExamsByExam_id(exam_idList,exam_status);
-        }else if(status.equals("2")){
+        }else if(status == 2){
             String stuExam_status = "DONE";
             String exam_status = "DONE";
             List<Long> exam_idList = stuExamRepository.findExam_idByStu_Id(stu_id, stuExam_status);
             exams = examRepository.findExamsByExam_id(exam_idList,exam_status);
-        }else {
+        }else if (status == 3){
             String stuExam_status = "WILL";
             String exam_status = "DONE";
             List<Long> exam_idList = stuExamRepository.findExam_idByStu_Id(stu_id, stuExam_status);
@@ -59,38 +59,6 @@ public class HomePageServiceimpl implements HomePageService {
     }
 
 
-
-    @Override
-
-    public List<Exam> findStuByPhone(String phone, String status) {
-
-        String stu_id = studentRepository.findStu_id_idByPhone(phone);
-        List<Exam> exams = new ArrayList<>();
-        if(status.equals("0")){
-            String stuExam_status = "WILL";
-            String exam_status = "ING";
-            List<Long> exam_idList = stuExamRepository.findExam_idByStu_Id(stu_id,stuExam_status);
-            exams = examRepository.findExamsByExam_id(exam_idList,exam_status);
-        }else if(status.equals("1")){
-            String stuExam_status = "DONE";
-            String exam_status = "ING";
-            List<Long> exam_idList = stuExamRepository.findExam_idByStu_Id(stu_id,stuExam_status);
-            exams = examRepository.findExamsByExam_id(exam_idList,exam_status);
-        }else if(status.equals("2")){
-            String stuExam_status = "DONE";
-            String exam_status = "DONE";
-            List<Long> exam_idList = stuExamRepository.findExam_idByStu_Id(stu_id,stuExam_status);
-            exams = examRepository.findExamsByExam_id(exam_idList,exam_status);
-        }else {
-            String stuExam_status = "WILL";
-            String exam_status = "DONE";
-            List<Long> exam_idList = stuExamRepository.findExam_idByStu_Id(stu_id,stuExam_status);
-            exams = examRepository.findExamsByExam_id(exam_idList,exam_status);
-        }
-
-        return exams;
-
-    }
 
 
 
@@ -107,19 +75,5 @@ public class HomePageServiceimpl implements HomePageService {
         return courses;
     }
 
-
-
-    @Override
-    public List<Course> findTeaByPhone(String Phone) {
-
-        String tea_id = teaRepository.findTea_idByPhone(Phone);
-
-
-        //获取教师所授课程
-        List<String> co_idList = teaCoRepository.findCo_idByTea_Id(tea_id);
-        List<Course> courses = courseRepository.findCourseByCo_idIn(co_idList);
-        return courses;
-
-    }
 
 }
