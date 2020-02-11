@@ -33,7 +33,7 @@ public class PersonalDataController {
             Map m = (Map) request.getSession().getAttribute("userInfo");
             String ID = (String) m.get("id");
 
-            Optional teacherData = personalDataService.getTeacherData(ID);
+            Optional<Teacher> teacherData = personalDataService.getTeacherData(ID);
             if(teacherData.isPresent())
                 return AjaxResponse.success(teacherData);//返回teacher类Data
             else
@@ -43,7 +43,7 @@ public class PersonalDataController {
          public AjaxResponse getStudentData(HttpServletRequest request){
         Map m = (Map) request.getSession().getAttribute("userInfo");
         String ID = (String) m.get("id");
-        Optional studentData = personalDataService.getStudentData(ID);
+        Optional<Student> studentData = personalDataService.getStudentData(ID);
         if(studentData.isPresent())
             return AjaxResponse.success(studentData);//返回teacher类
         else
