@@ -66,8 +66,6 @@ public class HomePageServiceimpl implements HomePageService {
     @Override
     public List<Course> findTeaById(String tea_id) {
 
-
-
         //获取教师所授课程
         List<String> co_idList = teaCoRepository.findCo_idByTea_Id(tea_id);
 
