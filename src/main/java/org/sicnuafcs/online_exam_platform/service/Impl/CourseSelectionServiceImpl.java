@@ -1,20 +1,20 @@
 package org.sicnuafcs.online_exam_platform.service.Impl;
 
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Multimap;
 import lombok.extern.slf4j.Slf4j;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomException;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomExceptionType;
 import org.sicnuafcs.online_exam_platform.dao.*;
 import org.sicnuafcs.online_exam_platform.model.Course;
-import org.sicnuafcs.online_exam_platform.model.Stu_co;
+import org.sicnuafcs.online_exam_platform.model.StuCo;
 import org.sicnuafcs.online_exam_platform.model.Student;
-import org.sicnuafcs.online_exam_platform.model.Tea_co;
 import org.sicnuafcs.online_exam_platform.service.CourseSelectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -30,10 +30,10 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
     MajorRepository majorRepository;
 
     @Autowired
-    Stu_coRepository stu_coRepository;
+    StuCoRepository stuCoRepository;
 
     @Autowired
-    Tea_coRepository tea_coRepository;
+    TeaCoRepository teaCoRepository;
 
     @Override
     public String getClass_id(String stu_id) {
@@ -83,7 +83,7 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
     //在stu_co表里根据stu_id 获取学生 已经选择 的课程和老师，co_id和tea_id;
     public Map<String, String> getChosenCoId_TeaId(String stu_id) {
         Map<String, String> coId_teaId = new IdentityHashMap<>();
-        List<Stu_co> stu_cos = stu_coRepository.getStu_coByStu_id(stu_id);
+        List<StuCo> stu_cos = stuCoRepository.getStu_coByStu_id(stu_id);
         for (int i = 0; i < stu_cos.size(); i++) {
             String id = new String(stu_cos.get(i).getCo_id());
             coId_teaId.put(id, stu_cos.get(i).getTea_id());
@@ -109,7 +109,7 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
     public Map<String, String> getAllCoId_TeaId(ArrayList<String> course_id) {  //course_id从course表里已读取出来
         Map<String, String> coId_teaId = new IdentityHashMap<>();
         for (String co_id : course_id) {
-            List<String> tea_ids = tea_coRepository.getTea_idByCo_id(co_id);
+            List<String> tea_ids = teaCoRepository.getTea_idByCo_id(co_id);
             for (int i = 0; i < tea_ids.size(); i++) {
                     String id = new String(co_id);
                     coId_teaId.put(id, tea_ids.get(i));

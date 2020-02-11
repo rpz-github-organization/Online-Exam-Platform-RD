@@ -30,6 +30,7 @@ public class LoginController {
     @PostMapping("/id")
     public @ResponseBody
     AjaxResponse loginId(@Valid @RequestBody Login login, HttpServletRequest request) {
+
         Login login1 = loginService.LoginId(login);
 
 //        //添加数据到session
@@ -43,6 +44,7 @@ public class LoginController {
 
         //添加数据到session
         request.getSession().setAttribute("userInfo", map);
+        System.out.println(map);
         return AjaxResponse.success(map);
     }
 

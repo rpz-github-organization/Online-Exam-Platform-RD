@@ -6,25 +6,22 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.io.Serializable;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-@IdClass(Stu_coPk.class)
-@Table(name = "stu_co")
-public class Stu_co {
+@IdClass(TeaCoPK.class)
+@Table(name = "tea_co")
+public class TeaCo {
     @Id
     @Column
     private String co_id;
 
     @Id
     @Column
-    private String tea_id;
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    String tea_id;
 
-    @Id
-    @Column
-    private String stu_id;
 }
+

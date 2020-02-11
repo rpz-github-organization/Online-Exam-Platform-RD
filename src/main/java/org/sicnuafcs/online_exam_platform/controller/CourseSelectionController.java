@@ -1,22 +1,18 @@
 package org.sicnuafcs.online_exam_platform.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.loadtime.Aj;
 import org.sicnuafcs.online_exam_platform.config.exception.AjaxResponse;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomException;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomExceptionType;
-import org.sicnuafcs.online_exam_platform.dao.CourseRepository;
 import org.sicnuafcs.online_exam_platform.model.Course;
 import org.sicnuafcs.online_exam_platform.model.GetCourse;
 import org.sicnuafcs.online_exam_platform.service.CourseSelectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.security.sasl.SaslServer;
 import java.util.*;
 
 @Slf4j
@@ -57,7 +53,8 @@ public class CourseSelectionController {
     }
 
     @RequestMapping("/get/Course")
-    public @ResponseBody AjaxResponse getAlternativeCourse(@RequestBody GetCourse getCourse) {
+    public @ResponseBody
+    AjaxResponse getAlternativeCourse(@RequestBody GetCourse getCourse) {
         String stu_id = getCourse.getStu_id();
         String major_id = courseSelectionService.getMajor_id(stu_id);
 
@@ -84,7 +81,8 @@ public class CourseSelectionController {
 
 
     @RequestMapping("/add")
-    public @ResponseBody AjaxResponse add(@RequestBody Course course) {
+    public @ResponseBody
+    AjaxResponse add(@RequestBody Course course) {
         Course course1 = courseSelectionService.add(course);
         return AjaxResponse.success(course1);
     }

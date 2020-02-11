@@ -19,7 +19,7 @@ import javax.persistence.Table;
 @Table(name = "major")
 public class Major {
     @Id
-    @Column
+    @Column(length = 16,nullable = false)
     private String major_id;
 
     @Column
