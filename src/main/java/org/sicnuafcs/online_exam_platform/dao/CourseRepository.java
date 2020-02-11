@@ -12,4 +12,8 @@ import java.util.List;
 public interface CourseRepository extends JpaRepository<Course,String> {
     @Query("select u from Course u where u.co_id in (:coIdList)")
     List<Course> findCourseByCo_idIn(List<String> coIdList);
+
+    @Query("select name from Course where co_id = ?1")
+    String getNameByCo_id(String co_id);
+
 }

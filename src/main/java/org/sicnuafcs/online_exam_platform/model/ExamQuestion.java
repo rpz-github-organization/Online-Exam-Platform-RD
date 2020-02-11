@@ -21,10 +21,10 @@ public class ExamQuestion {
     @Column
     private Long question_id;
 
-    private int num;
+    private Integer num;
 
     @Enumerated(EnumType.STRING)
     private Question.Type type = null;
 
-    private int score;
+    private Integer score;
 }

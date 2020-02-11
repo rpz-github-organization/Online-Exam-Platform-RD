@@ -60,8 +60,8 @@ public class PersonalDataServiceImpl implements PersonalDataService {
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"密码位数过少");
         }
 //原始密码相同？
-        Optional<Teacher> teacherPhoneList = teacherRepository.findByTelephone(newTelephone);
-        if ( teacherPhoneList.isPresent() && !teacherPhoneList.get().getTea_id().equals(ID)) {
+        Teacher teacherPhoneList = teacherRepository.findTeacherByTelephone(newTelephone);
+        if ( teacherPhoneList != null && !teacherPhoneList.getTea_id().equals(ID)) {
             log.info("该电话已被注册");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该电话已被注册");
         }
@@ -97,8 +97,8 @@ public class PersonalDataServiceImpl implements PersonalDataService {
             log.info("密码位数过少");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"密码位数过少");
         }
-        Optional<Student> studentPhoneList = studentRepository.findByTelephone(newTelephone);
-        if ( studentPhoneList.isPresent() && !studentPhoneList.get().getStu_id().equals(ID)) {
+        Student studentPhoneList = studentRepository.findStudentByTelephone(newTelephone);
+        if ( studentPhoneList != null && !studentPhoneList.getStu_id().equals(ID)) {
                 log.info("该电话已被注册");
                 throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该电话已被注册");
         }
@@ -159,8 +159,8 @@ public class PersonalDataServiceImpl implements PersonalDataService {
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"邮箱验证失败");
         }
         //邮箱验证：是否唯一
-        Optional<Teacher> emailList = teacherRepository.findByEmail(newEmail);
-        if (emailList.isPresent() && !emailList.get().getTea_id().equals(ID)) {
+        Teacher emailList = teacherRepository.findTeacherByEmail(newEmail);
+        if (emailList != null && !emailList.getTea_id().equals(ID)) {
             log.info("该邮箱已被注册");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱已被注册");
         }
@@ -183,8 +183,8 @@ public class PersonalDataServiceImpl implements PersonalDataService {
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"邮箱验证失败");
         }
         //邮箱验证：是否唯一
-        Optional<Student> emailList = studentRepository.findByEmail(newEmail);
-        if (emailList.isPresent() && !emailList.get().getStu_id().equals(ID)) {
+        Student emailList = studentRepository.findStudentByEmail(newEmail);
+        if (emailList != null && !emailList.getStu_id().equals(ID)) {
             log.info("该邮箱已被注册");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱已被注册");
         }

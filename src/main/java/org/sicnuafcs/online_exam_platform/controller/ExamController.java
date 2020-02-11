@@ -1,5 +1,6 @@
 package org.sicnuafcs.online_exam_platform.controller;
 
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.sicnuafcs.online_exam_platform.config.exception.AjaxResponse;
 import org.sicnuafcs.online_exam_platform.dao.QuestionRepository;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import springfox.documentation.spring.web.json.Json;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -71,9 +73,15 @@ public class ExamController {
 
     @PostMapping("/getStuExam")
     public @ResponseBody
-    AjaxResponse getStuExam(@Valid @RequestBody Long exma_id, String stu_id) throws Exception {
-        ArrayList<StuExam> stuExamArrayList;
-        stuExamArrayList = stuExamRepository.getByExam_idAndStu_id(exma_id, stu_id);
+    AjaxResponse getStuExam(@RequestBody String str) throws Exception {
+        //Long exam_id, String stu_id
+        long exam_id =Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
+        String stu_id = JSON.parseObject(str).get("stu_id").toString();
+        System.out.println(str);
+        System.out.println(exam_id);
+        System.out.println(stu_id);
+        ArrayList<StuExam> stuExamArrayList = new ArrayList<>();
+        stuExamArrayList = stuExamRepository.getByExam_idAndStu_id(exam_id, stu_id);
         log.info("获取学号为：" + stu_id + "同学的试卷成功");
         return AjaxResponse.success(stuExamArrayList);
     }
