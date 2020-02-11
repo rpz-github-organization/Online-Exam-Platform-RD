@@ -48,7 +48,6 @@ public class PersonalDataServiceImpl implements PersonalDataService {
     public Teacher updateTeacherPassword(String ID,Map<String, Object> params) {
         Teacher teacher = teacherRepository.findById(ID).get();
         String newPassword = (String) params.get("newPassword"),
-                newTelephone = (String) params.get("newTelephone"),
                 code = (String) params.get("code");
         //邮箱验证：验证码和邮箱是否一致；
         if (!sendMailService.verification(teacher.getEmail(), code)) {
@@ -59,12 +58,10 @@ public class PersonalDataServiceImpl implements PersonalDataService {
             log.info("密码位数过少");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"密码位数过少");
         }
-//原始密码相同？
-        Teacher teacherPhoneList = teacherRepository.findTeacherByTelephone(newTelephone);
-        if ( teacherPhoneList != null && !teacherPhoneList.getTea_id().equals(ID)) {
-            log.info("该电话已被注册");
-            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该电话已被注册");
+        if (BCrypt.checkpw(newPassword, teacher.getPassword())) {
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "和原始密码重复");
         }
+
         try {
             teacher.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
             log.info("密码加密成功");
@@ -72,20 +69,17 @@ public class PersonalDataServiceImpl implements PersonalDataService {
             log.info("密码加密失败");
             throw new CustomException(CustomExceptionType.SYSTEM_ERROR,"密码加密失败");
         }
-        if(newTelephone!=null)
-            teacher.setTelephone(newTelephone);
+
         Teacher newTeacherData = teacherRepository.save(teacher);
-            log.info(String.valueOf(newTeacherData));
         newTeacherData.setPassword(null);
         newTeacherData.setCode(null);
         return newTeacherData;
     }
-
+    //修改学生密码
     @Override
     public Student updateStudentPassword(String ID, Map<String, Object> params) {
         Student student = studentRepository.findById(ID).get();
         String newPassword = (String) params.get("newPassword"),
-                newTelephone = (String) params.get("newTelephone"),
                 code = (String) params.get("code");
         //邮箱验证：验证码和邮箱是否一致；
         if (!sendMailService.verification(student.getEmail(), code)) {
@@ -96,11 +90,10 @@ public class PersonalDataServiceImpl implements PersonalDataService {
             log.info("密码位数过少");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"密码位数过少");
         }
-        Student studentPhoneList = studentRepository.findStudentByTelephone(newTelephone);
-        if ( studentPhoneList != null && !studentPhoneList.getStu_id().equals(ID)) {
-                log.info("该电话已被注册");
-                throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该电话已被注册");
+        if (BCrypt.checkpw(newPassword, student.getPassword())) {
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "和原始密码重复");
         }
+
         try {
             student.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
             log.info("密码加密成功");
@@ -108,11 +101,9 @@ public class PersonalDataServiceImpl implements PersonalDataService {
             log.info("密码加密失败");
             throw new CustomException(CustomExceptionType.SYSTEM_ERROR,"密码加密失败");
         }
-        if(newTelephone!=null){
-            student.setTelephone(newTelephone);
-        }
+
         Student newStudentData = studentRepository.save(student);
-            log.info(String.valueOf(newStudentData));
+
         newStudentData.setPassword(null);
         newStudentData.setCode(null);
         return newStudentData;
@@ -120,6 +111,12 @@ public class PersonalDataServiceImpl implements PersonalDataService {
     @Override
     public Teacher editTeacherBaseData(String ID,Teacher newTeacherData) {
         Teacher teacher = teacherRepository.findById(ID).get();
+        //检测电话是否重复
+        Teacher teacherPhoneList = teacherRepository.findTeacherByTelephone(newTeacherData.getTelephone());
+        if ( teacherPhoneList != null && !teacherPhoneList.getTea_id().equals(ID)) {
+            log.info("该电话已被注册");
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该电话已被注册");
+        }
 
         teacher.setName(newTeacherData.getName());
         teacher.setQq(newTeacherData.getQq());
@@ -135,6 +132,12 @@ public class PersonalDataServiceImpl implements PersonalDataService {
     @Override
     public Student editStudentBaseData(String ID,Student newStudentData) {
         Student student = studentRepository.findById(ID).get();
+
+        Student studentPhoneList = studentRepository.findStudentByTelephone(newStudentData.getTelephone());
+        if ( studentPhoneList != null && !studentPhoneList.getStu_id().equals(ID)) {
+                log.info("该电话已被注册");
+                throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该电话已被注册");
+        }
 
         student.setName(newStudentData.getName());
         student.setQq(newStudentData.getQq());

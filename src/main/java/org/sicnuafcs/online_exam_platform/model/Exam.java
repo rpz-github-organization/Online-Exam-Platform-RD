@@ -30,7 +30,10 @@ public class Exam {
     @Column
     private Long exam_id;
 
+    @Column(length = 16)
+    @Enumerated(EnumType.STRING)
     private ProgressStatus progress_status; //状态
+
     private String name;
     private Long begin_time;//时间戳
     private int last_time; //持续时间
