@@ -72,7 +72,6 @@ public class PersonalDataServiceImpl implements PersonalDataService {
             log.info("密码加密失败");
             throw new CustomException(CustomExceptionType.SYSTEM_ERROR,"密码加密失败");
         }
-//        teacher.setPassword(newPassword);
         if(newTelephone!=null)
             teacher.setTelephone(newTelephone);
         Teacher newTeacherData = teacherRepository.save(teacher);
@@ -109,7 +108,6 @@ public class PersonalDataServiceImpl implements PersonalDataService {
             log.info("密码加密失败");
             throw new CustomException(CustomExceptionType.SYSTEM_ERROR,"密码加密失败");
         }
-//        student.setPassword(newPassword);
         if(newTelephone!=null){
             student.setTelephone(newTelephone);
         }
