@@ -9,7 +9,6 @@ import org.sicnuafcs.online_exam_platform.dao.TeacherRepository;
 import org.sicnuafcs.online_exam_platform.model.Student;
 import org.sicnuafcs.online_exam_platform.model.Teacher;
 import org.sicnuafcs.online_exam_platform.service.PersonalDataService;
-import org.sicnuafcs.online_exam_platform.service.RegisterService;
 import org.sicnuafcs.online_exam_platform.service.SendMailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,14 +65,14 @@ public class PersonalDataServiceImpl implements PersonalDataService {
             log.info("该电话已被注册");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该电话已被注册");
         }
-//        try {
-//            teacher.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
-//            log.info("密码加密成功");
-//        }catch (Exception e) {
-//            log.info("密码加密失败");
-//            throw new CustomException(CustomExceptionType.SYSTEM_ERROR,"密码加密失败");
-//        }
-        teacher.setPassword(newPassword);
+        try {
+            teacher.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+            log.info("密码加密成功");
+        }catch (Exception e) {
+            log.info("密码加密失败");
+            throw new CustomException(CustomExceptionType.SYSTEM_ERROR,"密码加密失败");
+        }
+//        teacher.setPassword(newPassword);
         if(newTelephone!=null)
             teacher.setTelephone(newTelephone);
         Teacher newTeacherData = teacherRepository.save(teacher);
@@ -103,14 +102,14 @@ public class PersonalDataServiceImpl implements PersonalDataService {
                 log.info("该电话已被注册");
                 throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该电话已被注册");
         }
-//        try {
-//            student.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
-//            log.info("密码加密成功");
-//        }catch (Exception e) {
-//            log.info("密码加密失败");
-//            throw new CustomException(CustomExceptionType.SYSTEM_ERROR,"密码加密失败");
-//        }
-        student.setPassword(newPassword);
+        try {
+            student.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+            log.info("密码加密成功");
+        }catch (Exception e) {
+            log.info("密码加密失败");
+            throw new CustomException(CustomExceptionType.SYSTEM_ERROR,"密码加密失败");
+        }
+//        student.setPassword(newPassword);
         if(newTelephone!=null){
             student.setTelephone(newTelephone);
         }
