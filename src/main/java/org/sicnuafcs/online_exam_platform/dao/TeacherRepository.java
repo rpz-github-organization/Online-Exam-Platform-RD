@@ -13,8 +13,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
     @Query(value = "SELECT tea_id FROM teacher WHERE telephone = ?", nativeQuery = true)
     String findTea_idByPhone(String Phone);
 
-    @Query(value = "SELECT name FROM teacher WHERE tea_id = ?", nativeQuery = true)
-    String findNameById(String tea_id);
+
 
 
 }

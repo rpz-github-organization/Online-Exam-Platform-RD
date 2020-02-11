@@ -14,6 +14,11 @@ import javax.validation.constraints.NotBlank;
 @Table(name = "stu_exam")
 @IdClass(StuExamPK.class)
 public class StuExam {
+
+    public static enum Status {
+        WILL,
+        DONE
+    }
     @Id
     @Column
     @NotBlank(message = "exam_id 不为空")
@@ -34,4 +39,5 @@ public class StuExam {
     private int score;
 
     private String answer;
+    private Status status;
 }

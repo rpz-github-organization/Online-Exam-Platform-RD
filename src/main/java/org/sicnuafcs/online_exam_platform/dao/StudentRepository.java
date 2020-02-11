@@ -9,6 +9,7 @@ import java.util.Optional;
 public interface StudentRepository extends JpaRepository<Student, String> {
     Optional<Student> findByEmail(String email);
     Optional<Student> findByTelephone(String telephone);
-    @Query(value = "SELECT  *FROM student WHERE telephone = ?", nativeQuery = true)
-    Optional<Student> findStu_id_idByPhone(String phone);
+
+    @Query(value = "SELECT  stu_id FROM student WHERE telephone = ?", nativeQuery = true)
+    String findStu_idByPhone(String phone);
 }

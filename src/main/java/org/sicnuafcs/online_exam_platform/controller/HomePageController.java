@@ -6,6 +6,8 @@ import org.sicnuafcs.online_exam_platform.config.exception.AjaxResponse;
 
 import org.sicnuafcs.online_exam_platform.config.exception.CustomException;
 
+import org.sicnuafcs.online_exam_platform.model.Course;
+import org.sicnuafcs.online_exam_platform.model.Exam;
 import org.sicnuafcs.online_exam_platform.service.HomePageService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -35,7 +39,7 @@ public class HomePageController {
     public @ResponseBody
     AjaxResponse findStuById(@PathVariable String stu_id,@PathVariable String status) {
 
-        Map json = homePageService.findStuById(stu_id,status);
+        List<Exam> json = homePageService.findStuById(stu_id,status);
         return AjaxResponse.success(json);
 
     }
@@ -47,7 +51,7 @@ public class HomePageController {
     public @ResponseBody
     AjaxResponse findStuByPhone(@PathVariable String phone,@PathVariable String status) {
 
-        Map json = homePageService.findStuByPhone(phone,status);
+        List<Exam> json = homePageService.findStuByPhone(phone,status);
         return AjaxResponse.success(json);
 
     }
@@ -60,7 +64,7 @@ public class HomePageController {
     public @ResponseBody
     AjaxResponse findTeaById(@PathVariable String tea_id) {
 
-        Map json = homePageService.findTeaById(tea_id);
+        List<Course> json = homePageService.findTeaById(tea_id);
         return AjaxResponse.success(json);
 
     }
@@ -73,7 +77,7 @@ public class HomePageController {
     public @ResponseBody
     AjaxResponse findTeaByPhone(@PathVariable String phone) {
 
-        Map json = homePageService.findTeaByPhone(phone);
+        List<Course> json = homePageService.findTeaByPhone(phone);
         return AjaxResponse.success(json);
 
     }
