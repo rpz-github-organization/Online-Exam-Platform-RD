@@ -15,12 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Controller;
 
-import org.springframework.web.bind.annotation.PathVariable;
-
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -38,10 +33,10 @@ public class HomePageController {
     //学号登录获取信息
     @RequestMapping("/stu/id")
     public @ResponseBody
-    AjaxResponse findStuById(@PathVariable String str) {
+    AjaxResponse findStuById(@RequestBody String str) {
         //Long exam_id, String stu_id
         String stu_id = JSON.parseObject(str).get("stu_id").toString();
-        Integer status = JSON.parseObject(str).get("status").hashCode();
+        Integer status = Integer.valueOf(JSON.parseObject(str).get("status").toString());
         List<Exam> json = homePageService.findStuById(stu_id,status);
         return AjaxResponse.success(json);
 
@@ -52,7 +47,7 @@ public class HomePageController {
     //工号号登录获取信息
     @RequestMapping("/tea/id")
     public @ResponseBody
-    AjaxResponse findTeaById(@PathVariable String str) {
+    AjaxResponse findTeaById(@RequestBody String str) {
         String tea_id = JSON.parseObject(str).get("tea_id").toString();
         List<Course> json = homePageService.findTeaById(tea_id);
         return AjaxResponse.success(json);

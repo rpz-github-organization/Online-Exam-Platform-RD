@@ -7,6 +7,7 @@ import org.sicnuafcs.online_exam_platform.dao.QuestionRepository;
 import org.sicnuafcs.online_exam_platform.dao.StuExamRepository;
 import org.sicnuafcs.online_exam_platform.model.*;
 import org.sicnuafcs.online_exam_platform.service.ExamService;
+import org.sicnuafcs.online_exam_platform.service.Impl.ExamServiceImpl;
 import org.sicnuafcs.online_exam_platform.service.JudgeService;
 import org.sicnuafcs.online_exam_platform.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,11 +89,21 @@ public class ExamController {
 
     @PostMapping("/getQuestion")
     public @ResponseBody
-    AjaxResponse getQuestion(@Valid @RequestBody Long question_id) throws Exception {
+    AjaxResponse getQuestion(@RequestBody String str) throws Exception {
         Question question;
+        Long question_id = Long.parseLong(JSON.parseObject(str).get("question_id").toString());
         question = questionRepository.findById(question_id).get();
         log.info("获取questionid为：" + question_id + "的题目成功");
         return AjaxResponse.success(question);
+    }
+    @PostMapping("/distributeExamToStudent")
+    public @ResponseBody
+    AjaxResponse distributeExamToStudent(@RequestBody String str) throws Exception {
+        long exam_id =Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
+        String co_id = JSON.parseObject(str).get("co_id").toString();
+        examService.distributeExamToStudent(exam_id, co_id);
+        log.info("为：" + exam_id + "考试分发试卷成功");
+        return AjaxResponse.success("success");
     }
 }
 

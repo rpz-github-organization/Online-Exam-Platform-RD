@@ -20,8 +20,6 @@ public class TeaCo {
 
     @Id
     @Column
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    String tea_id;
-
+    private String tea_id;
 }
 

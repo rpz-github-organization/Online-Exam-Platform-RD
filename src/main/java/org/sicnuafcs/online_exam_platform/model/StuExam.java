@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor
@@ -20,15 +21,15 @@ public class StuExam {
     }
     @Id
     @Column(length = 32,nullable = false)
-    @NotBlank(message = "exam_id 不为空")
+    @NotNull
     private Long exam_id;
     @Id
     @Column(length = 32,nullable = false)
     @NotBlank(message = "stu_id 不为空")
     private String stu_id;
     @Id
-    @Column(length = 32,nullable = false)
-    @NotBlank(message = "question_id 不为空")
+    @Column(length = 32)
+    @NotNull
     private Long question_id;
     @Column
     @Enumerated(EnumType.STRING)
