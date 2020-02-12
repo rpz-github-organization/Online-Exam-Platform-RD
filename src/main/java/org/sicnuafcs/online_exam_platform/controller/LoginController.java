@@ -47,24 +47,24 @@ public class LoginController {
         System.out.println(map);
         return AjaxResponse.success(map);
     }
-
-    //手机号加密码
-    @PostMapping("/phone")
-    public @ResponseBody AjaxResponse loginPhone(@Valid @RequestBody Login login, HttpServletRequest request) {
-        Login login1 = loginService.loginPhone(login);
-
-
-        //添加sessionID到map（传给前端）
-        Map<String, Object> map = new HashMap<>();
-        map.put("id", login1.getId());
-        map.put("session", request.getSession().getId());
-        map.put("authority", login1.getAuthority());
-
-        //添加数据到session(保存到session和redis)
-        request.getSession().setAttribute("userInfo", map);
-
-        return AjaxResponse.success(map);
-    }
+//
+//    //手机号加密码
+//    @PostMapping("/phone")
+//    public @ResponseBody AjaxResponse loginPhone(@Valid @RequestBody Login login, HttpServletRequest request) {
+//        Login login1 = loginService.loginPhone(login);
+//
+//
+//        //添加sessionID到map（传给前端）
+//        Map<String, Object> map = new HashMap<>();
+//        map.put("id", login1.getId());
+//        map.put("session", request.getSession().getId());
+//        map.put("authority", login1.getAuthority());
+//
+//        //添加数据到session(保存到session和redis)
+//        request.getSession().setAttribute("userInfo", map);
+//
+//        return AjaxResponse.success(map);
+//    }
 
     @PostMapping("/get/userInfo")
     public @ResponseBody AjaxResponse get(HttpServletRequest request) {
