@@ -8,7 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.ArrayList;
 
 public interface ExamQuestionRepository extends JpaRepository<ExamQuestion, String> {
-    ArrayList<ExamQuestion> findByType(Question.Type type);
-    @Query("select score from ExamQuestion where question_id = ?1 and exam_id = ?2")
+    @Query("select u from ExamQuestion u where u.exam_id = (:exam_id) and u.type = (:type)")
+    ArrayList<ExamQuestion> findByExam_idAndType(Long exam_id, Question.Type type);
+    @Query("select u.score from ExamQuestion u where u.question_id = ?1 and u.exam_id = ?2")
     int findScoreById(Long question_id, Long exam_id);
 }

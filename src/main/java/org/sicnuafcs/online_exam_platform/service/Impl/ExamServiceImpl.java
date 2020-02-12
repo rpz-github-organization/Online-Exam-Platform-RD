@@ -60,21 +60,23 @@ public class ExamServiceImpl implements ExamService {
     @Override
     public void distributeExamToStudent(long exma_id, String co_id) throws Exception {
         ArrayList<String> studentList = (ArrayList<String>)stuCoRepository.findByCo_id(co_id);
-        ArrayList<ExamQuestion> singleList = examQuestionRepository.findByType(Question.Type.Single);
-        ArrayList<ExamQuestion> judgeList = examQuestionRepository.findByType(Question.Type.Judge);
-        ArrayList<ExamQuestion> discussList = examQuestionRepository.findByType(Question.Type.Discussion);
-        ArrayList<ExamQuestion> programList = examQuestionRepository.findByType(Question.Type.Program);
-
+        ArrayList<ExamQuestion> singleList = examQuestionRepository.findByExam_idAndType(exma_id, Question.Type.Single);
+        ArrayList<ExamQuestion> judgeList = examQuestionRepository.findByExam_idAndType(exma_id, Question.Type.Judge);
+        ArrayList<ExamQuestion> discussList = examQuestionRepository.findByExam_idAndType(exma_id, Question.Type.Discussion);
+        ArrayList<ExamQuestion> programList = examQuestionRepository.findByExam_idAndType(exma_id, Question.Type.Program);
+        ArrayList<ExamQuestion> examQuestions = new ArrayList<>();
         for (String stu_id : studentList) {
             randomCommon(singleList);
             randomCommon(judgeList);
             StuExam stuExam = new StuExam();
+            stuExam.setStatus(StuExam.Status.WILL);
             for (ExamQuestion single : singleList) {
                 stuExam.setStu_id(stu_id);
                 stuExam.setExam_id(exma_id);
                 stuExam.setQuestion_id(single.getQuestion_id());
                 stuExam.setType(Question.Type.Single);
                 stuExam.setNum(single.getNum());
+                log.info("single num:" + stuExam.getNum());
                 stuExamRepository.save(stuExam);
             }
             for (ExamQuestion judge : judgeList) {
@@ -83,6 +85,7 @@ public class ExamServiceImpl implements ExamService {
                 stuExam.setQuestion_id(judge.getQuestion_id());
                 stuExam.setType(Question.Type.Judge);
                 stuExam.setNum(judge.getNum());
+                log.info("judge num:" + stuExam.getNum());
                 stuExamRepository.save(stuExam);
             }
             for (ExamQuestion discuss : discussList) {
@@ -97,7 +100,7 @@ public class ExamServiceImpl implements ExamService {
                 stuExam.setStu_id(stu_id);
                 stuExam.setExam_id(exma_id);
                 stuExam.setQuestion_id(program.getQuestion_id());
-                stuExam.setType(Question.Type.Judge);
+                stuExam.setType(Question.Type.Program);
                 stuExam.setNum(program.getNum());
                 stuExamRepository.save(stuExam);
             }
@@ -133,7 +136,7 @@ public class ExamServiceImpl implements ExamService {
             num = random.nextInt(n+1);
             num++;
             boolean flag = true;
-            log.info("num:", +num);
+            log.info("num:" + num);
             //判断是否已经存在
             for (ExamQuestion examQuestion : questionsList) {
                 if (examQuestion.getNum() == num) {
