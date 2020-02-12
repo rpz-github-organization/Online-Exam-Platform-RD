@@ -114,6 +114,10 @@ public class PersonalDataController {
             String ID = (String) m.get("id");
             return AjaxResponse.success(personalDataService.editStudentBaseData(ID,newStudentData));
         }
-
+        @PostMapping("/checkCode")
+        public AjaxResponse checkCode(@RequestBody Map<String, Object> params){
+            personalDataService.checkCode(params);
+            return AjaxResponse.success();
+        }
 }
 

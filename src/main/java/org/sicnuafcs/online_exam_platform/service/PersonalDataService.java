@@ -18,4 +18,7 @@ public interface PersonalDataService {
      //此处发的时候只会验证格式正确与否 而不会检测数据库存在与否
      void checkTeacherEmail(String email);
      void checkStudentEmail(String email);
+
+     void checkCode(Map<String, Object> params);
+
 }

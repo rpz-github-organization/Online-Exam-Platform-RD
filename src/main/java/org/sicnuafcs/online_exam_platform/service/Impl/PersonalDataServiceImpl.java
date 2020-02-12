@@ -47,13 +47,8 @@ public class PersonalDataServiceImpl implements PersonalDataService {
     @Override
     public Teacher updateTeacherPassword(String ID,Map<String, Object> params) {
         Teacher teacher = teacherRepository.findById(ID).get();
-        String newPassword = (String) params.get("newPassword"),
-                code = (String) params.get("code");
+        String newPassword = (String) params.get("newPassword");
         //邮箱验证：验证码和邮箱是否一致；
-        if (!sendMailService.verification(teacher.getEmail(), code)) {
-            log.info("邮箱验证不一致");
-            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"邮箱验证失败");
-        }
         if (newPassword.length() < 8) {
             log.info("密码位数过少");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"密码位数过少");
@@ -79,13 +74,8 @@ public class PersonalDataServiceImpl implements PersonalDataService {
     @Override
     public Student updateStudentPassword(String ID, Map<String, Object> params) {
         Student student = studentRepository.findById(ID).get();
-        String newPassword = (String) params.get("newPassword"),
-                code = (String) params.get("code");
-        //邮箱验证：验证码和邮箱是否一致；
-        if (!sendMailService.verification(student.getEmail(), code)) {
-            log.info("邮箱验证不一致");
-            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"邮箱验证失败");
-        }
+        String newPassword = (String) params.get("newPassword");
+
         if (newPassword.length() < 8) {
             log.info("密码位数过少");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"密码位数过少");
@@ -157,7 +147,7 @@ public class PersonalDataServiceImpl implements PersonalDataService {
         String code = (String) params.get("code");
         if (!sendMailService.verification(newEmail, code)) {
             log.info("邮箱验证不一致");
-            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"邮箱验证失败");
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"新邮箱验证失败");
         }
         //邮箱验证：是否唯一
         Teacher emailList = teacherRepository.findTeacherByEmail(newEmail);
@@ -223,6 +213,16 @@ public class PersonalDataServiceImpl implements PersonalDataService {
             sendMailService.sendEmail(email);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void checkCode(Map<String, Object> params) {
+        String code = (String) params.get("code");
+        String email = (String) params.get("email");
+        if (!sendMailService.verification(email, code)) {
+            log.info("邮箱验证不一致");
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"邮箱验证失败");
         }
     }
 }

@@ -30,7 +30,7 @@ public class StuExam {
     @Column(length = 32,nullable = false)
     @NotBlank(message = "question_id 不为空")
     private Long question_id;
-
+    @Column
     @Enumerated(EnumType.STRING)
     private Question.Type type;
 
@@ -39,5 +39,6 @@ public class StuExam {
     private Integer score;
 
     private String answer;
+    @Enumerated(EnumType.STRING)
     private Status status;
 }
