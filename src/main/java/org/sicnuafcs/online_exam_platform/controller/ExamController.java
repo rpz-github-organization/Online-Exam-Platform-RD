@@ -88,8 +88,9 @@ public class ExamController {
 
     @PostMapping("/getQuestion")
     public @ResponseBody
-    AjaxResponse getQuestion(@Valid @RequestBody Long question_id) throws Exception {
+    AjaxResponse getQuestion(@RequestBody String str) throws Exception {
         Question question;
+        Long question_id = Long.parseLong(JSON.parseObject(str).get("question_id").toString());
         question = questionRepository.findById(question_id).get();
         log.info("获取questionid为：" + question_id + "的题目成功");
         return AjaxResponse.success(question);
