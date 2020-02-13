@@ -35,7 +35,7 @@ import java.util.List;
 @Service
 public class JudgeServiceImpl implements JudgeService {
 
-    public JSONObject judge(String src, String language) {
+    public JSONObject judge(String src, String language, Integer testCaseId) {
         if (language == null || language.length() == 0) {
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "编程语言不能为空");
         }
@@ -66,6 +66,7 @@ public class JudgeServiceImpl implements JudgeService {
         body.add("max_cpu_time", 1000);
         body.add("max_memory", 134217728);
         body.add("test_case_id", "normal");
+        body.add("test_case_id", testCaseId);
         body.add("output", true);
 
         HttpHeaders headers = new HttpHeaders();
