@@ -17,8 +17,8 @@ import java.util.*;
 
 @Slf4j
 @Controller
-@RequestMapping("/course/selection")
-public class CourseSelectionController {
+@RequestMapping("/course")
+public class CourseController {
     @Autowired
     CourseSelectionService courseSelectionService;
 
@@ -32,7 +32,7 @@ public class CourseSelectionController {
      * @param map
      * @return
      */
-    @RequestMapping("/get")
+    @RequestMapping("/selection/get")
     public @ResponseBody
     AjaxResponse getCourse(@RequestBody Map map) {
         String stu_id = map.values().toString().substring(1, map.values().toString().length()-1);
