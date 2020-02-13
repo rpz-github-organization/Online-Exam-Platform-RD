@@ -64,7 +64,6 @@ public class ExamServiceImpl implements ExamService {
         ArrayList<ExamQuestion> judgeList = examQuestionRepository.findByExam_idAndType(exma_id, Question.Type.Judge);
         ArrayList<ExamQuestion> discussList = examQuestionRepository.findByExam_idAndType(exma_id, Question.Type.Discussion);
         ArrayList<ExamQuestion> programList = examQuestionRepository.findByExam_idAndType(exma_id, Question.Type.Program);
-        ArrayList<ExamQuestion> examQuestions = new ArrayList<>();
         for (String stu_id : studentList) {
             randomCommon(singleList);
             randomCommon(judgeList);

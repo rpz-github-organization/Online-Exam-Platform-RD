@@ -37,21 +37,33 @@ public class HomePageServiceimpl implements HomePageService {
             StuExam.Status stuExam_status = StuExam.Status.WILL;
             Exam.ProgressStatus exam_status = Exam.ProgressStatus.ING;
             List<Long> exam_idList = stuExamRepository.findExam_idByStu_IdAAndStatus(stu_id, stuExam_status);
+            if (exam_idList.isEmpty()) {
+                return null;
+            }
             exams = examRepository.findExamsByExam_idAAndProgress_status(exam_idList,exam_status);
         }else if(status == 1){
             StuExam.Status stuExam_status = StuExam.Status.DONE;
             Exam.ProgressStatus exam_status = Exam.ProgressStatus.ING;
             List<Long> exam_idList = stuExamRepository.findExam_idByStu_IdAAndStatus(stu_id, stuExam_status);
+            if (exam_idList.isEmpty()) {
+                return null;
+            }
             exams = examRepository.findExamsByExam_idAAndProgress_status(exam_idList,exam_status);
         }else if(status == 2){
             StuExam.Status stuExam_status = StuExam.Status.DONE;
             Exam.ProgressStatus exam_status = Exam.ProgressStatus.DONE;
             List<Long> exam_idList = stuExamRepository.findExam_idByStu_IdAAndStatus(stu_id, stuExam_status);
+            if (exam_idList.isEmpty()) {
+                return null;
+            }
             exams = examRepository.findExamsByExam_idAAndProgress_status(exam_idList,exam_status);
         }else if (status == 3){
             StuExam.Status stuExam_status = StuExam.Status.WILL;
             Exam.ProgressStatus exam_status = Exam.ProgressStatus.DONE;
             List<Long> exam_idList = stuExamRepository.findExam_idByStu_IdAAndStatus(stu_id, stuExam_status);
+            if (exam_idList.isEmpty()) {
+                return null;
+            }
             exams = examRepository.findExamsByExam_idAAndProgress_status(exam_idList,exam_status);
         }
 

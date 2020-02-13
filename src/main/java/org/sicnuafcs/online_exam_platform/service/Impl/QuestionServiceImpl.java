@@ -23,12 +23,6 @@ public class QuestionServiceImpl implements QuestionService {
     RedisUtils redisUtils;
     @Override
     public long saveQuestion(Question question) throws Exception {
-//        if (question.getType() == null) {
-//            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"题目类型为空！");
-//        }
-//        if(question.getType().equals(Question.Type.Single) && question.getOptions().equals("")) {
-//            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"选择题选项为空！");
-//        }
         if (question.getQuestion_id() != null) {
             questionRepository.save(question);
             return question.getQuestion_id();
