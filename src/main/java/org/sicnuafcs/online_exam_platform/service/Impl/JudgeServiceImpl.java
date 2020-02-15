@@ -1,11 +1,17 @@
 package org.sicnuafcs.online_exam_platform.service.Impl;
 
 import com.alibaba.fastjson.JSON;
-import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.sicnuafcs.online_exam_platform.config.JudegConfig.JudgeConfig;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomException;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomExceptionType;
+import org.sicnuafcs.online_exam_platform.dao.QuestionRepository;
+import org.sicnuafcs.online_exam_platform.dao.TeatCaseRepository;
+//import org.sicnuafcs.online_exam_platform.model.TestCase;
+import org.sicnuafcs.online_exam_platform.model.GetQuestion;
+import org.sicnuafcs.online_exam_platform.model.Question;
+import org.sicnuafcs.online_exam_platform.model.TestCase;
+import org.sicnuafcs.online_exam_platform.model.ToTestCase;
 import org.sicnuafcs.online_exam_platform.service.JudgeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
@@ -19,8 +25,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
+
+import static org.sicnuafcs.online_exam_platform.util.DockerUtils.*;
 
 /**
  * <p>Description:  xx</p>
@@ -34,6 +45,10 @@ import java.util.List;
 @EnableAsync
 @Service
 public class JudgeServiceImpl implements JudgeService {
+    @Autowired
+    TeatCaseRepository teatCaseRepository;
+    @Autowired
+    QuestionRepository questionRepository;
 
     public JSONObject judge(String src, String language, Long testCaseId) {
         if (language == null || language.length() == 0) {
@@ -84,4 +99,125 @@ public class JudgeServiceImpl implements JudgeService {
         return res;
     }
 
+    public void addTestCase(GetQuestion getQuestion) {
+        if (getQuestion.getQuestion_id() == null) {
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "题号不能为空");
+        }
+        ArrayList<String> in = new ArrayList<>();
+        ArrayList<String> out = new ArrayList<>();
+        for (ToTestCase toTestCase : getQuestion.getTest_case()) {
+            in.add(toTestCase.getInput());
+            out.add(toTestCase.getOutput());
+        }
+        int isInDocker = 0;
+        TestCase testCase = new TestCase(getQuestion.getQuestion_id(), in, out, isInDocker);
+        teatCaseRepository.save(testCase);
+    }
+
+    //异步怎么实现
+    public void writeFileToDocker(Long question_id, int type) {
+        //保存的文件名字
+        ArrayList<String> fileNames = new ArrayList<>();
+
+        if (question_id == null) {
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "题号不能为空");
+        }
+
+        //获取in out输入输出数组，并写入文件
+        ArrayList<String> in = teatCaseRepository.getOneByQuestion_id(question_id).getInput();
+        ArrayList<String> out = teatCaseRepository.getOneByQuestion_id(question_id).getOutput();
+        //先创建该id的目录
+        String path = "/test_cases/"+question_id;
+        File f = new File(path);
+        if (!f.exists()) {
+            f.mkdirs();
+            for (int i = 1; i <= in.size(); i++) {
+                //创建.in文件
+                String fileName = new String(path + "/" + i + ".in.txt");
+                try {
+                    BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
+                    bw.write(in.get(i - 1));
+                    bw.flush();
+                    bw.close();
+                } catch (IOException e) {
+                    throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "创建in文件失败");
+                }
+                fileNames.add(i + ".in.txt");
+                //创建.out文件
+                if (type == 1) {
+                    fileName = new String(path + "/" + i + ".out.txt");
+                    try {
+                        BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
+                        bw.write(out.get(i - 1));
+                        bw.flush();
+                        bw.close();
+                    } catch (IOException e) {
+                        throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "创建out文件失败");
+                    }
+                    fileNames.add(i + ".out.txt");
+                }
+            }
+        }
+        else {
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "题目重复");
+        }
+        log.info("写入文件成功");
+
+        //将文件放入docker中
+        addToDocker(path, question_id, fileNames);
+        log.info("放入docker成功");
+
+        //将源文件删除
+        deleteFile(path, fileNames);
+    }
+    public void addToDocker(String path, Long question_id, ArrayList<String> fileNames) {
+        String remote = "/test_cases/" + question_id;
+        String container_id = "4564615a125d";
+        //创建question_id目录
+        String command = "mkdir /test_cases/" + question_id;
+        String[] commands = {"docker", "exec", "-it", "4564615a125d", "/bin/bash", "-c", command};
+        try {
+            Process p = Runtime.getRuntime().exec(commands);
+        } catch (IOException e) {
+            throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "创建目录失败");
+        }
+
+
+        for (String filename : fileNames) {
+            //依次放入docker的相应目录中
+            String resource = path + "/" + filename;
+            Object res = copyArchiveToContainerCmd(container_id, resource, remote);
+        }
+        TestCase testCase = teatCaseRepository.getOneByQuestion_id(question_id);
+        testCase.setIsInDocker(1);
+    }
+
+    public Question.Type findQuestionType (Long question_id) {
+        Question.Type type = questionRepository.findTypeByQuestion_id(question_id);
+        if (type == null) {
+            log.info(question_id + "的题目类型为空 不能执行写下来的操作");
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "题目类型为空");
+        }
+        return type;
+    }
+
+    public void deleteFile(String path, ArrayList<String> fileNames) {
+        for (String fileName : fileNames) {
+            String path1 = path + "/" + fileName;
+            File file = new File(path1);
+            if (file.exists()) {
+                file.delete();
+            }
+            else {
+                throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "文件不存在");
+            }
+        }
+        File file = new File(path);
+        if (file.exists()) {
+            file.delete();
+        }
+        else {
+            throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "目录不存在");
+        }
+    }
 }

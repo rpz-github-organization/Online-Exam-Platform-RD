@@ -63,7 +63,8 @@ public class ExamServiceImpl implements ExamService {
         ArrayList<ExamQuestion> singleList = examQuestionRepository.findByExam_idAndType(exma_id, Question.Type.Single);
         ArrayList<ExamQuestion> judgeList = examQuestionRepository.findByExam_idAndType(exma_id, Question.Type.Judge);
         ArrayList<ExamQuestion> discussList = examQuestionRepository.findByExam_idAndType(exma_id, Question.Type.Discussion);
-        ArrayList<ExamQuestion> programList = examQuestionRepository.findByExam_idAndType(exma_id, Question.Type.Program);
+        ArrayList<ExamQuestion> normal_programList = examQuestionRepository.findByExam_idAndType(exma_id, Question.Type.Normal_Program);
+        ArrayList<ExamQuestion> specialJudge_programList = examQuestionRepository.findByExam_idAndType(exma_id, Question.Type.SpecialJudge_Program);
         for (String stu_id : studentList) {
             randomCommon(singleList);
             randomCommon(judgeList);
@@ -95,12 +96,20 @@ public class ExamServiceImpl implements ExamService {
                 stuExam.setNum(discuss.getNum());
                 stuExamRepository.save(stuExam);
             }
-            for (ExamQuestion program : programList) {
+            for (ExamQuestion normal_program : normal_programList) {
                 stuExam.setStu_id(stu_id);
                 stuExam.setExam_id(exma_id);
-                stuExam.setQuestion_id(program.getQuestion_id());
-                stuExam.setType(Question.Type.Program);
-                stuExam.setNum(program.getNum());
+                stuExam.setQuestion_id(normal_program.getQuestion_id());
+                stuExam.setType(Question.Type.Normal_Program);
+                stuExam.setNum(normal_program.getNum());
+                stuExamRepository.save(stuExam);
+            }
+            for (ExamQuestion specialJudge_program : specialJudge_programList) {
+                stuExam.setStu_id(stu_id);
+                stuExam.setExam_id(exma_id);
+                stuExam.setQuestion_id(specialJudge_program.getQuestion_id());
+                stuExam.setType(Question.Type.SpecialJudge_Program);
+                stuExam.setNum(specialJudge_program.getNum());
                 stuExamRepository.save(stuExam);
             }
         }

@@ -1,57 +1,41 @@
 package org.sicnuafcs.online_exam_platform.model;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.ArrayList;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-@Entity
-@Table(name = "question")
+public class GetQuestion {
 
-public class
-
-Question {
     public static enum Type {
         Single,
         MultipleChoice,
         Judge,
         FillInTheBlank,
         Discussion,
+        Program,
         Normal_Program,
         SpecialJudge_Program;
     }
 
-    @Id
-    @Column
     private Long question_id;
-
-    @Column(length = 16, nullable = false)
     @NotBlank(message = "教师id不为空")
     private  String tea_id;
-
-    @Column(length = 16, nullable = false)
     private String question;
-
-    @Column(length = 128, nullable = false)
     private String tag;
-
-    @Column(length = 256)
     private  String options;
-
-    @Column(nullable = false)
     private String answer;
 
     @Enumerated(EnumType.STRING)
     private Type type = null;
 
-    @Column
+    private ArrayList<ToTestCase> test_case;
+
     private String tip; //提示
 }

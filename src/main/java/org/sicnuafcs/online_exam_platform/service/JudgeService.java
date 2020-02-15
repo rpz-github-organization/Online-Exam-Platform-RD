@@ -1,6 +1,10 @@
 package org.sicnuafcs.online_exam_platform.service;
 
+import org.sicnuafcs.online_exam_platform.model.GetQuestion;
+import org.sicnuafcs.online_exam_platform.model.Question;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * <p>Description:  xx</p>
@@ -13,4 +17,14 @@ import org.springframework.boot.configurationprocessor.json.JSONObject;
 public interface JudgeService {
 
     JSONObject judge(String src, String language, Long testCaseId);
+
+    void addTestCase(GetQuestion getQuestion);
+
+    void writeFileToDocker(Long question_id, int type);
+
+    void addToDocker(String path, Long question_id, ArrayList<String> fileNames);
+
+    Question.Type findQuestionType (Long question_id);
+
+    void deleteFile(String path, ArrayList<String> fileNames);
 }
