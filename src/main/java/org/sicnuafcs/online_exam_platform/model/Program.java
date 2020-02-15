@@ -15,4 +15,5 @@ public class Program {
     private String code;
     @NotBlank(message = "语言不为空")
     private String language;
+    private  String question_id;
 }

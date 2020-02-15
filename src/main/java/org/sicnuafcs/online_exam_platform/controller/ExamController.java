@@ -59,7 +59,7 @@ public class ExamController {
     @PostMapping("/judgeProgram")
     public @ResponseBody
     AjaxResponse judge(@Valid @RequestBody Program program) throws Exception {
-        JSONObject json = judgeService.judge(program.getCode(), program.getLanguage());
+        JSONObject json = judgeService.judge(program.getCode(), program.getLanguage(), program.getQuestion_id());
         log.info("判题成功");
         return AjaxResponse.success(json);
     }
