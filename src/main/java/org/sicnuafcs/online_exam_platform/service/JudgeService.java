@@ -12,5 +12,5 @@ import org.springframework.boot.configurationprocessor.json.JSONObject;
 
 public interface JudgeService {
 
-    JSONObject judge(String src, String language, Integer testCaseId);
+    JSONObject judge(String src, String language, Long testCaseId);
 }

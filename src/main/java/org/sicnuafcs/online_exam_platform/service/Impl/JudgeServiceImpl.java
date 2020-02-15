@@ -35,7 +35,7 @@ import java.util.List;
 @Service
 public class JudgeServiceImpl implements JudgeService {
 
-    public JSONObject judge(String src, String language, Integer testCaseId) {
+    public JSONObject judge(String src, String language, Long testCaseId) {
         if (language == null || language.length() == 0) {
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "编程语言不能为空");
         }
