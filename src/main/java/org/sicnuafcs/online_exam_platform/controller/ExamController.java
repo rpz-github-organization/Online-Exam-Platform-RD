@@ -125,7 +125,7 @@ public class ExamController {
         ret.put("name", exam.getName());
         ret.put("co_name", courseRepository.getNameByCo_id(exam.getCo_id()));
         ret.put("tea_name", teacherRepository.getNameByTea_id(exam.getTea_id()));
-        ret.put("begin_timg", exam.getBegin_time());
+        ret.put("begin_time", exam.getBegin_time());
         ret.put("last_time", exam.getLast_time());
         if (exam.getProgress_status() == Exam.ProgressStatus.ING) {
             ret.put("status", 1);

@@ -127,13 +127,13 @@ public class JudgeServiceImpl implements JudgeService {
         ArrayList<String> in = teatCaseRepository.getOneByQuestion_id(question_id).getInput();
         ArrayList<String> out = teatCaseRepository.getOneByQuestion_id(question_id).getOutput();
         //先创建该id的目录
-        String path = "/test_cases/"+question_id;
+        String path = "/home/user/ojSystemSvr/test_cases/"+question_id;
         File f = new File(path);
         if (!f.exists()) {
             f.mkdirs();
             for (int i = 1; i <= in.size(); i++) {
                 //创建.in文件
-                String fileName = new String(path + "/" + i + ".in.txt");
+                String fileName = new String(path + "/" + i + ".in");
                 try {
                     BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
                     bw.write(in.get(i - 1));
@@ -142,7 +142,7 @@ public class JudgeServiceImpl implements JudgeService {
                 } catch (IOException e) {
                     throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "创建in文件失败");
                 }
-                fileNames.add(i + ".in.txt");
+                fileNames.add(i + ".in");
                 //创建.out文件
                 if (type == 1) {
                     fileName = new String(path + "/" + i + ".out.txt");
@@ -175,7 +175,7 @@ public class JudgeServiceImpl implements JudgeService {
         String container_id = "4564615a125d";
         //创建question_id目录
         String command = "mkdir /test_cases/" + question_id;
-        String[] commands = {"docker", "exec", "-it", "4564615a125d", "/bin/bash", "-c", command};
+        String[] commands = {"docker", "exec", "4564615a125d", "/bin/bash", "-c", command};
         try {
             Process p = Runtime.getRuntime().exec(commands);
         } catch (IOException e) {
