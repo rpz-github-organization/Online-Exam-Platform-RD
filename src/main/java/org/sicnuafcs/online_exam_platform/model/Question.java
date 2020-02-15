@@ -50,8 +50,5 @@ Question {
 
     @Enumerated(EnumType.STRING)
     private Type type = null;
-
-    private String input;   //编程题示例输入
-    private String output;  //编程题示例输出
     private String tip; //提示
 }

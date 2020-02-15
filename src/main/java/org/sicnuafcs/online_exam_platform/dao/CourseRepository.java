@@ -16,4 +16,7 @@ public interface CourseRepository extends JpaRepository<Course,String> {
     @Query("select name from Course where co_id = ?1")
     String getNameByCo_id(String co_id);
 
+    @Query("select u from Course u where u.co_id = ?1")
+    Course findCourseByCo_id(String co_id);
+
 }

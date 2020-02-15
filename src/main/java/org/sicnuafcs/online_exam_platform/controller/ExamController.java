@@ -3,8 +3,7 @@ package org.sicnuafcs.online_exam_platform.controller;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.sicnuafcs.online_exam_platform.config.exception.AjaxResponse;
-import org.sicnuafcs.online_exam_platform.dao.QuestionRepository;
-import org.sicnuafcs.online_exam_platform.dao.StuExamRepository;
+import org.sicnuafcs.online_exam_platform.dao.*;
 import org.sicnuafcs.online_exam_platform.model.*;
 import org.sicnuafcs.online_exam_platform.service.ExamService;
 import org.sicnuafcs.online_exam_platform.service.Impl.ExamServiceImpl;
@@ -21,6 +20,8 @@ import springfox.documentation.spring.web.json.Json;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Slf4j
@@ -37,7 +38,12 @@ public class ExamController {
     StuExamRepository stuExamRepository;
     @Autowired
     QuestionRepository questionRepository;
-
+    @Autowired
+    ExamRepository examRepository;
+    @Autowired
+    CourseRepository courseRepository;
+    @Autowired
+    TeacherRepository teacherRepository;
     @PostMapping("/addQuestion")
     public @ResponseBody
     AjaxResponse saveQuestion(@Valid @RequestBody Question question) throws Exception {
@@ -96,14 +102,27 @@ public class ExamController {
         log.info("获取questionid为：" + question_id + "的题目成功");
         return AjaxResponse.success(question);
     }
-    @PostMapping("/distributeExamToStudent")
+
+    @PostMapping("/stuExamInfo")
     public @ResponseBody
-    AjaxResponse distributeExamToStudent(@RequestBody String str) throws Exception {
+    AjaxResponse stuExamInfo(@RequestBody String str) throws Exception {
         long exam_id =Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
-        String co_id = JSON.parseObject(str).get("co_id").toString();
-        examService.distributeExamToStudent(exam_id, co_id);
-        log.info("为：" + exam_id + "考试分发试卷成功");
-        return AjaxResponse.success("success");
+        Exam exam = examRepository.findExamByExam_id(exam_id);
+        log.info("exam:" + exam.toString());
+        Map<String, Object> ret = new HashMap<>();
+        ret.put("name", exam.getName());
+        ret.put("co_name", courseRepository.getNameByCo_id(exam.getCo_id()));
+        ret.put("tea_name", teacherRepository.getNameByTea_id(exam.getTea_id()));
+        ret.put("begin_timg", exam.getBegin_time());
+        ret.put("last_time", exam.getLast_time());
+        if (exam.getProgress_status() == Exam.ProgressStatus.ING) {
+            ret.put("status", 1);
+        } else if (exam.getProgress_status() == Exam.ProgressStatus.WILL) {
+            ret.put("status", 0);
+        } else{
+            ret.put("status", -1);
+        }
+        return AjaxResponse.success(ret);
     }
 }
 
