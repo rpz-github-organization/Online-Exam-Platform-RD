@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
@@ -13,7 +14,7 @@ import javax.validation.constraints.NotBlank;
 @Entity
 @Table(name = "exam_question")
 @IdClass(ExamQuestionPK.class)
-public class ExamQuestion {
+public class ExamQuestion implements Serializable {
     @Id
     @Column
     private Long exam_id;

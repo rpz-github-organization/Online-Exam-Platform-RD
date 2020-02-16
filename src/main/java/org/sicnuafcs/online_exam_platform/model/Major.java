@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
@@ -17,7 +18,7 @@ import javax.persistence.Table;
 @Builder
 @Entity
 @Table(name = "major")
-public class Major {
+public class Major implements Serializable {
     @Id
     @Column(length = 16,nullable = false)
     private String major_id;

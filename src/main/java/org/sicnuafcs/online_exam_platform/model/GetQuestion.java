@@ -6,12 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetQuestion {
+public class GetQuestion implements Serializable {
 
     public static enum Type {
         Single,

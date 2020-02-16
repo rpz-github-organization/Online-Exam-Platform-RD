@@ -1,6 +1,7 @@
 package org.sicnuafcs.online_exam_platform.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.weaver.loadtime.Aj;
 import org.sicnuafcs.online_exam_platform.config.DozerBeanMapperConfigure;
@@ -16,7 +17,6 @@ import org.sicnuafcs.online_exam_platform.service.Impl.ExamServiceImpl;
 import org.sicnuafcs.online_exam_platform.service.JudgeService;
 import org.sicnuafcs.online_exam_platform.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -79,6 +79,7 @@ public class ExamController {
     AjaxResponse judge(@Valid @RequestBody Program program) throws Exception {
         JSONObject json = judgeService.judge(program.getCode(), program.getLanguage(), program.getQuestion_id());
         log.info("判题成功");
+        log.info("ret" + json);
         return AjaxResponse.success(json);
     }
 

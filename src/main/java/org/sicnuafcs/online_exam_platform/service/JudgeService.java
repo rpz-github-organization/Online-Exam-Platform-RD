@@ -1,8 +1,8 @@
 package org.sicnuafcs.online_exam_platform.service;
 
+import com.alibaba.fastjson.JSONObject;
 import org.sicnuafcs.online_exam_platform.model.GetQuestion;
 import org.sicnuafcs.online_exam_platform.model.Question;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 
 import java.util.ArrayList;
 

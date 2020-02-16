@@ -20,6 +20,7 @@ public class LoginConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/register/teacher")
                 .excludePathPatterns("/register/email/student")
                 .excludePathPatterns("/register/email/teacher")
-                .excludePathPatterns("/exam/writeToDocker");
+                .excludePathPatterns("/exam/writeToDocker")
+                .excludePathPatterns("/exam/judgeProgram");
     }
 }

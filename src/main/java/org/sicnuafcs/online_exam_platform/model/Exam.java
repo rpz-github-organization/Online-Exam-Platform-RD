@@ -6,13 +6,14 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "exam")
-public class Exam {
+public class Exam implements Serializable {
     public static enum ProgressStatus {
         WILL,
         ING,

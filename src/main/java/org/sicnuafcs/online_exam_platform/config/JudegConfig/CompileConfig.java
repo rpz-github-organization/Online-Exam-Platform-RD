@@ -18,16 +18,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CompileConfig {
-    String SrcName;
+    String src_name;
 
-    String ExeName;
+    String exe_name;
 
-    long MaxCpuTime;
+    long max_cpu_time;
 
-    long MaxRealTime;
+    long max_real_time;
 
-    long MaxMemory;
+    long max_memory;
 
-    String CompileCommand;
+    String compile_command;
 
 }

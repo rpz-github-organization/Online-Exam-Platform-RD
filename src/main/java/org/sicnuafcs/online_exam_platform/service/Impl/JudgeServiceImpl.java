@@ -14,22 +14,17 @@ import org.sicnuafcs.online_exam_platform.model.TestCase;
 import org.sicnuafcs.online_exam_platform.model.ToTestCase;
 import org.sicnuafcs.online_exam_platform.service.JudgeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.sicnuafcs.online_exam_platform.util.DockerUtils.*;
 
@@ -50,7 +45,7 @@ public class JudgeServiceImpl implements JudgeService {
     @Autowired
     QuestionRepository questionRepository;
 
-    public JSONObject judge(String src, String language, Long testCaseId) {
+    public com.alibaba.fastjson.JSONObject judge(String src, String language, Long testCaseId) {
         if (language == null || language.length() == 0) {
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "编程语言不能为空");
         }
@@ -60,7 +55,7 @@ public class JudgeServiceImpl implements JudgeService {
         RestTemplate restTemplate = new RestTemplate();
 
         JSONObject jsonObject = new JSONObject();
-        LinkedMultiValueMap body = new LinkedMultiValueMap();
+        //LinkedMultiValueMap body = new LinkedMultiValueMap();
 
         JudgeConfig.LangConfig langConfig;
         if ("c".equalsIgnoreCase(language)) {
@@ -76,6 +71,19 @@ public class JudgeServiceImpl implements JudgeService {
         } else {
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "暂不支持此语言");
         }
+        Map<String,Object> body = new HashMap<>();
+        body.put("src", src);
+        body.put("language_config", langConfig);
+        body.put("max_cpu_time", 1000);
+        body.put("max_memory", 134217728);
+        body.put("test_case_id","normal");
+        body.put("output", true);
+        String jsonStr = JSON.toJSONString(body);
+        String result = doPost("http://121.36.18.182:10085/judge", jsonStr);
+        log.info("result" + result);
+        log.info("strjson" + jsonStr);
+        return JSON.parseObject(result);
+        /*
         body.add("src", src);
         body.add("language_config", JSON.toJSONString(langConfig));
         body.add("max_cpu_time", 1000);
@@ -84,19 +92,23 @@ public class JudgeServiceImpl implements JudgeService {
         body.add("test_case_id", testCaseId);
         body.add("output", true);
 
+
         HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Judge-Server-Token", "b82fd881d1303ba9794e19b7f4a5e2b79231d065f744e72172ad9ee792909126");
+        headers.set("X-Judge-Server-Token", "b82fd881d1303ba9794e19b7f4a5e2b79231d065f744e72172ad9ee792909126");
+        headers.set("Content-Type","application/json");
 
         HttpEntity httpEntity = new HttpEntity(body, headers);
 
         JSONObject res = null;
         try {
             ResponseEntity<String> strbody = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
+            log.info("info"+strbody);
             res = new JSONObject(strbody.getBody());
         } catch (JSONException e) {
             log.info(e.toString());
         }
         return res;
+        */
     }
 
     public void addTestCase(GetQuestion getQuestion) {
@@ -145,7 +157,7 @@ public class JudgeServiceImpl implements JudgeService {
                 fileNames.add(i + ".in");
                 //创建.out文件
                 if (type == 1) {
-                    fileName = new String(path + "/" + i + ".out.txt");
+                    fileName = new String(path + "/" + i + ".out");
                     try {
                         BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
                         bw.write(out.get(i - 1));
@@ -154,7 +166,7 @@ public class JudgeServiceImpl implements JudgeService {
                     } catch (IOException e) {
                         throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "创建out文件失败");
                     }
-                    fileNames.add(i + ".out.txt");
+                    fileNames.add(i + ".out");
                 }
             }
         }
@@ -219,5 +231,56 @@ public class JudgeServiceImpl implements JudgeService {
         else {
             throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "目录不存在");
         }
+    }
+    public String doPost(String URL, String jsonStr){
+        OutputStreamWriter out = null;
+        BufferedReader in = null;
+        StringBuilder result = new StringBuilder();
+        HttpURLConnection conn = null;
+        try{
+            java.net.URL url = new URL(URL);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            //发送POST请求必须设置为true
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            //设置连接超时时间和读取超时时间
+            conn.setConnectTimeout(30000);
+            conn.setReadTimeout(10000);
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Accept", "application/json");
+            conn.setRequestProperty("X-Judge-Server-Token", "b82fd881d1303ba9794e19b7f4a5e2b79231d065f744e72172ad9ee792909126");
+            //获取输出流
+            out = new OutputStreamWriter(conn.getOutputStream());
+
+            out.write(jsonStr);
+            out.flush();
+            out.close();
+            //取得输入流，并使用Reader读取
+            if (200 == conn.getResponseCode()){
+                in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+                String line;
+                while ((line = in.readLine()) != null){
+                    result.append(line);
+                    System.out.println(line);
+                }
+            }else{
+                System.out.println("ResponseCode is an error code:" + conn.getResponseCode());
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            try{
+                if(out != null){
+                    out.close();
+                }
+                if(in != null){
+                    in.close();
+                }
+            }catch (IOException ioe){
+                ioe.printStackTrace();
+            }
+        }
+        return result.toString();
     }
 }

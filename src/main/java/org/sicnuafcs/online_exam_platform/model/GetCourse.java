@@ -5,11 +5,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetCourse {
+public class GetCourse implements Serializable {
     @NotBlank(message = "学号不能为空")
     private String stu_id;
 

@@ -3,6 +3,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.persistence.*;
@@ -16,9 +18,7 @@ import javax.validation.constraints.NotBlank;
 @Entity
 @Table(name = "question")
 
-public class
-
-Question {
+public class Question implements Serializable {
     public static enum Type {
         Single,
         MultipleChoice,

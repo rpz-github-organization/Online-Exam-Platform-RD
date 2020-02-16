@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
@@ -15,7 +16,7 @@ import javax.validation.constraints.NotBlank;
 @Builder
 @Entity
 @Table(name = "student")
-public class Student {
+public class Student implements Serializable {
 
     public static enum Sex {
         male,

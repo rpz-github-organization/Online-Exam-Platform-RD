@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 @Data
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 @Builder
 @Entity
 @Table(name = "test_case")
-public class TestCase {
+public class TestCase implements Serializable {
     @Id
     @Column
     private Long question_id;

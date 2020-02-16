@@ -15,7 +15,7 @@ import java.io.Serializable;
 @Entity
 @IdClass(StuCoPK.class)
 @Table(name = "stu_co")
-public class StuCo {
+public class StuCo implements Serializable{
     @Id
     @Column(length = 32,nullable = false)
     private String co_id;

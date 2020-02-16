@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 @Builder
 @Entity
 @Table(name = "course")
-public class Course {
+public class Course implements Serializable {
 
     @Id
     @Column

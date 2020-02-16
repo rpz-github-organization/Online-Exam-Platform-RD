@@ -18,8 +18,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RunConfig {
-    String Command;
-    String SeccompRule;
-    String[] Env;
-    int MemoryLimitCheckOnly;
+    String command;
+    String seccomp_rule;
+    String[] env;
+    int memory_limit_check_only;
 }
