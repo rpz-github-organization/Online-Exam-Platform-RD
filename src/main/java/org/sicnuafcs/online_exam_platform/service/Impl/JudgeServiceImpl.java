@@ -80,7 +80,7 @@ public class JudgeServiceImpl implements JudgeService {
         body.put("language_config", langConfig);
         body.put("max_cpu_time", 1000);
         body.put("max_memory", 134217728);
-        body.put("test_case_id","normal");
+        body.put("test_case_id",testCaseId.toString());
         body.put("output", true);
         String jsonStr = JSON.toJSONString(body);
         String result = doPost("http://121.36.18.182:10085/judge", jsonStr);
