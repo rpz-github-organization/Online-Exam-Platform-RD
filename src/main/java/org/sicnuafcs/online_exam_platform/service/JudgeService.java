@@ -20,11 +20,13 @@ public interface JudgeService {
 
     void addTestCase(GetQuestion getQuestion);
 
-    void writeFileToDocker(Long question_id, int type);
+    void writeFile(Long question_id, int type);
 
-    void addToDocker(String path, Long question_id, ArrayList<String> fileNames);
+//    void addToDocker(String path, Long question_id, ArrayList<String> fileNames);
 
     Question.Type findQuestionType (Long question_id);
 
-    void deleteFile(String path, ArrayList<String> fileNames);
+//    void deleteFile(String path, ArrayList<String> fileNames);
+
+    String transformToMd5(String output);
 }

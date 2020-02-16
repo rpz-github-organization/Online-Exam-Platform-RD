@@ -1,6 +1,7 @@
 package org.sicnuafcs.online_exam_platform.service.Impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.sicnuafcs.online_exam_platform.config.JudegConfig.JudgeConfig;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomException;
@@ -14,7 +15,6 @@ import org.sicnuafcs.online_exam_platform.model.TestCase;
 import org.sicnuafcs.online_exam_platform.model.ToTestCase;
 import org.sicnuafcs.online_exam_platform.service.JudgeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -22,6 +22,8 @@ import org.springframework.web.client.RestTemplate;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +42,8 @@ import static org.sicnuafcs.online_exam_platform.util.DockerUtils.*;
 @EnableAsync
 @Service
 public class JudgeServiceImpl implements JudgeService {
+
+
     @Autowired
     TeatCaseRepository teatCaseRepository;
     @Autowired
@@ -127,7 +131,7 @@ public class JudgeServiceImpl implements JudgeService {
     }
 
     //异步怎么实现
-    public void writeFileToDocker(Long question_id, int type) {
+    public void writeFile(Long question_id, int type) {
         //保存的文件名字
         ArrayList<String> fileNames = new ArrayList<>();
 
@@ -169,40 +173,91 @@ public class JudgeServiceImpl implements JudgeService {
                     fileNames.add(i + ".out");
                 }
             }
+            //创建info文件
+            JSONObject info = new JSONObject();
+            JSONObject test_cases = new JSONObject();
+            if (type == 1) {    //normal
+                info.put("spj","false");
+                for (int i = 1; i <= in.size(); i++) {
+                    JSONObject test_case = new JSONObject();
+                    String output_md5 = transformToMd5(out.get(i - 1));
+                    test_case.put("stripped_output_md5", output_md5);
+
+                    //output
+                    int output_size = out.get(i - 1).split(" ").length;
+                    String output_name = i + ".out";
+                    test_case.put("output_size", output_size);
+                    test_case.put("output_name", output_name);
+
+                    //input
+                    int input_size = in.get(i - 1).split(" ").length;
+                    String input_name = i + ".in";
+                    test_case.put("input_name", input_name);
+                    test_case.put("input_size", input_size);
+
+                    test_cases.put(String.valueOf(i), test_case);
+                }
+                info.put("test_cases", test_cases);
+            }
+            else if (type == 2) {   //spj
+                info.put("spj","true");
+                for (int i = 1; i <= in.size(); i++) {
+                    JSONObject test_case = new JSONObject();
+
+                    //input
+                    int input_size = in.get(i - 1).split(" ").length;
+                    String input_name = i + ".in";
+                    test_case.put("input_name", input_name);
+                    test_case.put("input_size", input_size);
+
+                    test_cases.put(String.valueOf(i), test_case);
+                }
+                info.put("test_cases", test_cases);
+            }
+            String fileName = new String(path + "/info");
+            try {
+                BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
+                bw.write(info.toJSONString());
+                bw.flush();
+                bw.close();
+            } catch (IOException e) {
+                throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "创建info文件失败");
+            }
         }
         else {
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "题目重复");
         }
         log.info("写入文件成功");
 
-        //将文件放入docker中
-        addToDocker(path, question_id, fileNames);
-        log.info("放入docker成功");
-
-        //将源文件删除
-        deleteFile(path, fileNames);
+//        //将文件放入docker中
+//        addToDocker(path, question_id, fileNames);
+//        log.info("放入docker成功");
+//
+//        //将源文件删除
+//        deleteFile(path, fileNames);
     }
-    public void addToDocker(String path, Long question_id, ArrayList<String> fileNames) {
-        String remote = "/test_cases/" + question_id;
-        String container_id = "4564615a125d";
-        //创建question_id目录
-        String command = "mkdir /test_cases/" + question_id;
-        String[] commands = {"docker", "exec", "4564615a125d", "/bin/bash", "-c", command};
-        try {
-            Process p = Runtime.getRuntime().exec(commands);
-        } catch (IOException e) {
-            throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "创建目录失败");
-        }
 
-
-        for (String filename : fileNames) {
-            //依次放入docker的相应目录中
-            String resource = path + "/" + filename;
-            Object res = copyArchiveToContainerCmd(container_id, resource, remote);
-        }
-        TestCase testCase = teatCaseRepository.getOneByQuestion_id(question_id);
-        testCase.setIsInDocker(1);
-    }
+//    public void addToDocker(String path, Long question_id, ArrayList<String> fileNames) {
+////        String remote = "/test_cases/" + question_id;
+////        String container_id = "4564615a125d";
+////        //创建question_id目录
+////        String command = "mkdir /test_cases/" + question_id;
+////        String[] commands = {"docker", "exec", "4564615a125d", "/bin/bash", "-c", command};
+////        try {
+////            Process p = Runtime.getRuntime().exec(commands);
+////        } catch (IOException e) {
+////            throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "创建目录失败");
+////        }
+////
+////
+////        for (String filename : fileNames) {
+////            //依次放入docker的相应目录中
+////            String resource = path + "/" + filename;
+////            Object res = copyArchiveToContainerCmd(container_id, resource, remote);
+////        }
+////        TestCase testCase = teatCaseRepository.getOneByQuestion_id(question_id);
+////        testCase.setIsInDocker(1);
+////    }
 
     public Question.Type findQuestionType (Long question_id) {
         Question.Type type = questionRepository.findTypeByQuestion_id(question_id);
@@ -213,25 +268,26 @@ public class JudgeServiceImpl implements JudgeService {
         return type;
     }
 
-    public void deleteFile(String path, ArrayList<String> fileNames) {
-        for (String fileName : fileNames) {
-            String path1 = path + "/" + fileName;
-            File file = new File(path1);
-            if (file.exists()) {
-                file.delete();
-            }
-            else {
-                throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "文件不存在");
-            }
-        }
-        File file = new File(path);
-        if (file.exists()) {
-            file.delete();
-        }
-        else {
-            throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "目录不存在");
-        }
-    }
+//    public void deleteFile(String path, ArrayList<String> fileNames) {
+//        for (String fileName : fileNames) {
+//            String path1 = path + "/" + fileName;
+//            File file = new File(path1);
+//            if (file.exists()) {
+//                file.delete();
+//            }
+//            else {
+//                throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "文件不存在");
+//            }
+//        }
+//        File file = new File(path);
+//        if (file.exists()) {
+//            file.delete();
+//        }
+//        else {
+//            throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "目录不存在");
+//        }
+//    }
+
     public String doPost(String URL, String jsonStr){
         OutputStreamWriter out = null;
         BufferedReader in = null;
@@ -282,5 +338,31 @@ public class JudgeServiceImpl implements JudgeService {
             }
         }
         return result.toString();
+    }
+
+    public String transformToMd5(String output) {
+        //加密之后所得字节数组
+        byte[] bytes = null;
+        try {
+            // 获取MD5算法实例 得到一个md5的消息摘要
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            //添加要进行计算摘要的信息
+            md.update(output.getBytes());
+            //得到该摘要
+            bytes = md.digest();
+        } catch (NoSuchAlgorithmException e) {
+            throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "md5算法不存在");
+        }
+        StringBuffer sb = new StringBuffer();
+        for (byte aByte : bytes) {
+            String s = Integer.toHexString(0xff & aByte);
+            if (s.length() == 1) {
+                sb.append("0" + s);
+            }
+            else {
+                sb.append(s);
+            }
+        }
+        return sb.toString();
     }
 }

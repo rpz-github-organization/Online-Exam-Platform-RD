@@ -138,7 +138,7 @@ public class ExamController {
         return AjaxResponse.success(ret);
     }
 
-    @PostMapping("/writeToDocker")
+    @PostMapping("/writeFile")
     public @ResponseBody AjaxResponse writeToDocker(@RequestBody String str) {
         Long question_id = Long.parseLong(JSON.parseObject(str).get("question_id").toString());
         //去question类中找到type
@@ -148,7 +148,7 @@ public class ExamController {
         }else {
             type = 2;
         }
-        judgeService.writeFileToDocker(question_id, type);
+        judgeService.writeFile(question_id, type);
         return AjaxResponse.success("success");
     }
 }
