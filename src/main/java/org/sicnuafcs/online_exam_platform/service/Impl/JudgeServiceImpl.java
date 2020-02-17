@@ -15,6 +15,8 @@ import org.sicnuafcs.online_exam_platform.model.TestCase;
 import org.sicnuafcs.online_exam_platform.model.ToTestCase;
 import org.sicnuafcs.online_exam_platform.service.JudgeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -27,6 +29,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import static org.sicnuafcs.online_exam_platform.util.DockerUtils.*;
 
@@ -130,8 +133,9 @@ public class JudgeServiceImpl implements JudgeService {
         teatCaseRepository.save(testCase);
     }
 
-    //异步怎么实现
-    public void writeFile(Long question_id, int type) {
+    //异步
+    @Async
+    public AsyncResult<String> writeFile(Long question_id, int type) {
         //保存的文件名字
         ArrayList<String> fileNames = new ArrayList<>();
 
@@ -156,7 +160,8 @@ public class JudgeServiceImpl implements JudgeService {
                     bw.flush();
                     bw.close();
                 } catch (IOException e) {
-                    throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "创建in文件失败");
+                    return new AsyncResult<>("创建in文件失败");
+                    //throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "创建in文件失败");
                 }
                 fileNames.add(i + ".in");
                 //创建.out文件
@@ -168,7 +173,8 @@ public class JudgeServiceImpl implements JudgeService {
                         bw.flush();
                         bw.close();
                     } catch (IOException e) {
-                        throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "创建out文件失败");
+                        return new AsyncResult<>("创建out文件失败");
+                        //throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "创建out文件失败");
                     }
                     fileNames.add(i + ".out");
                 }
@@ -227,13 +233,16 @@ public class JudgeServiceImpl implements JudgeService {
                 bw.flush();
                 bw.close();
             } catch (IOException e) {
-                throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "创建info文件失败");
+                return new AsyncResult<>("创建info文件失败");
+                //throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "创建info文件失败");
             }
         }
         else {
-            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "题目重复");
+            return new AsyncResult<>("题目重复");
+            //throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "题目重复");
         }
         log.info("写入文件成功");
+        return new AsyncResult<>("写入文件成功");
 
 //        //将文件放入docker中
 //        addToDocker(path, question_id, fileNames);

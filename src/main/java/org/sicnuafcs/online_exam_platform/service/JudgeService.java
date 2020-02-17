@@ -3,6 +3,7 @@ package org.sicnuafcs.online_exam_platform.service;
 import com.alibaba.fastjson.JSONObject;
 import org.sicnuafcs.online_exam_platform.model.GetQuestion;
 import org.sicnuafcs.online_exam_platform.model.Question;
+import org.springframework.scheduling.annotation.AsyncResult;
 
 import java.util.ArrayList;
 
@@ -20,7 +21,7 @@ public interface JudgeService {
 
     void addTestCase(GetQuestion getQuestion);
 
-    void writeFile(Long question_id, int type);
+    AsyncResult<String> writeFile(Long question_id, int type);
 
 //    void addToDocker(String path, Long question_id, ArrayList<String> fileNames);
 
