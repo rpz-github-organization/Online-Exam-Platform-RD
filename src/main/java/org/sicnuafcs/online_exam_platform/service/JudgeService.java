@@ -7,6 +7,7 @@ import org.sicnuafcs.online_exam_platform.model.Question;
 import org.springframework.scheduling.annotation.AsyncResult;
 
 import java.util.ArrayList;
+import java.util.concurrent.Future;
 
 /**
  * <p>Description:  xx</p>
@@ -22,7 +23,7 @@ public interface JudgeService {
 
     void addTestCase(GetQuestion getQuestion);
 
-    AsyncResult<String> writeFile(Long question_id, int type);
+    Future<String> writeFile(Long question_id, int type) throws InterruptedException;
 
 //    void addToDocker(String path, Long question_id, ArrayList<String> fileNames);
 

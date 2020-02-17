@@ -28,8 +28,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Future;
 
-import static org.sicnuafcs.online_exam_platform.util.DockerUtils.*;
-
 /**
  * <p>Description:  xx</p>
  *
@@ -131,7 +129,7 @@ public class JudgeServiceImpl implements JudgeService {
 
     //异步
     @Async
-    public AsyncResult<String> writeFile(Long question_id, int type) {
+    public Future<String> writeFile(Long question_id, int type) throws InterruptedException {
         //保存的文件名字
         ArrayList<String> fileNames = new ArrayList<>();
 
@@ -371,6 +369,14 @@ public class JudgeServiceImpl implements JudgeService {
 
     public JudgeResult transformToResult(JSONObject json) {
         JudgeResult judgeResult = new JudgeResult();
+        String err = json.getString("err");
+        if (err == null) {
+            //编译成功
+
+        } else {
+            //编译失败
+            judgeResult.setCompile_error(true);
+        }
         return judgeResult;
 
     }

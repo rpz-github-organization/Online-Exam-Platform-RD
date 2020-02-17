@@ -11,14 +11,15 @@ import java.util.ArrayList;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JudgeResult {
-    private String cur_time;
-    private String status;
-    private Integer score;
-    private Integer num;
-    private ArrayList<String> teat_case_res;
-    private String code;
-    private String error_message;
-    private String username;
-    private String compiler;
-    private String run_time;
+    private String cur_time;    //提交时间
+    private String status;      //状态
+    private Integer score;      //分数
+    private Integer num;        //题号
+    private ArrayList<String> teat_case_res;    //测试用例结果
+    private String code;        //代码
+    private Boolean compile_error;      //是否编译失败
+    private String error_message;       //编译失败的信息
+    private String username;    //用户名
+    private String compiler;    //编译器
+    private String run_time;    //
 }
