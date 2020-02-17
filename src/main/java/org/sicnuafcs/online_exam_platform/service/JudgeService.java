@@ -2,6 +2,7 @@ package org.sicnuafcs.online_exam_platform.service;
 
 import com.alibaba.fastjson.JSONObject;
 import org.sicnuafcs.online_exam_platform.model.GetQuestion;
+import org.sicnuafcs.online_exam_platform.model.JudgeResult;
 import org.sicnuafcs.online_exam_platform.model.Question;
 import org.springframework.scheduling.annotation.AsyncResult;
 
@@ -25,9 +26,11 @@ public interface JudgeService {
 
 //    void addToDocker(String path, Long question_id, ArrayList<String> fileNames);
 
-    Question.Type findQuestionType (Long question_id);
-
-//    void deleteFile(String path, ArrayList<String> fileNames);
+    void deleteFile(Long question_id);
 
     String transformToMd5(String output);
+
+    JudgeResult transformToResult(JSONObject json);
+
+    ArrayList<String> getFileNames(Long question_id);
 }

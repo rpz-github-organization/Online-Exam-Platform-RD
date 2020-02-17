@@ -22,8 +22,6 @@ import java.util.Optional;
 public class QuestionServiceImpl implements QuestionService {
     @Autowired
     QuestionRepository questionRepository;
-    @Autowired
-    RedisUtils redisUtils;
     @Resource
     private Mapper dozerMapper;
 
@@ -31,17 +29,8 @@ public class QuestionServiceImpl implements QuestionService {
     public long saveQuestion(GetQuestion getQuestion) throws Exception {
         //将getQuestion类转化为question类
         Question question = dozerMapper.map(getQuestion, Question.class);
-
-        if (question.getQuestion_id() != null) {
-            questionRepository.save(question);
-            return question.getQuestion_id();
-
-        } else {
-            long question_id = redisUtils.incr("question_id");
-            question.setQuestion_id(question_id);
-            questionRepository.save(question);
-            return question_id;
-        }
+        questionRepository.save(question);
+        return question.getQuestion_id();
     }
 
 }

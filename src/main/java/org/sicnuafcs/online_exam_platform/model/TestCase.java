@@ -27,6 +27,4 @@ public class TestCase implements Serializable {
     private ArrayList input;
     @Column
     private ArrayList output;
-    @Column
-    private int isInDocker;
 }

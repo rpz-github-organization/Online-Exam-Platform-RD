@@ -16,6 +16,7 @@ import org.sicnuafcs.online_exam_platform.service.ExamService;
 import org.sicnuafcs.online_exam_platform.service.Impl.ExamServiceImpl;
 import org.sicnuafcs.online_exam_platform.service.JudgeService;
 import org.sicnuafcs.online_exam_platform.service.QuestionService;
+import org.sicnuafcs.online_exam_platform.util.RedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,19 +54,56 @@ public class ExamController {
     TeacherRepository teacherRepository;
     @Autowired
     DozerBeanMapperConfigure dozerBeanMapperConfigure;
+    @Autowired
+    RedisUtils redisUtils;
 
     @PostMapping("/addQuestion")
     public @ResponseBody
     AjaxResponse saveQuestion(@Valid @RequestBody GetQuestion getQuestion) throws Exception {
-        Long question_id = questionService.saveQuestion(getQuestion);
-        getQuestion.setQuestion_id(question_id);
+        //先判断是否为添加题目
+        Long question_id = getQuestion.getQuestion_id();
+        if (question_id == null) {
+            question_id = redisUtils.incr("question_id");   //添加题目 id不存在 就新建一个question_id
+            getQuestion.setQuestion_id(question_id);
+
+            //如果是编程题
+            if (getQuestion.getType() == (GetQuestion.Type.Normal_Program) || getQuestion.getType() == (GetQuestion.Type.SpecialJudge_Program)) {
+                //去question类中找到type
+                int type = 0; //类型1:normal;类型2：special judge
+                if (getQuestion.getType() == GetQuestion.Type.Normal_Program) {   //判断编程题目类型
+                    type = 1;
+                } else {
+                    type = 2;
+                }
+                judgeService.writeFile(question_id, type);
+            }
+        }
+        else {
+            //如果为修改 而且是编程题 删除之前的文件并重新创建
+            if (getQuestion.getType() == (GetQuestion.Type.Normal_Program) || getQuestion.getType() == (GetQuestion.Type.SpecialJudge_Program)) {
+                //删除
+                judgeService.deleteFile(getQuestion.getQuestion_id());
+
+                //再创建 去question类中找到type
+                int type = 0; //类型1:normal;类型2：special judge
+                if (getQuestion.getType() == GetQuestion.Type.Normal_Program) {   //判断编程题目类型
+                    type = 1;
+                } else {
+                    type = 2;
+                }
+                judgeService.writeFile(question_id, type);
+            }
+        }
+
+        questionService.saveQuestion(getQuestion);  //保存到question表
         log.info("题目 添加/更新 成功");
         if (getQuestion.getType() == (GetQuestion.Type.Normal_Program) || getQuestion.getType() == (GetQuestion.Type.SpecialJudge_Program)) {
-            judgeService.addTestCase(getQuestion);
+            judgeService.addTestCase(getQuestion);   //保存到test_case表
             log.info("添加/更新 测试用例成功");
         }
         return AjaxResponse.success(question_id);
     }
+
     @PostMapping("/addExam")
     public @ResponseBody
     AjaxResponse saveToExam(@Valid @RequestBody Exam exam) throws Exception {
@@ -79,8 +117,8 @@ public class ExamController {
     AjaxResponse judge(@Valid @RequestBody Program program) throws Exception {
         JSONObject json = judgeService.judge(program.getCode(), program.getLanguage(), program.getQuestion_id());
         log.info("判题成功");
-        log.info("ret" + json);
-        return AjaxResponse.success(json);
+        JudgeResult judgeResult = judgeService.transformToResult(json);
+        return AjaxResponse.success(judgeResult);
     }
 
     @PostMapping("/addQuestionToExam")
@@ -136,20 +174,6 @@ public class ExamController {
             ret.put("status", -1);
         }
         return AjaxResponse.success(ret);
-    }
-
-    @PostMapping("/writeFile")
-    public @ResponseBody AjaxResponse writeToDocker(@RequestBody String str) {
-        Long question_id = Long.parseLong(JSON.parseObject(str).get("question_id").toString());
-        //去question类中找到type
-        int type = 0; //类型1:normal;类型2：special judge
-        if (judgeService.findQuestionType(question_id) == Question.Type.Normal_Program) {
-            type = 1;
-        }else {
-            type = 2;
-        }
-        judgeService.writeFile(question_id, type);
-        return AjaxResponse.success("success");
     }
 }
 

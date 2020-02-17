@@ -9,10 +9,7 @@ import org.sicnuafcs.online_exam_platform.config.exception.CustomExceptionType;
 import org.sicnuafcs.online_exam_platform.dao.QuestionRepository;
 import org.sicnuafcs.online_exam_platform.dao.TeatCaseRepository;
 //import org.sicnuafcs.online_exam_platform.model.TestCase;
-import org.sicnuafcs.online_exam_platform.model.GetQuestion;
-import org.sicnuafcs.online_exam_platform.model.Question;
-import org.sicnuafcs.online_exam_platform.model.TestCase;
-import org.sicnuafcs.online_exam_platform.model.ToTestCase;
+import org.sicnuafcs.online_exam_platform.model.*;
 import org.sicnuafcs.online_exam_platform.service.JudgeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -128,8 +125,7 @@ public class JudgeServiceImpl implements JudgeService {
             in.add(toTestCase.getInput());
             out.add(toTestCase.getOutput());
         }
-        int isInDocker = 0;
-        TestCase testCase = new TestCase(getQuestion.getQuestion_id(), in, out, isInDocker);
+        TestCase testCase = new TestCase(getQuestion.getQuestion_id(), in, out);
         teatCaseRepository.save(testCase);
     }
 
@@ -247,9 +243,6 @@ public class JudgeServiceImpl implements JudgeService {
 //        //将文件放入docker中
 //        addToDocker(path, question_id, fileNames);
 //        log.info("放入docker成功");
-//
-//        //将源文件删除
-//        deleteFile(path, fileNames);
     }
 
 //    public void addToDocker(String path, Long question_id, ArrayList<String> fileNames) {
@@ -274,34 +267,29 @@ public class JudgeServiceImpl implements JudgeService {
 ////        testCase.setIsInDocker(1);
 ////    }
 
-    public Question.Type findQuestionType (Long question_id) {
-        Question.Type type = questionRepository.findTypeByQuestion_id(question_id);
-        if (type == null) {
-            log.info(question_id + "的题目类型为空 不能执行写下来的操作");
-            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "题目类型为空");
+    public void deleteFile(Long question_id) {
+        ArrayList<String> fileNames = getFileNames(question_id);
+        String path = "/home/user/ojSystemSvr/test_cases/" + question_id;   //文件夹路径
+        for (String fileName : fileNames) {
+            String path1 = path + "/" + fileName;
+            File file = new File(path1);
+            if (file.exists()) {
+                file.delete();
+            }
+            else {
+                log.info("文件不存在");
+                throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "文件不存在");
+            }
         }
-        return type;
+        File file = new File(path);
+        if (file.exists()) {
+            file.delete();
+        }
+        else {
+            log.info("目录不存在");
+            throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "目录不存在");
+        }
     }
-
-//    public void deleteFile(String path, ArrayList<String> fileNames) {
-//        for (String fileName : fileNames) {
-//            String path1 = path + "/" + fileName;
-//            File file = new File(path1);
-//            if (file.exists()) {
-//                file.delete();
-//            }
-//            else {
-//                throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "文件不存在");
-//            }
-//        }
-//        File file = new File(path);
-//        if (file.exists()) {
-//            file.delete();
-//        }
-//        else {
-//            throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "目录不存在");
-//        }
-//    }
 
     public String doPost(String URL, String jsonStr){
         OutputStreamWriter out = null;
@@ -379,5 +367,26 @@ public class JudgeServiceImpl implements JudgeService {
             }
         }
         return sb.toString();
+    }
+
+    public JudgeResult transformToResult(JSONObject json) {
+        JudgeResult judgeResult = new JudgeResult();
+        return judgeResult;
+
+    }
+
+    public ArrayList<String> getFileNames(Long question_id) {
+        ArrayList<String> fileNames = new ArrayList<>();
+
+        if (question_id == null) {
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "题号不能为空");
+        }
+        //获取in 输入数组
+        ArrayList<String> in = teatCaseRepository.getOneByQuestion_id(question_id).getInput();
+        for (int i = 1; i <= in.size(); i++) {
+            fileNames.add(i + ".in");
+            fileNames.add(i + ".out");
+        }
+        return fileNames;
     }
 }
