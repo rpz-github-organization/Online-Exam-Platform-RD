@@ -28,7 +28,6 @@ public class HomePageServiceimpl implements HomePageService {
     @Autowired
     private TeaCoRepository teaCoRepository;
 
-
     @Override
     public List<Exam> findStuById(String stu_id, int status) {
 
@@ -66,7 +65,6 @@ public class HomePageServiceimpl implements HomePageService {
             }
             exams = examRepository.findExamsByExam_idAAndProgress_status(exam_idList,exam_status);
         }
-
         return exams;
 
     }
@@ -77,12 +75,10 @@ public class HomePageServiceimpl implements HomePageService {
 
     @Override
     public List<Course> findTeaById(String tea_id) {
-
         //获取教师所授课程
         List<String> co_idList = teaCoRepository.findCo_idByTea_Id(tea_id);
-
+        log.info("co_idlist:" + co_idList.toString());
         List<Course> courses = courseRepository.findCourseByCo_idIn(co_idList);
-
         return courses;
     }
 

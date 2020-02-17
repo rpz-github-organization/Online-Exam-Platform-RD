@@ -17,7 +17,7 @@ public class Exam implements Serializable {
     public static enum ProgressStatus {
         WILL,
         ING,
-        DONE
+        DONE,
     }
 
     @Column
@@ -39,4 +39,5 @@ public class Exam implements Serializable {
     private String name;
     private Long begin_time;//时间戳
     private int last_time; //持续时间
+    private boolean is_judge; //是否判分
 }

@@ -14,4 +14,7 @@ public interface StuCoRepository extends JpaRepository<StuCo, StuCoPK> {
 
     @Query("select u.stu_id from StuCo u where u.co_id = ?1")
     List<String> findByCo_id(String co_id);
+
+    @Query("select count(u) from StuCo u where u.co_id = ?1")
+    Long findStuNumByCo_id(String co_id);
 }

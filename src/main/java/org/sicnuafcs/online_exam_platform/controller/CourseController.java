@@ -1,10 +1,15 @@
 package org.sicnuafcs.online_exam_platform.controller;
 
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.sicnuafcs.online_exam_platform.config.exception.AjaxResponse;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomException;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomExceptionType;
+import org.sicnuafcs.online_exam_platform.dao.CourseRepository;
+import org.sicnuafcs.online_exam_platform.dao.ExamRepository;
+import org.sicnuafcs.online_exam_platform.dao.StuCoRepository;
 import org.sicnuafcs.online_exam_platform.model.Course;
+import org.sicnuafcs.online_exam_platform.model.Exam;
 import org.sicnuafcs.online_exam_platform.model.GetCourse;
 import org.sicnuafcs.online_exam_platform.service.CourseSelectionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +26,12 @@ import java.util.*;
 public class CourseController {
     @Autowired
     CourseSelectionService courseSelectionService;
+    @Autowired
+    ExamRepository examRepository;
+    @Autowired
+    CourseRepository courseRepository;
+    @Autowired
+    StuCoRepository stuCoRepository;
 
 
     /**
@@ -52,7 +63,7 @@ public class CourseController {
         return AjaxResponse.success(map1);
     }
 
-    @RequestMapping("/get/Course")
+    @RequestMapping("/getByStu")
     public @ResponseBody
     AjaxResponse getAlternativeCourse(@RequestBody GetCourse getCourse) {
         String stu_id = getCourse.getStu_id();
@@ -85,5 +96,43 @@ public class CourseController {
     AjaxResponse add(@RequestBody Course course) {
         Course course1 = courseSelectionService.add(course);
         return AjaxResponse.success(course1);
+    }
+    @RequestMapping("/getByTea")
+    public @ResponseBody
+    AjaxResponse getByTea(@RequestBody String str) {
+        String tea_id = JSON.parseObject(str).get("tea_id").toString();
+        String co_id = JSON.parseObject(str).get("co_id").toString();
+        if (tea_id.equals("") || co_id.equals("")) {
+            log.info("course/getByTea:tea_id or co_id is null");
+            return AjaxResponse.error(new CustomException(CustomExceptionType.USER_INPUT_ERROR, "tea_id or co_id is null"));
+        }
+        List<Exam> exams = examRepository.findExamsByCo_idAAndTea_id(co_id, tea_id);
+        Course course = courseRepository.findCourseByCo_id(co_id);
+        List<Map<String, Object>> examRet = new ArrayList<>();
+        Map<String, Object> examsInfo = new HashMap<>();
+        Map<String, Object> ret = new HashMap<>();
+        if (course != null) {
+            ret.put("name", course.getName());
+            ret.put("stu_num", stuCoRepository.findStuNumByCo_id(co_id));
+            ret.put("credit", course.getCredit());
+            ret.put("school_hour", course.getSchool_hour());
+        } else {
+            return AjaxResponse.error(new CustomException(CustomExceptionType.USER_INPUT_ERROR, "do not exists course"));
+        }
+        for (Exam exam : exams) {
+            examsInfo.put("exam_name",exam.getName());
+            if (exam.getProgress_status().equals(Exam.ProgressStatus.WILL)) {
+                examsInfo.put("status", 0);
+            } else if (exam.getProgress_status().equals(Exam.ProgressStatus.ING)) {
+                examsInfo.put("status", 1);
+            } else {
+                examsInfo.put("status", 2);
+            }
+            examsInfo.put("is_judge", exam.is_judge());
+            examRet.add(examsInfo);
+        }
+        ret.put("exams", examRet);
+
+        return AjaxResponse.success(ret);
     }
 }
