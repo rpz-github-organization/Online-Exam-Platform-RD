@@ -14,12 +14,16 @@ public class JudgeResult {
     private String hand_in_time;    //提交时间
     private String status;      //状态
     private Integer score;      //分数
-    private Integer num;        //题号
+    private String username;    //用户名`
+    private String compiler;    //编译器x/语言
+    private String run_time;    //耗时x
+    private Integer num;        //题号x
+
     private ArrayList<String> teat_case_res;    //测试用例结果
-    private String code;        //代码
+
+    private String code;        //代码x
+
     private Boolean compile_error;      //是否编译失败`
     private String error_message;       //编译失败的信息`
-    private String username;    //用户名
-    private String compiler;    //编译器
-    private String run_time;    //运行实际
+
 }

@@ -3,10 +3,13 @@ package org.sicnuafcs.online_exam_platform.service.Impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
+import org.bouncycastle.crypto.tls.SRTPProtectionProfile;
 import org.sicnuafcs.online_exam_platform.config.JudegConfig.JudgeConfig;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomException;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomExceptionType;
 import org.sicnuafcs.online_exam_platform.dao.QuestionRepository;
+import org.sicnuafcs.online_exam_platform.dao.StuExamRepository;
+import org.sicnuafcs.online_exam_platform.dao.StudentRepository;
 import org.sicnuafcs.online_exam_platform.dao.TeatCaseRepository;
 //import org.sicnuafcs.online_exam_platform.model.TestCase;
 import org.sicnuafcs.online_exam_platform.model.*;
@@ -40,12 +43,14 @@ import java.util.concurrent.Future;
 @EnableAsync
 @Service
 public class JudgeServiceImpl implements JudgeService {
-//    @Autowired
-//    Program
+    @Autowired
+    StuExamRepository stuExamRepository;
     @Autowired
     TeatCaseRepository teatCaseRepository;
     @Autowired
     QuestionRepository questionRepository;
+    @Autowired
+    StudentRepository studentRepository;
 
     public com.alibaba.fastjson.JSONObject judge(String src, String language, Long testCaseId) {
         if (language == null || language.length() == 0) {
@@ -379,15 +384,21 @@ public class JudgeServiceImpl implements JudgeService {
         return sb.toString();
     }
 
-    public JudgeResult transformToResult(JSONObject json, Long question_id) {
+    public JudgeResult transformToResult(JSONObject json, Long question_id, String stu_id) {
         JudgeResult judgeResult = new JudgeResult();
         String err = json.getString("err");
         if (err == null) {
             //编译成功
             judgeResult.setCompile_error(true);
             judgeResult.setError_message(null);
+            //获取code  得到exam_id
+//            judgeResult.setCode(code);
 
-//            judgeResult.setCode();
+            //获取用户名
+            judgeResult.setUsername(studentRepository.findNameByStu_id(stu_id));
+
+
+
         } else {
             //编译失败
             judgeResult.setCompile_error(true);

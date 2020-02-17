@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import springfox.documentation.spring.web.json.Json;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -125,11 +126,16 @@ public class ExamController {
 
     @PostMapping("/judgeProgram")
     public @ResponseBody
-    AjaxResponse judge(@Valid @RequestBody Program program) throws Exception {
+    AjaxResponse judge(@Valid @RequestBody Program program, HttpServletRequest request) throws Exception {
+        Map userInfo = (Map) request.getSession().getAttribute("userInfo");
+        String stu_id = String.valueOf(userInfo.get("id"));
         Long question_id = program.getQuestion_id();
+
         JSONObject json = judgeService.judge(program.getCode(), program.getLanguage(), program.getQuestion_id());
         log.info("判题成功");
-        JudgeResult judgeResult = judgeService.transformToResult(json, question_id);
+
+        JudgeResult judgeResult = judgeService.transformToResult(json, question_id, stu_id);
+
         return AjaxResponse.success(judgeResult);
     }
 
