@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 
 @Slf4j
@@ -62,9 +63,11 @@ public class ExamController {
     AjaxResponse saveQuestion(@Valid @RequestBody GetQuestion getQuestion) throws Exception {
         //先判断是否为添加题目
         Long question_id = getQuestion.getQuestion_id();
+        Future<String> future = null;
         if (question_id == null) {
             question_id = redisUtils.incr("question_id");   //添加题目 id不存在 就新建一个question_id
             getQuestion.setQuestion_id(question_id);
+
 
             //如果是编程题
             if (getQuestion.getType() == (GetQuestion.Type.Normal_Program) || getQuestion.getType() == (GetQuestion.Type.SpecialJudge_Program)) {
@@ -75,7 +78,7 @@ public class ExamController {
                 } else {
                     type = 2;
                 }
-                judgeService.writeFile(question_id, type);
+                future = judgeService.writeFile(question_id, type);
             }
         }
         else {
@@ -91,11 +94,17 @@ public class ExamController {
                 } else {
                     type = 2;
                 }
-                judgeService.writeFile(question_id, type);
+                future = judgeService.writeFile(question_id, type);
             }
         }
 
         questionService.saveQuestion(getQuestion);  //保存到question表
+        try {
+            future.get();
+        } catch (Exception e) {
+            new CustomException(CustomExceptionType.OTHER_ERROR, e.getMessage());
+        }
+
         log.info("题目 添加/更新 成功");
         if (getQuestion.getType() == (GetQuestion.Type.Normal_Program) || getQuestion.getType() == (GetQuestion.Type.SpecialJudge_Program)) {
             judgeService.addTestCase(getQuestion);   //保存到test_case表
