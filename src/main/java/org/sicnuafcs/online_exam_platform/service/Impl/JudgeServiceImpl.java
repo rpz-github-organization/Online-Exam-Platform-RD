@@ -177,20 +177,25 @@ public class JudgeServiceImpl implements JudgeService {
             JSONObject info = new JSONObject();
             JSONObject test_cases = new JSONObject();
             if (type == 1) {    //normal
-                info.put("spj","false");
+                info.put("spj",false);
                 for (int i = 1; i <= in.size(); i++) {
                     JSONObject test_case = new JSONObject();
                     String output_md5 = transformToMd5(out.get(i - 1));
                     test_case.put("stripped_output_md5", output_md5);
 
                     //output
-                    int output_size = out.get(i - 1).split(" ").length;
+                    File file = new File(path + "/" + i +".out");
+                    if (!file.exists()) {
+                        System.out.println("文件不存在");
+                    }
+                    Long output_size = file.length();
                     String output_name = i + ".out";
                     test_case.put("output_size", output_size);
                     test_case.put("output_name", output_name);
 
                     //input
-                    int input_size = in.get(i - 1).split(" ").length;
+                    File files = new File(path + "/" + i +".in");
+                    Long input_size = files.length();
                     String input_name = i + ".in";
                     test_case.put("input_name", input_name);
                     test_case.put("input_size", input_size);
@@ -200,12 +205,13 @@ public class JudgeServiceImpl implements JudgeService {
                 info.put("test_cases", test_cases);
             }
             else if (type == 2) {   //spj
-                info.put("spj","true");
+                info.put("spj",true);
                 for (int i = 1; i <= in.size(); i++) {
                     JSONObject test_case = new JSONObject();
 
                     //input
-                    int input_size = in.get(i - 1).split(" ").length;
+                    File file = new File(path + "/" + i +".in");
+                    Long input_size = file.length();
                     String input_name = i + ".in";
                     test_case.put("input_name", input_name);
                     test_case.put("input_size", input_size);
