@@ -80,7 +80,7 @@ public class ExamController {
                 } else {
                     type = 2;
                 }
-                future = judgeService.writeFile(question_id, type);
+                future = judgeService.writeFile(question_id, type, getQuestion);
             }
         }
         else {
@@ -96,7 +96,7 @@ public class ExamController {
                 } else {
                     type = 2;
                 }
-                future = judgeService.writeFile(question_id, type);
+                future = judgeService.writeFile(question_id, type, getQuestion);
             }
         }
 
@@ -126,9 +126,10 @@ public class ExamController {
     @PostMapping("/judgeProgram")
     public @ResponseBody
     AjaxResponse judge(@Valid @RequestBody Program program) throws Exception {
+        Long question_id = program.getQuestion_id();
         JSONObject json = judgeService.judge(program.getCode(), program.getLanguage(), program.getQuestion_id());
         log.info("判题成功");
-        JudgeResult judgeResult = judgeService.transformToResult(json);
+        JudgeResult judgeResult = judgeService.transformToResult(json, question_id);
         return AjaxResponse.success(judgeResult);
     }
 

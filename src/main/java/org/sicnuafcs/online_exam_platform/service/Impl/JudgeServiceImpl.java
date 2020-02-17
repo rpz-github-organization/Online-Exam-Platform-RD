@@ -40,8 +40,8 @@ import java.util.concurrent.Future;
 @EnableAsync
 @Service
 public class JudgeServiceImpl implements JudgeService {
-
-
+//    @Autowired
+//    Program
     @Autowired
     TeatCaseRepository teatCaseRepository;
     @Autowired
@@ -129,7 +129,7 @@ public class JudgeServiceImpl implements JudgeService {
 
     //异步
     @Async
-    public Future<String> writeFile(Long question_id, int type) throws InterruptedException {
+    public Future<String> writeFile(Long question_id, int type,GetQuestion getQuestion) throws InterruptedException {
         //保存的文件名字
         ArrayList<String> fileNames = new ArrayList<>();
 
@@ -137,9 +137,13 @@ public class JudgeServiceImpl implements JudgeService {
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "题号不能为空");
         }
 
-        //获取in out输入输出数组，并写入文件
-        ArrayList<String> in = teatCaseRepository.getOneByQuestion_id(question_id).getInput();
-        ArrayList<String> out = teatCaseRepository.getOneByQuestion_id(question_id).getOutput();
+        //从getQuestion中获取in out输入输出数组，并写入文件
+        ArrayList<String> in = new ArrayList<>();
+        ArrayList<String> out = new ArrayList<>();
+        for (ToTestCase toTestCase : getQuestion.getTest_case()) {
+            in.add(toTestCase.getInput());
+            out.add(toTestCase.getOutput());
+        }
         //先创建该id的目录
         String path = "/home/user/ojSystemSvr/test_cases/"+question_id;
         File f = new File(path);
@@ -279,9 +283,17 @@ public class JudgeServiceImpl implements JudgeService {
                 throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "文件不存在");
             }
         }
-        File file = new File(path);
+        File file = new File(path + "/info");
         if (file.exists()) {
             file.delete();
+        }
+        else {
+            log.info("info文件不存在");
+            throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "info文件不存在");
+        }
+        File files = new File(path);
+        if (files.exists()) {
+            files.delete();
         }
         else {
             log.info("目录不存在");
@@ -367,15 +379,19 @@ public class JudgeServiceImpl implements JudgeService {
         return sb.toString();
     }
 
-    public JudgeResult transformToResult(JSONObject json) {
+    public JudgeResult transformToResult(JSONObject json, Long question_id) {
         JudgeResult judgeResult = new JudgeResult();
         String err = json.getString("err");
         if (err == null) {
             //编译成功
+            judgeResult.setCompile_error(true);
+            judgeResult.setError_message(null);
 
+//            judgeResult.setCode();
         } else {
             //编译失败
             judgeResult.setCompile_error(true);
+            judgeResult.setError_message(json.getString("data"));
         }
         return judgeResult;
 

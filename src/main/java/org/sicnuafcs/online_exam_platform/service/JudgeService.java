@@ -23,7 +23,7 @@ public interface JudgeService {
 
     void addTestCase(GetQuestion getQuestion);
 
-    Future<String> writeFile(Long question_id, int type) throws InterruptedException;
+    Future<String> writeFile(Long question_id, int type, GetQuestion getQuestion) throws InterruptedException;
 
 //    void addToDocker(String path, Long question_id, ArrayList<String> fileNames);
 
@@ -31,7 +31,7 @@ public interface JudgeService {
 
     String transformToMd5(String output);
 
-    JudgeResult transformToResult(JSONObject json);
+    JudgeResult transformToResult(JSONObject json, Long question_id);
 
     ArrayList<String> getFileNames(Long question_id);
 }
