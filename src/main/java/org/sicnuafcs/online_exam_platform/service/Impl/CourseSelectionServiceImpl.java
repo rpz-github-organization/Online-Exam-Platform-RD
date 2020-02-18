@@ -1,16 +1,20 @@
 package org.sicnuafcs.online_exam_platform.service.Impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.dozer.DozerBeanMapper;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomException;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomExceptionType;
 import org.sicnuafcs.online_exam_platform.dao.*;
 import org.sicnuafcs.online_exam_platform.model.Course;
+import org.sicnuafcs.online_exam_platform.model.CourseVO;
 import org.sicnuafcs.online_exam_platform.model.StuCo;
 import org.sicnuafcs.online_exam_platform.model.Student;
 import org.sicnuafcs.online_exam_platform.service.CourseSelectionService;
+import org.sicnuafcs.online_exam_platform.service.HomePageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -25,15 +29,16 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
     TeacherRepository teacherRepository;
     @Autowired
     CourseRepository courseRepository;
-
     @Autowired
     MajorRepository majorRepository;
-
     @Autowired
     StuCoRepository stuCoRepository;
-
     @Autowired
     TeaCoRepository teaCoRepository;
+    @Resource
+    HomePageService homePageService;
+    @Autowired
+    DozerBeanMapper dozerBeanMapper;
 
     @Override
     public String getClass_id(String stu_id) {
@@ -71,7 +76,7 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
         ArrayList<String> course = new ArrayList<>();   //可选的课程
         List<Course> courses = courseRepository.findAll();  //所有课程
         for (int i = 0; i < courses.size(); i++) {
-            ArrayList majors = courses.get(i).getMajor_list();  //每个课程对应的所有的专业
+            ArrayList<String> majors = homePageService.String2List(courses.get(i).getMajor());  //每个课程对应的所有的专业
             if (majors.contains(major_id)) {
                 course.add(courses.get(i).getCo_id());
             }
@@ -124,7 +129,11 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
     }
 
     @Override
-    public Course add(Course course) {
+    public Course add(CourseVO courseVO) {
+        Course course = dozerBeanMapper.map(courseVO, Course.class);
+        if (courseVO.getMajor_list() != null) {
+            course.setMajor(homePageService.List2String(courseVO.getMajor_list()));
+        }
         courseRepository.save(course);
         return course;
     }

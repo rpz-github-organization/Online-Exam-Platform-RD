@@ -9,6 +9,7 @@ import org.sicnuafcs.online_exam_platform.dao.CourseRepository;
 import org.sicnuafcs.online_exam_platform.dao.ExamRepository;
 import org.sicnuafcs.online_exam_platform.dao.StuCoRepository;
 import org.sicnuafcs.online_exam_platform.model.Course;
+import org.sicnuafcs.online_exam_platform.model.CourseVO;
 import org.sicnuafcs.online_exam_platform.model.Exam;
 import org.sicnuafcs.online_exam_platform.model.GetCourse;
 import org.sicnuafcs.online_exam_platform.service.CourseSelectionService;
@@ -93,9 +94,9 @@ public class CourseController {
 
     @RequestMapping("/add")
     public @ResponseBody
-    AjaxResponse add(@RequestBody Course course) {
-        Course course1 = courseSelectionService.add(course);
-        return AjaxResponse.success(course1);
+    AjaxResponse add(@RequestBody CourseVO courseVO) {
+        Course course1 = courseSelectionService.add(courseVO);
+        return AjaxResponse.success("success");
     }
     @RequestMapping("/getByTea")
     public @ResponseBody

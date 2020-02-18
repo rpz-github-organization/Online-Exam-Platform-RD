@@ -1,13 +1,12 @@
 package org.sicnuafcs.online_exam_platform.service.Impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.dozer.DozerBeanMapper;
 import org.sicnuafcs.online_exam_platform.dao.*;
-import org.sicnuafcs.online_exam_platform.model.Course;
-import org.sicnuafcs.online_exam_platform.model.Exam;
-import org.sicnuafcs.online_exam_platform.model.StuExam;
-import org.sicnuafcs.online_exam_platform.model.Student;
+import org.sicnuafcs.online_exam_platform.model.*;
 import org.sicnuafcs.online_exam_platform.service.HomePageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.stereotype.Service;
 import java.util.*;
 
@@ -27,6 +26,8 @@ public class HomePageServiceimpl implements HomePageService {
     private TeacherRepository teaRepository;
     @Autowired
     private TeaCoRepository teaCoRepository;
+    @Autowired
+    private DozerBeanMapper dozerBeanMapper;
 
     @Override
     public List<Exam> findStuById(String stu_id, int status) {
@@ -74,18 +75,43 @@ public class HomePageServiceimpl implements HomePageService {
 
 
     @Override
-    public List<Course> findTeaById(String tea_id) {
+    public List<CourseVO> findTeaById(String tea_id) {
         //获取教师所授课程
         List<String> co_idList = teaCoRepository.findCo_idByTea_Id(tea_id);
-//        List<Course> courses = courseRepository.findCourseByCo_idIn(co_idList);
-        ArrayList<Course> courses = new ArrayList<>();
-        for (String co_id : co_idList) {
-            Course course = courseRepository.findCourseByCo_id(co_id);
-            System.out.println(course);
-            courses.add(course);
+        List<Course> course = courseRepository.findCourseByCo_idIn(co_idList);
+        List<CourseVO> courses = new ArrayList<>();
+        for (int i = 0; i < course.size(); i++) {
+            courses.add(dozerBeanMapper.map(course.get(i),CourseVO.class));
+            courses.get(i).setMajor_list(String2List(course.get(i).getMajor()));
         }
         return courses;
     }
 
+    @Override
+    public String List2String(ArrayList<String> list){
+        JSONArray jsonArray = new JSONArray();
+        for(int i=0;i<list.size();++i){
+            try{
+                jsonArray.put(list.get(i));
+            }catch (Exception e){
+                //这里处理异常
+                break;
+            }
+        }
+        return jsonArray.toString();
+    }
 
+    @Override
+    public ArrayList<String> String2List(String s){
+        ArrayList<String> list = new ArrayList<>();
+        try{
+            JSONArray jsonArray = new JSONArray(s);
+            for(int i=0;i<jsonArray.length();++i){
+                list.add(jsonArray.getString(i));
+            }
+        }catch (Exception e){
+            //这里处理异常
+        }
+        return list;
+    }
 }

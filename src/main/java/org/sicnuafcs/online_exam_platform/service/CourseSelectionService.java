@@ -1,6 +1,7 @@
 package org.sicnuafcs.online_exam_platform.service;
 
 import org.sicnuafcs.online_exam_platform.model.Course;
+import org.sicnuafcs.online_exam_platform.model.CourseVO;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -20,5 +21,5 @@ public interface CourseSelectionService {
 
     String getMajorName(String major_id);
 
-    Course add(Course course);
+    Course add(CourseVO courseVO);
 }

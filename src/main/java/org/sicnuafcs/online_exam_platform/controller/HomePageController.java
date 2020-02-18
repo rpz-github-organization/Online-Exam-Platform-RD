@@ -8,6 +8,7 @@ import org.sicnuafcs.online_exam_platform.config.exception.AjaxResponse;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomException;
 
 import org.sicnuafcs.online_exam_platform.model.Course;
+import org.sicnuafcs.online_exam_platform.model.CourseVO;
 import org.sicnuafcs.online_exam_platform.model.Exam;
 import org.sicnuafcs.online_exam_platform.service.HomePageService;
 
@@ -49,7 +50,7 @@ public class HomePageController {
     public @ResponseBody
     AjaxResponse findTeaById(@RequestBody String str) {
         String tea_id = JSON.parseObject(str).get("tea_id").toString();
-        List<Course> json = homePageService.findTeaById(tea_id);
+        List<CourseVO> json = homePageService.findTeaById(tea_id);
         return AjaxResponse.success(json);
 
     }
