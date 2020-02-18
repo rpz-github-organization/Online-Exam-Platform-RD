@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
 
 import java.io.*;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -32,7 +33,7 @@ public class DockerUtils {
 
     static {
 
-        //获取配置文件 try-with-resources
+        //获取端口配置文件 try-with-resources
         Properties properties = new Properties();
         try(InputStream inputStream = DockerUtils.class.getClassLoader().getResourceAsStream("application.properties")) {
             properties.load(inputStream);
@@ -40,10 +41,21 @@ public class DockerUtils {
             e.printStackTrace();
         }
 
+        //证书路径
+        String DockerCertPath = DockerUtils.class.getClassLoader().getResource("dockertls").getPath();
+        if (System.getProperties().getProperty("os.name").contains("Windows")) {
+            DockerCertPath = DockerCertPath.substring(1);
+        }
+
         // 添加配置
         DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
                 .withDockerHost(properties.getProperty("DOCKER_HOST"))
+                .withDockerTlsVerify(true)
+                // 证书的本地位置
+                .withDockerCertPath(DockerCertPath)
                 .build();
+
+
 
         // docker命令执行工厂
         DockerCmdExecFactory dockerCmdExecFactory = new JerseyDockerCmdExecFactory()
@@ -53,6 +65,10 @@ public class DockerUtils {
                 .withMaxPerRouteConnections(10);
 
         dockerClient = DockerClientBuilder.getInstance(config).withDockerCmdExecFactory(dockerCmdExecFactory).build();
+    }
+
+    public static void main(String[] args) {
+        System.out.println(System.getProperties().getProperty("os.name"));
     }
 
     /**

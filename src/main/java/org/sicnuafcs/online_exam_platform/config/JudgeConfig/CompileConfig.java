@@ -1,4 +1,4 @@
-package org.sicnuafcs.online_exam_platform.config.JudegConfig;
+package org.sicnuafcs.online_exam_platform.config.JudgeConfig;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

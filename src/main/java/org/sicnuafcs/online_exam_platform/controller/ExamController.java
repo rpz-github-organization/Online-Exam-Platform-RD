@@ -105,7 +105,7 @@ public class ExamController {
         try {
             future.get();
         } catch (Exception e) {
-            new CustomException(CustomExceptionType.OTHER_ERROR, e.getMessage());
+            throw new CustomException(CustomExceptionType.OTHER_ERROR, e.getMessage());
         }
 
         log.info("题目 添加/更新 成功");
