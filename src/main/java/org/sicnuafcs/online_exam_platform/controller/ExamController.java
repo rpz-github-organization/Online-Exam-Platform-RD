@@ -182,10 +182,10 @@ public class ExamController {
             TestCase testCase = testCaseRepository.getOneByQuestion_id(question_id);
             if (testCase != null) {
                 if (testCase.getInput().size() > 0 ) {
-                    ret.put("input", testCase.getInput().indexOf(0));
+                    ret.put("input", testCase.getInput().get(0));
                 }
                 if (testCase.getOutput().size() > 0) {
-                    ret.put("output", testCase.getOutput().indexOf(0));
+                    ret.put("output", testCase.getOutput().get(0));
                 }
             }
         }
