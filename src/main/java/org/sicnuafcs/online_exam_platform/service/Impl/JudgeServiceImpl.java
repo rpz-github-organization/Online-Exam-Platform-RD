@@ -63,15 +63,15 @@ public class JudgeServiceImpl implements JudgeService {
         //LinkedMultiValueMap body = new LinkedMultiValueMap();
 
         JudgeConfig.LangConfig langConfig;
-        if ("c".equalsIgnoreCase(language)) {
+        if ("C".equalsIgnoreCase(language)) {
             langConfig = new JudgeConfig.ClangConfig();
-        } else if ("cpp".equalsIgnoreCase(language)) {
+        } else if ("C++".equalsIgnoreCase(language)) {
             langConfig = new JudgeConfig.CPPLangConfig();
-        } else if ("java".equalsIgnoreCase(language)) {
+        } else if ("Java".equalsIgnoreCase(language)) {
             langConfig = new JudgeConfig.JavaLangConfig();
-        } else if ("python2".equalsIgnoreCase(language)) {
+        } else if ("Python2".equalsIgnoreCase(language)) {
             langConfig = new JudgeConfig.PY2LangConfig();
-        } else if ("python3".equalsIgnoreCase(language)) {
+        } else if ("Python3".equalsIgnoreCase(language)) {
             langConfig = new JudgeConfig.PY3LangConfig();
         } else {
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "暂不支持此语言");
