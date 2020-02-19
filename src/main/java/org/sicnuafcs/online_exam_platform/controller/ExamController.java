@@ -129,13 +129,9 @@ public class ExamController {
     AjaxResponse judge(@Valid @RequestBody Program program, HttpServletRequest request) throws Exception {
         Map userInfo = (Map) request.getSession().getAttribute("userInfo");
         String stu_id = String.valueOf(userInfo.get("id"));
-        Long question_id = program.getQuestion_id();
-
         JSONObject json = judgeService.judge(program.getCode(), program.getLanguage(), program.getQuestion_id());
         log.info("判题成功");
-
-        JudgeResult judgeResult = judgeService.transformToResult(json, question_id, stu_id);
-
+        JudgeResult judgeResult = judgeService.transformToResult(json, stu_id, program.getCode(), program.getLanguage(), program.getQuestion_id(), program.getExam_id());
         return AjaxResponse.success(judgeResult);
     }
 

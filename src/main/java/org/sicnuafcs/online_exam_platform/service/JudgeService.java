@@ -31,7 +31,9 @@ public interface JudgeService {
 
     String transformToMd5(String output);
 
-    JudgeResult transformToResult(JSONObject json, Long question_id, String stu_id);
+    JudgeResult transformToResult(JSONObject json, String stu_id, String code, String language, Long question_id, Long exam_id);
 
     ArrayList<String> getFileNames(Long question_id);
+
+    String getJudgeResult(int result);
 }

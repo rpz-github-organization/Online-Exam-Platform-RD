@@ -16,5 +16,6 @@ public class Program implements Serializable {
     private String code;
     @NotBlank(message = "语言不为空")
     private String language;
-    private  Long question_id;
+    private Long question_id;
+    private Long exam_id;
 }

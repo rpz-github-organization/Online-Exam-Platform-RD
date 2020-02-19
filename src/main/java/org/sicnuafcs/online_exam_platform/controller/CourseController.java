@@ -8,10 +8,8 @@ import org.sicnuafcs.online_exam_platform.config.exception.CustomExceptionType;
 import org.sicnuafcs.online_exam_platform.dao.CourseRepository;
 import org.sicnuafcs.online_exam_platform.dao.ExamRepository;
 import org.sicnuafcs.online_exam_platform.dao.StuCoRepository;
-import org.sicnuafcs.online_exam_platform.model.Course;
-import org.sicnuafcs.online_exam_platform.model.CourseVO;
-import org.sicnuafcs.online_exam_platform.model.Exam;
-import org.sicnuafcs.online_exam_platform.model.GetCourse;
+import org.sicnuafcs.online_exam_platform.dao.TeacherRepository;
+import org.sicnuafcs.online_exam_platform.model.*;
 import org.sicnuafcs.online_exam_platform.service.CourseSelectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -33,6 +31,8 @@ public class CourseController {
     CourseRepository courseRepository;
     @Autowired
     StuCoRepository stuCoRepository;
+    @Autowired
+    TeacherRepository teacherRepository;
 
 
     /**
@@ -129,11 +129,14 @@ public class CourseController {
             } else {
                 examsInfo.put("status", 2);
             }
+            examsInfo.put("begin_time", exam.getBegin_time());
+            examsInfo.put("last_time", exam.getLast_time());
             examsInfo.put("is_judge", exam.is_judge());
             examRet.add(examsInfo);
         }
         ret.put("exams", examRet);
-
+        ret.put("tea_id", tea_id);
+        ret.put("teacherName", teacherRepository.getNameByTea_id(tea_id));
         return AjaxResponse.success(ret);
     }
 }

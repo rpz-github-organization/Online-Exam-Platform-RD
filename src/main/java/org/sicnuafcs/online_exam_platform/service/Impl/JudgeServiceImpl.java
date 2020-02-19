@@ -1,17 +1,13 @@
 package org.sicnuafcs.online_exam_platform.service.Impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
-import org.bouncycastle.crypto.tls.SRTPProtectionProfile;
-import org.sicnuafcs.online_exam_platform.config.JudegConfig.JudgeConfig;
+import org.sicnuafcs.online_exam_platform.config.JudgeConfig.JudgeConfig;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomException;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomExceptionType;
-import org.sicnuafcs.online_exam_platform.dao.QuestionRepository;
-import org.sicnuafcs.online_exam_platform.dao.StuExamRepository;
-import org.sicnuafcs.online_exam_platform.dao.StudentRepository;
-import org.sicnuafcs.online_exam_platform.dao.TeatCaseRepository;
-//import org.sicnuafcs.online_exam_platform.model.TestCase;
+import org.sicnuafcs.online_exam_platform.dao.*;
 import org.sicnuafcs.online_exam_platform.model.*;
 import org.sicnuafcs.online_exam_platform.service.JudgeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +47,8 @@ public class JudgeServiceImpl implements JudgeService {
     QuestionRepository questionRepository;
     @Autowired
     StudentRepository studentRepository;
+    @Autowired
+    ExamQuestionRepository examQuestionRepository;
 
     public com.alibaba.fastjson.JSONObject judge(String src, String language, Long testCaseId) {
         if (language == null || language.length() == 0) {
@@ -384,21 +382,57 @@ public class JudgeServiceImpl implements JudgeService {
         return sb.toString();
     }
 
-    public JudgeResult transformToResult(JSONObject json, Long question_id, String stu_id) {
+    public JudgeResult transformToResult(JSONObject json, String stu_id, String code, String language, Long question_id, Long exam_id) {
         JudgeResult judgeResult = new JudgeResult();
         String err = json.getString("err");
         if (err == null) {
             //编译成功
-            judgeResult.setCompile_error(true);
+            judgeResult.setCompile_error(false);
             judgeResult.setError_message(null);
-            //获取code  得到exam_id
-//            judgeResult.setCode(code);
+
+            judgeResult.setCode(code);
+            judgeResult.setLanguage(language);
 
             //获取用户名
             judgeResult.setUsername(studentRepository.findNameByStu_id(stu_id));
 
+            //获取测试用例结果列表
+            int count = 0;
+            int right = 0;
+            ArrayList<TestCaseRes> list = new ArrayList<>();
+            JSONArray test_case_res = json.getJSONArray("data");
+            for (Object test_case : test_case_res) {
+                TestCaseRes testCaseRes = new TestCaseRes();
+                JSONObject res = (JSONObject) test_case;
+                testCaseRes.setCase_num(Integer.valueOf(res.get("test_case").toString()));
+                testCaseRes.setRun_time(res.get("real_time").toString() + "ms");
+                testCaseRes.setMemory(res.get("memory").toString() + "KB");  //单位
+                int result = Integer.parseInt(res.get("result").toString());
+                String judgeres = getJudgeResult(result);
+                if (judgeres.equals("答案正确")) {
+                    right++;
+                }
+                testCaseRes.setResult(judgeres);
+                list.add( testCaseRes);
+                count++;
+            }
+            judgeResult.setTeat_case_res(list);
 
+            //状态 分数
+            int Full = examQuestionRepository.findScoreById(question_id, exam_id);
+            if (right == count) {
+                judgeResult.setStatus("答案正确");
+                judgeResult.setScore(Full);
+            }else if (right < count && right > 0) {
+                judgeResult.setStatus("部分正确");
+                judgeResult.setScore(right / count * Full);
+            }else if (right == 0) {
+                judgeResult.setStatus("答案错误");
+                judgeResult.setScore(0);
+            }
 
+            //题号
+            judgeResult.setNum(examQuestionRepository.findNumById(question_id, exam_id));
         } else {
             //编译失败
             judgeResult.setCompile_error(true);
@@ -421,5 +455,34 @@ public class JudgeServiceImpl implements JudgeService {
             fileNames.add(i + ".out");
         }
         return fileNames;
+    }
+
+    public String getJudgeResult(int result) {
+        String str = null;
+        switch (result) {
+            case 0:
+                str = "答案正确";
+                break;
+            case -1:
+                str = "答案错误";
+                break;
+            case 1:
+                str = "运行超时";
+                break;
+            case 2:
+                str = "运行超时";
+                break;
+            case 3:
+                str = "内存超限";
+                break;
+            case 4:
+                str = "运行时错误";
+                break;
+            case 5:
+                str = "系统错误";
+                break;
+
+        }
+        return str;
     }
 }

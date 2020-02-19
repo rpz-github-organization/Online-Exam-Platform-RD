@@ -12,4 +12,6 @@ public interface ExamQuestionRepository extends JpaRepository<ExamQuestion, Stri
     ArrayList<ExamQuestion> findByExam_idAndType(Long exam_id, Question.Type type);
     @Query("select u.score from ExamQuestion u where u.question_id = ?1 and u.exam_id = ?2")
     int findScoreById(Long question_id, Long exam_id);
+    @Query("select u.num from ExamQuestion u where u.question_id = ?1 and u.exam_id = ?2")
+    int findNumById(Long question_id, Long exam_id);
 }

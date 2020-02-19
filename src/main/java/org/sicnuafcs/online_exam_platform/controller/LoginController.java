@@ -44,7 +44,6 @@ public class LoginController {
 
         //添加数据到session
         request.getSession().setAttribute("userInfo", map);
-        System.out.println(map);
         return AjaxResponse.success(map);
     }
 //
