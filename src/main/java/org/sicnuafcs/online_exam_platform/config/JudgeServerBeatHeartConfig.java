@@ -32,7 +32,7 @@ import java.util.List;
 public class JudgeServerBeatHeartConfig {
 
     @Scheduled(cron = "0/5 * * * * ?")
-    private void beatHeart() {
+    public void beatHeart() {
 
         List<Container> containerList = DockerUtils.listContainersCmd();
         if (containerList == null || containerList.size() == 0) {
