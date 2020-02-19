@@ -42,7 +42,7 @@ public class JudgeServiceImpl implements JudgeService {
     @Autowired
     StuExamRepository stuExamRepository;
     @Autowired
-    TeatCaseRepository teatCaseRepository;
+    TestCaseRepository teatCaseRepository;
     @Autowired
     QuestionRepository questionRepository;
     @Autowired

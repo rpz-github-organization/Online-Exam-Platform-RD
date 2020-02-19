@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 
 @Repository
-public interface TeatCaseRepository extends JpaRepository<TestCase, Long> {
+public interface TestCaseRepository extends JpaRepository<TestCase, Long> {
     @Query("select u from TestCase u where u.question_id = ?1")
     TestCase getOneByQuestion_id(Long question_id);
 

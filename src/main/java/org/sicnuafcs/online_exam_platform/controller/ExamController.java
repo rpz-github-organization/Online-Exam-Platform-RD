@@ -60,6 +60,8 @@ public class ExamController {
     DozerBeanMapperConfigure dozerBeanMapperConfigure;
     @Autowired
     RedisUtils redisUtils;
+    @Autowired
+    TestCaseRepository testCaseRepository;
 
     @PostMapping("/addQuestion")
     public @ResponseBody
@@ -164,8 +166,31 @@ public class ExamController {
         Question question;
         Long question_id = Long.parseLong(JSON.parseObject(str).get("question_id").toString());
         question = questionRepository.findById(question_id).get();
+        if (question == null) {
+            return AjaxResponse.error(new CustomException(CustomExceptionType.USER_INPUT_ERROR, "do not exist question"));
+        }
+        Map<String, Object> ret = new HashMap<>();
+        ret.put("question_id", question.getQuestion_id());
+        ret.put("question", question.getQuestion());
+        ret.put("type", question.getType());
+        ret.put("answer", question.getAnswer());
+        ret.put("tag", question.getTag());
+        ret.put("tea_id", question.getTea_id());
+        ret.put("tip", question.getTip());
+        ret.put("options", question.getOptions());
+        if (question.getType() == Question.Type.SpecialJudge_Program || question.getType() == Question.Type.Normal_Program) {
+            TestCase testCase = testCaseRepository.getOneByQuestion_id(question_id);
+            if (testCase != null) {
+                if (testCase.getInput().size() > 0 ) {
+                    ret.put("input", testCase.getInput().indexOf(0));
+                }
+                if (testCase.getOutput().size() > 0) {
+                    ret.put("output", testCase.getOutput().indexOf(0));
+                }
+            }
+        }
         log.info("获取questionid为：" + question_id + "的题目成功");
-        return AjaxResponse.success(question);
+        return AjaxResponse.success(ret);
     }
 
     @PostMapping("/stuExamInfo")
