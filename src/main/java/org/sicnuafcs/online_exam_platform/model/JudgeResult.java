@@ -18,7 +18,7 @@ public class JudgeResult {
     private String language;    //语言`
     private Integer num;        //题号`
 
-    private ArrayList<TestCaseRes> teat_case_res;    //测试用例结果`
+    private ArrayList<TestCaseRes> test_case_res;    //测试用例结果`
 
     private String code;        //代码`
 

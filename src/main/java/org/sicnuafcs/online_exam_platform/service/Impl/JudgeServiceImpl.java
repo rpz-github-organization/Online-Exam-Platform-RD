@@ -42,7 +42,7 @@ public class JudgeServiceImpl implements JudgeService {
     @Autowired
     StuExamRepository stuExamRepository;
     @Autowired
-    TestCaseRepository teatCaseRepository;
+    TestCaseRepository testCaseRepository;
     @Autowired
     QuestionRepository questionRepository;
     @Autowired
@@ -127,7 +127,7 @@ public class JudgeServiceImpl implements JudgeService {
             out.add(toTestCase.getOutput());
         }
         TestCase testCase = new TestCase(getQuestion.getQuestion_id(), in, out);
-        teatCaseRepository.save(testCase);
+        testCaseRepository.save(testCase);
     }
 
     //异步
@@ -416,7 +416,7 @@ public class JudgeServiceImpl implements JudgeService {
                 list.add( testCaseRes);
                 count++;
             }
-            judgeResult.setTeat_case_res(list);
+            judgeResult.setTest_case_res(list);
 
             //状态 分数
             int Full = examQuestionRepository.findScoreById(question_id, exam_id);
@@ -449,7 +449,7 @@ public class JudgeServiceImpl implements JudgeService {
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "题号不能为空");
         }
         //获取in 输入数组
-        ArrayList<String> in = teatCaseRepository.getOneByQuestion_id(question_id).getInput();
+        ArrayList<String> in = testCaseRepository.getOneByQuestion_id(question_id).getInput();
         for (int i = 1; i <= in.size(); i++) {
             fileNames.add(i + ".in");
             fileNames.add(i + ".out");
