@@ -24,7 +24,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         log.info("userInfo:"+session.getAttribute("userInfo"));
         //获取用户信息 如果没有用户信息就提示没有登录
         Object userInfo = session.getAttribute("userInfo");
-        if (userInfo == null) {
+            if (userInfo == null) {
             log.info("没有登录");
 //            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "没有登录或登录失败");
             response.sendError(400,"没有登录或登陆失败");

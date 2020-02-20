@@ -12,6 +12,7 @@ import org.sicnuafcs.online_exam_platform.dao.QuestionRepository;
 import org.sicnuafcs.online_exam_platform.dao.StuExamRepository;
 import org.sicnuafcs.online_exam_platform.dao.*;
 import org.sicnuafcs.online_exam_platform.model.*;
+import org.sicnuafcs.online_exam_platform.service.AuthorityCheckService;
 import org.sicnuafcs.online_exam_platform.service.ExamService;
 import org.sicnuafcs.online_exam_platform.service.Impl.ExamServiceImpl;
 import org.sicnuafcs.online_exam_platform.service.JudgeService;
@@ -62,10 +63,19 @@ public class ExamController {
     RedisUtils redisUtils;
     @Autowired
     TestCaseRepository testCaseRepository;
+    @Autowired
+    AuthorityCheckService authorityCheckService;
 
+    /**
+     * 老师添加/更新题目
+     * @param getQuestion
+     * @return
+     * @throws Exception
+     */
     @PostMapping("/addQuestion")
     public @ResponseBody
-    AjaxResponse saveQuestion(@Valid @RequestBody GetQuestion getQuestion) throws Exception {
+    AjaxResponse saveQuestion(@Valid @RequestBody GetQuestion getQuestion, HttpServletRequest httpServletRequest) throws Exception {
+        authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
         //先判断是否为添加题目
         Long question_id = getQuestion.getQuestion_id();
         Future<String> future = null;
@@ -118,17 +128,32 @@ public class ExamController {
         return AjaxResponse.success(question_id);
     }
 
+    /**
+     * 老师添加/更新考试
+     * @param exam
+     * @return
+     * @throws Exception
+     */
     @PostMapping("/addExam")
     public @ResponseBody
-    AjaxResponse saveToExam(@Valid @RequestBody Exam exam) throws Exception {
+    AjaxResponse saveToExam(@Valid @RequestBody Exam exam, HttpServletRequest httpServletRequest) throws Exception {
+        authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
         long exam_id = examService.saveToExam(exam);
         log.info("添加/更新 试卷成功");
         return AjaxResponse.success(exam_id);
     }
 
+    /**
+     * 学生编程题判题
+     * @param program
+     * @param request
+     * @return
+     * @throws Exception
+     */
     @PostMapping("/judgeProgram")
     public @ResponseBody
-    AjaxResponse judge(@Valid @RequestBody Program program, HttpServletRequest request) throws Exception {
+    AjaxResponse judge(@Valid @RequestBody Program program, HttpServletRequest request, HttpServletRequest httpServletRequest) throws Exception {
+        authorityCheckService.checkStudentAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
         Map userInfo = (Map) request.getSession().getAttribute("userInfo");
         String stu_id = String.valueOf(userInfo.get("id"));
         JSONObject json = judgeService.judge(program.getCode(), program.getLanguage(), program.getQuestion_id());
@@ -137,17 +162,31 @@ public class ExamController {
         return AjaxResponse.success(judgeResult);
     }
 
+    /**
+     * 老师添加/更新题目到试卷
+     * @param examQuestion
+     * @return
+     * @throws Exception
+     */
     @PostMapping("/addQuestionToExam")
     public @ResponseBody
-    AjaxResponse saveQuestionToExam(@Valid @RequestBody ExamQuestion examQuestion) throws Exception {
+    AjaxResponse saveQuestionToExam(@Valid @RequestBody ExamQuestion examQuestion, HttpServletRequest httpServletRequest) throws Exception {
+        authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
         examService.saveQuestionToExam(examQuestion);
         log.info("添加/编辑 试题到试卷成功");
         return AjaxResponse.success();
     }
 
+    /**
+     * 学生获取学生试卷
+     * @param str
+     * @return
+     * @throws Exception
+     */
     @PostMapping("/getStuExam")
     public @ResponseBody
-    AjaxResponse getStuExam(@RequestBody String str) throws Exception {
+    AjaxResponse getStuExam(@RequestBody String str, HttpServletRequest httpServletRequest) throws Exception {
+        authorityCheckService.checkStudentAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
         //Long exam_id, String stu_id
         long exam_id =Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
         String stu_id = JSON.parseObject(str).get("stu_id").toString();
@@ -160,9 +199,16 @@ public class ExamController {
         return AjaxResponse.success(stuExamArrayList);
     }
 
+    /**
+     *学生获取题目结果
+     * @param str
+     * @return
+     * @throws Exception
+     */
     @PostMapping("/getQuestion")
     public @ResponseBody
-    AjaxResponse getQuestion(@RequestBody String str) throws Exception {
+    AjaxResponse getQuestion(@RequestBody String str, HttpServletRequest httpServletRequest) throws Exception {
+        authorityCheckService.checkStudentAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
         Question question;
         Long question_id = Long.parseLong(JSON.parseObject(str).get("question_id").toString());
         question = questionRepository.findById(question_id).get();
@@ -193,9 +239,16 @@ public class ExamController {
         return AjaxResponse.success(ret);
     }
 
+    /**
+     *学生获取考试信息
+     * @param str
+     * @return
+     * @throws Exception
+     */
     @PostMapping("/stuExamInfo")
     public @ResponseBody
-    AjaxResponse stuExamInfo(@RequestBody String str) throws Exception {
+    AjaxResponse stuExamInfo(@RequestBody String str, HttpServletRequest httpServletRequest) throws Exception {
+        authorityCheckService.checkStudentAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
         long exam_id =Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
         Exam exam = examRepository.findExamByExam_id(exam_id);
         log.info("exam:" + exam.toString());

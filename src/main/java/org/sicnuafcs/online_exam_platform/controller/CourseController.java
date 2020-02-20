@@ -10,6 +10,7 @@ import org.sicnuafcs.online_exam_platform.dao.ExamRepository;
 import org.sicnuafcs.online_exam_platform.dao.StuCoRepository;
 import org.sicnuafcs.online_exam_platform.dao.TeacherRepository;
 import org.sicnuafcs.online_exam_platform.model.*;
+import org.sicnuafcs.online_exam_platform.service.AuthorityCheckService;
 import org.sicnuafcs.online_exam_platform.service.CourseSelectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 @Slf4j
@@ -33,9 +35,12 @@ public class CourseController {
     StuCoRepository stuCoRepository;
     @Autowired
     TeacherRepository teacherRepository;
+    @Autowired
+    AuthorityCheckService authorityCheckService;
 
 
     /**
+     * 学生
      * 获取选课中心页面需要展示的东西
      * 班级号（需要考虑到学院？） 专业名
      * 可选的课程
@@ -46,7 +51,8 @@ public class CourseController {
      */
     @RequestMapping("/selection/get")
     public @ResponseBody
-    AjaxResponse getCourse(@RequestBody Map map) {
+    AjaxResponse getCourse(@RequestBody Map map, HttpServletRequest httpServletRequest) {
+        authorityCheckService.checkStudentAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
         String stu_id = map.values().toString().substring(1, map.values().toString().length()-1);
         if (stu_id.equals(null) || stu_id.equals("")) {
             log.info("学号为空");
@@ -64,9 +70,16 @@ public class CourseController {
         return AjaxResponse.success(map1);
     }
 
+    /**
+     * 学生查询已选课程和未选课程
+     * @param getCourse
+     * @param httpServletRequest
+     * @return
+     */
     @RequestMapping("/getByStu")
     public @ResponseBody
-    AjaxResponse getAlternativeCourse(@RequestBody GetCourse getCourse) {
+    AjaxResponse getAlternativeCourse(@RequestBody GetCourse getCourse, HttpServletRequest httpServletRequest) {
+        authorityCheckService.checkStudentAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
         String stu_id = getCourse.getStu_id();
         String major_id = courseSelectionService.getMajor_id(stu_id);
 
@@ -92,15 +105,28 @@ public class CourseController {
     }
 
 
+    /**
+     * 老师添加/更新课程
+     * @param courseVO
+     * @return
+     */
     @RequestMapping("/add")
     public @ResponseBody
-    AjaxResponse add(@RequestBody CourseVO courseVO) {
+    AjaxResponse add(@RequestBody CourseVO courseVO, HttpServletRequest httpServletRequest) {
+        authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
         Course course1 = courseSelectionService.add(courseVO);
         return AjaxResponse.success("success");
     }
+
+    /**
+     * 老师的课程页面
+     * @param str
+     * @return
+     */
     @RequestMapping("/getByTea")
     public @ResponseBody
-    AjaxResponse getByTea(@RequestBody String str) {
+    AjaxResponse getByTea(@RequestBody String str, HttpServletRequest httpServletRequest) {
+        authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
         String tea_id = JSON.parseObject(str).get("tea_id").toString();
         String co_id = JSON.parseObject(str).get("co_id").toString();
         if (tea_id.equals("") || co_id.equals("")) {
