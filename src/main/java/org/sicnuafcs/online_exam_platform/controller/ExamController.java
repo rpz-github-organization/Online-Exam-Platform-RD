@@ -249,7 +249,7 @@ public class ExamController {
     public @ResponseBody
     AjaxResponse stuExamInfo(@RequestBody String str, HttpServletRequest httpServletRequest) throws Exception {
         authorityCheckService.checkStudentAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
-        long exam_id =Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
+        long exam_id = Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
         Exam exam = examRepository.findExamByExam_id(exam_id);
         log.info("exam:" + exam.toString());
         Map<String, Object> ret = new HashMap<>();
@@ -266,6 +266,21 @@ public class ExamController {
             ret.put("status", -1);
         }
         return AjaxResponse.success(ret);
+    }
+
+    /**
+     * 学生提交试卷
+     * id 答案 分数 和type
+     */
+    @PostMapping("/handInExam")
+    public @ResponseBody AjaxResponse handInExam(@RequestBody String str, HttpServletRequest httpServletRequest) {
+        authorityCheckService.checkStudentAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        Map m = (Map) httpServletRequest.getSession().getAttribute("userInfo");
+        String stu_id = (String) m.get("id");
+        long exam_id = Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
+        String data = JSON.parseObject(str).get("data").toString();
+        examService.saveToStuExam(data, exam_id, stu_id);
+        return AjaxResponse.success("success");
     }
 }
 

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
@@ -14,7 +15,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "stu_exam")
 @IdClass(StuExamPK.class)
-public class StuExam {
+public class StuExam implements Serializable {
     public static enum Status {
         WILL,
         DONE

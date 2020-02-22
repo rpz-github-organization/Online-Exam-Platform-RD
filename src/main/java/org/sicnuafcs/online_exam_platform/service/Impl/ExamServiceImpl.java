@@ -1,21 +1,21 @@
 package org.sicnuafcs.online_exam_platform.service.Impl;
 
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
+import org.dozer.DozerBeanMapper;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomException;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomExceptionType;
 import org.sicnuafcs.online_exam_platform.dao.*;
 import org.sicnuafcs.online_exam_platform.model.*;
 import org.sicnuafcs.online_exam_platform.service.ExamService;
+import org.sicnuafcs.online_exam_platform.service.HomePageService;
 import org.sicnuafcs.online_exam_platform.service.QuestionService;
 import org.sicnuafcs.online_exam_platform.util.RedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 @Slf4j
 @EnableAsync
@@ -37,6 +37,10 @@ public class ExamServiceImpl implements ExamService {
     QuestionRepository questionRepository;
     @Autowired
     StuCoRepository stuCoRepository;
+    @Autowired
+    HomePageService homePageService;
+    @Autowired
+    DozerBeanMapper dozerBeanMapper;
 
     @Override
     public long saveToExam(Exam exam) throws Exception {
@@ -156,6 +160,46 @@ public class ExamServiceImpl implements ExamService {
                 questionsList.get(count).setNum(num);
                 count++;
             }
+        }
+    }
+
+    public void saveToStuExam(String data, Long exam_id, String stu_id) {
+        ArrayList<String> stuExams= homePageService.String2List(data);
+        for (String in : stuExams) {
+            Map map = JSON.parseObject(in);
+            StuExam stuExam = new StuExam();
+            stuExam.setQuestion_id(Long.parseLong(map.get("question_id").toString()));
+            String type = map.get("type").toString();
+            switch (type) {
+                case "Single":
+                    stuExam.setType(Question.Type.Single);
+                    break;
+                case "MultipleChoice":
+                    stuExam.setType(Question.Type.MultipleChoice);
+                    break;
+                case "Judge":
+                    stuExam.setType(Question.Type.Judge);
+                    break;
+                case "FillInTheBlank":
+                    stuExam.setType(Question.Type.FillInTheBlank);
+                    break;
+                case "Discussion":
+                    stuExam.setType(Question.Type.Discussion);
+                    break;
+                case "Normal_Program":
+                    stuExam.setType(Question.Type.Normal_Program);
+                    stuExam.setScore(Integer.parseInt(map.get("score").toString()));
+                    break;
+                case "SpecialJudge_Program":
+                    stuExam.setType(Question.Type.SpecialJudge_Program);
+                    stuExam.setScore(Integer.parseInt(map.get("score").toString()));
+                    break;
+            }
+            stuExam.setAnswer(map.get("answer").toString());
+            stuExam.setExam_id(exam_id);
+            stuExam.setStu_id(stu_id);
+            stuExam.setStatus(StuExam.Status.DONE);
+            stuExamRepository.save(stuExam);
         }
     }
 }
