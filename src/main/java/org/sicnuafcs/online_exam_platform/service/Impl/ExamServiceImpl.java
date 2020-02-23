@@ -218,6 +218,7 @@ public class ExamServiceImpl implements ExamService {
             question.put("question_id", question_id);
             question.put("question", questionRepository.getQuestionByQuestion_id(question_id));
             question.put("answer", questionRepository.getAnswerByQuestion_id(question_id));
+            question.put("score", examQuestionRepository.findScoreById(question_id, exam_id));
             questions.add(question);
         }
         result.put("question", questions);
