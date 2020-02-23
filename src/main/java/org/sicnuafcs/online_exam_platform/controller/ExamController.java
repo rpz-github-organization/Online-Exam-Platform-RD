@@ -282,5 +282,13 @@ public class ExamController {
         examService.saveToStuExam(data, exam_id, stu_id);
         return AjaxResponse.success("success");
     }
+
+    @PostMapping("/getDiscussion")
+    public @ResponseBody AjaxResponse getDiscussion(@RequestBody String str, HttpServletRequest httpServletRequest) {
+//        authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        long exam_id = Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
+        Map data = examService.getDiscussion(exam_id);
+        return AjaxResponse.success(data);
+    }
 }
 

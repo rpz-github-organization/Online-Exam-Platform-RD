@@ -202,4 +202,44 @@ public class ExamServiceImpl implements ExamService {
             stuExamRepository.save(stuExam);
         }
     }
+
+    public Map getDiscussion(Long exam_id) {
+        Exam.ProgressStatus examProgramStatus = examRepository.findExamByExam_id(exam_id).getProgress_status();
+        if (!examProgramStatus.equals(Exam.ProgressStatus.DONE)) {
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "该考试还未结束");
+        }
+        Map<String, Object> result = new HashMap<>();
+
+        //题目部分
+        List<Long> questionIdList = examQuestionRepository.getQuestionIdListByExam_idAndType(exam_id, Question.Type.Discussion);
+        ArrayList<Map> questions = new ArrayList<>();
+        for (Long question_id : questionIdList) {
+            Map<String, Object> question = new HashMap<>();
+            question.put("question_id", question_id);
+            question.put("question", questionRepository.getQuestionByQuestion_id(question_id));
+            question.put("answer", questionRepository.getAnswerByQuestion_id(question_id));
+            questions.add(question);
+        }
+        result.put("question", questions);
+
+        //学生信息部分
+        ArrayList<String> stuIdList = stuExamRepository.getStu_idByQuestion_idAndExam_id(questionIdList.get(0), exam_id);
+        ArrayList<Map> stu = new ArrayList<>();
+        for (String stu_id : stuIdList) {
+            Map<String, Object> stuExam = new HashMap<>();
+            stuExam.put("id",stu_id);
+            stuExam.put("name", studentRepository.findNameByStu_id(stu_id));
+            ArrayList<Map> ress = new ArrayList<>();
+            for (Long question_id : questionIdList) {
+                Map<String, Object> res = new HashMap<>();
+                res.put("question_id", question_id);
+                res.put("answer", stuExamRepository.getAnswerById(question_id, exam_id, stu_id));
+                ress.add(res);
+            }
+            stuExam.put("question", ress);
+            stu.add(stuExam);
+        }
+        result.put("stuInfo", stu);
+        return result;
+    }
 }

@@ -16,4 +16,10 @@ public interface  StuExamRepository extends JpaRepository<StuExam, String> {
 
     @Query("select distinct u.exam_id from StuExam u where u.stu_id = ?1 and u.status = ?2")
     List<Long> findExam_idByStu_IdAAndStatus(String Stu_id, StuExam.Status status); //distinct 去重
+
+    @Query("select u.stu_id from StuExam u where u.question_id = ?1 and u.exam_id = ?2")
+    ArrayList<String> getStu_idByQuestion_idAndExam_id(Long question_id, Long exam_id);
+
+    @Query("select u.answer from StuExam u where u.question_id = ?1 and u.exam_id = ?2 and u.stu_id = ?3")
+    String getAnswerById(Long question_id, Long exam_id, String stu_id);
 }
