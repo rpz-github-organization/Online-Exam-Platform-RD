@@ -67,9 +67,6 @@ public class DockerUtils {
         dockerClient = DockerClientBuilder.getInstance(config).withDockerCmdExecFactory(dockerCmdExecFactory).build();
     }
 
-    public static void main(String[] args) {
-        System.out.println(System.getProperties().getProperty("os.name"));
-    }
 
     /**
      * 查询连接信息
