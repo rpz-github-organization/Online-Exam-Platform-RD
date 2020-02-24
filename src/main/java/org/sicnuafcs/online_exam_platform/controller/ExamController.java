@@ -31,6 +31,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
@@ -296,16 +297,18 @@ public class ExamController {
      * @return
      */
     @PostMapping("/handInScore")
-    public @ResponseBody AjaxResponse handInScore(@RequestBody StuExam req) {
+    public @ResponseBody AjaxResponse handInScore(@RequestBody HandInScore req) {
         try {
-            log.info("stu_examinfo : " + req.getStu_id());
-            stuExamRepository.saveScore(req.getScore(), req.getQuestion_id(), req.getExam_id(), req.getStu_id());
+            String stu_id = req.getStu_id();
+            Long exam_id = req.getExam_id();
+            for (StuExam stuExam: req.getScoreList()) {
+                stuExamRepository.saveScore(stuExam.getScore(), stuExam.getQuestion_id(), exam_id, stu_id);
+            }
             return AjaxResponse.success("success!");
         } catch (Exception e) {
             log.error(e.getMessage());
             return AjaxResponse.error(new CustomException(CustomExceptionType.SYSTEM_ERROR, e.getMessage()));
         }
-
     }
 
 }
