@@ -14,7 +14,6 @@ import org.sicnuafcs.online_exam_platform.dao.*;
 import org.sicnuafcs.online_exam_platform.model.*;
 import org.sicnuafcs.online_exam_platform.service.AuthorityCheckService;
 import org.sicnuafcs.online_exam_platform.service.ExamService;
-import org.sicnuafcs.online_exam_platform.service.Impl.ExamServiceImpl;
 import org.sicnuafcs.online_exam_platform.service.JudgeService;
 import org.sicnuafcs.online_exam_platform.service.QuestionService;
 import org.sicnuafcs.online_exam_platform.util.RedisUtils;
@@ -290,5 +289,24 @@ public class ExamController {
         Map data = examService.getDiscussion(exam_id);
         return AjaxResponse.success(data);
     }
+
+    /**
+     * 教师提交学生分数
+     * @param req
+     * @return
+     */
+    @PostMapping("/handInScore")
+    public @ResponseBody AjaxResponse handInScore(@RequestBody StuExam req) {
+        try {
+            log.info("stu_examinfo : " + req.getStu_id());
+            stuExamRepository.saveScore(req.getScore(), req.getQuestion_id(), req.getExam_id(), req.getStu_id());
+            return AjaxResponse.success("success!");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return AjaxResponse.error(new CustomException(CustomExceptionType.USER_INPUT_ERROR, e.getMessage()));
+        }
+
+    }
+
 }
 
