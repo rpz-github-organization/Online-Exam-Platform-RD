@@ -303,7 +303,7 @@ public class ExamController {
             return AjaxResponse.success("success!");
         } catch (Exception e) {
             log.error(e.getMessage());
-            return AjaxResponse.error(new CustomException(CustomExceptionType.USER_INPUT_ERROR, e.getMessage()));
+            return AjaxResponse.error(new CustomException(CustomExceptionType.SYSTEM_ERROR, e.getMessage()));
         }
 
     }
