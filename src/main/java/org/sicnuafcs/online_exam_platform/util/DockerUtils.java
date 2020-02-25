@@ -41,18 +41,16 @@ public class DockerUtils {
             e.printStackTrace();
         }
 
-        //证书路径
-        String DockerCertPath = DockerUtils.class.getClassLoader().getResource("dockertls").getPath();
-        if (System.getProperties().getProperty("os.name").contains("Windows")) {
-            DockerCertPath = DockerCertPath.substring(1);
-        }
+        //证书测试路径
+        //String DockerCertPath = DockerUtils.class.getClassLoader().getResource("/dockertls").getPath();
+
 
         // 添加配置
         DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
                 .withDockerHost(properties.getProperty("DOCKER_HOST"))
                 .withDockerTlsVerify(true)
                 // 证书的本地位置
-                .withDockerCertPath(DockerCertPath)
+                .withDockerCertPath(properties.getProperty("DOCKER_CERT_PATH"))
                 .build();
 
 
