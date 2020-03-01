@@ -283,9 +283,15 @@ public class ExamController {
         return AjaxResponse.success("success");
     }
 
+    /**
+     * 教师获取学生问答题部分
+     * @param str
+     * @param httpServletRequest
+     * @return
+     */
     @PostMapping("/getDiscussion")
     public @ResponseBody AjaxResponse getDiscussion(@RequestBody String str, HttpServletRequest httpServletRequest) {
-//        authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
         long exam_id = Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
         Map data = examService.getDiscussion(exam_id);
         return AjaxResponse.success(data);
@@ -297,7 +303,8 @@ public class ExamController {
      * @return
      */
     @PostMapping("/handInScore")
-    public @ResponseBody AjaxResponse handInScore(@RequestBody HandInScore req) {
+    public @ResponseBody AjaxResponse handInScore(@RequestBody HandInScore req, HttpServletRequest httpServletRequest) {
+        authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
         try {
             String stu_id = req.getStu_id();
             Long exam_id = req.getExam_id();
@@ -311,5 +318,23 @@ public class ExamController {
         }
     }
 
+    /**
+     * 教师改变考试状态
+     */
+    @PostMapping("/changeExamStatus")
+    public @ResponseBody AjaxResponse changeExamStatus(@RequestBody Exam req, HttpServletRequest httpServletRequest) {
+        authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        try {
+            if (req.getExam_id() != null && req.getProgress_status() != null) {
+                examRepository.saveStatus(req.getExam_id(), req.getProgress_status());
+                return AjaxResponse.success("success!");
+            } else {
+                return AjaxResponse.error(new CustomException(CustomExceptionType.SYSTEM_ERROR, "examid or status empty!"));
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return AjaxResponse.error(new CustomException(CustomExceptionType.SYSTEM_ERROR, e.getMessage()));
+        }
+    }
 }
 
