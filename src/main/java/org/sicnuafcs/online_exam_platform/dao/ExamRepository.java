@@ -26,4 +26,7 @@ public interface ExamRepository extends JpaRepository<Exam, String> {
     @Query("update Exam u set u.progress_status = :status where u.exam_id = :exam_id")
     void saveStatus(@Param("exam_id") Long exam_id, @Param("status") Exam.ProgressStatus status);
 
+    @Query("select u.exam_id from Exam  u where u.co_id = ?1 and u.tea_id = ?2")
+    List<Long> findExamIdByCo_idAAndTea_id(String co_id, String tea_id);
+
 }

@@ -12,8 +12,10 @@ import org.sicnuafcs.online_exam_platform.dao.TeacherRepository;
 import org.sicnuafcs.online_exam_platform.model.*;
 import org.sicnuafcs.online_exam_platform.service.AuthorityCheckService;
 import org.sicnuafcs.online_exam_platform.service.CourseSelectionService;
+import org.sicnuafcs.online_exam_platform.service.ExamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -37,6 +39,8 @@ public class CourseController {
     TeacherRepository teacherRepository;
     @Autowired
     AuthorityCheckService authorityCheckService;
+    @Autowired
+    ExamService examService;
 
 
     /**
@@ -88,7 +92,7 @@ public class CourseController {
         if (getCourse.getOption() == 1) {    //查询已选课程
 
             //chosenCoId_TeaId转化为name
-            return AjaxResponse.success(courseSelectionService.getName(chosenCoId_TeaId));
+            return AjaxResponse.success(courseSelectionService.getIdAndName(chosenCoId_TeaId));
         }
         else if (getCourse.getOption() == 0) {
             ArrayList<String> allCourse_id = courseSelectionService.getAllCourse_id(major_id);  //在course表里获取专业major_id对应的全部课程co_id
@@ -99,7 +103,7 @@ public class CourseController {
             alternativeCourseList.removeAll(chosenCourseList);       //执行removeAll时用的是equals方法
 
             //allCoId_TeaId转化为name
-            return AjaxResponse.success(courseSelectionService.getName(allCoId_TeaId));
+            return AjaxResponse.success(courseSelectionService.getIdAndName(allCoId_TeaId));
         }
         throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "选项错误");
     }
@@ -164,5 +168,24 @@ public class CourseController {
         ret.put("tea_id", tea_id);
         ret.put("teacherName", teacherRepository.getNameByTea_id(tea_id));
         return AjaxResponse.success(ret);
+    }
+
+    /**
+     * 教师课程详情页
+     * 老师id 课程id
+     * 考试名字 时间 时长 状态（考试未开始 考试中 考试结束未评分 考试结束已评分）
+     */
+    @PostMapping("/getExams")
+    public @ResponseBody AjaxResponse getExams(@RequestBody String str, HttpServletRequest httpServletRequest) {
+        authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        String tea_id = JSON.parseObject(str).get("tea_id").toString();
+        String co_id = JSON.parseObject(str).get("co_id").toString();
+        int option = 0;
+        ArrayList<Map> res = new ArrayList<>();
+        List<Long> exams = examService.getExam(co_id, tea_id);
+        for (Long exam : exams) {
+            res.add(examService.getExamInfo(exam, option));
+        }
+        return AjaxResponse.success(res);
     }
 }

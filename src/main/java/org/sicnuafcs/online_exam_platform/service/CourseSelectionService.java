@@ -15,7 +15,7 @@ public interface CourseSelectionService {
 
     Map<String, String> getChosenCoId_TeaId(String stu_id);
 
-    Map<String, String> getName(Map<String, String> coId_TeaId);
+    ArrayList<Map> getIdAndName(Map<String, String> coId_TeaId);
 
     Map<String, String> getAllCoId_TeaId(ArrayList<String> course_id);
 

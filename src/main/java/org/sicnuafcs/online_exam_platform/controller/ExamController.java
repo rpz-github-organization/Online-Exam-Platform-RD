@@ -20,19 +20,13 @@ import org.sicnuafcs.online_exam_platform.util.RedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.spring.web.json.Json;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Future;
 
 
@@ -335,6 +329,20 @@ public class ExamController {
             log.error(e.getMessage());
             return AjaxResponse.error(new CustomException(CustomExceptionType.SYSTEM_ERROR, e.getMessage()));
         }
+    }
+
+    /**
+     * 学生考试详情页
+     * 考试id
+     * 考试名字 时间 时长 状态（考试未开始 考试中 考试结束未评分 考试结束已评分）考生人数 实际考试人数
+     */
+    @PostMapping("/getExamInfo")
+    public @ResponseBody AjaxResponse getExamInfo(@RequestBody String str, HttpServletRequest httpServletRequest) {
+        authorityCheckService.checkStudentAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        long exam_id = Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
+        int option = 1;
+        Map res = examService.getExamInfo(exam_id, option);
+        return AjaxResponse.success(res);
     }
 }
 

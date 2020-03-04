@@ -15,10 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.Timestamp;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -98,15 +96,23 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
 
     @Override
     //key(co_id)到course中得到name  value(tea_id)到teacher中得到name
-    public Map<String, String> getName(Map<String, String> coId_TeaId) {
-        Map<String, String> co_Tea = new IdentityHashMap<>();
+    public ArrayList<Map> getIdAndName(Map<String, String> coId_TeaId) {
+        ArrayList<Map> list = new ArrayList();
         for (Map.Entry<String, String> m : coId_TeaId.entrySet()) {
+            Map<String, Object> one = new HashMap();
             String course = new String(courseRepository.getNameByCo_id(m.getKey()));
             String teacher = new String(teacherRepository.getNameByTea_id(m.getValue()));
-            co_Tea.put(course, teacher);
+            one.put("co_id", m.getKey());
+            one.put("co_name", course);
+            one.put("tea_id", m.getValue());
+            one.put("tea_name", teacher);
+            Timestamp time = courseRepository.findBeginTimeByCo_id(m.getKey());
+            one.put("begin_time", time.getYear()+1900 + "-" + time.getMonth() + 1 + "-" + time.getDate());
+            time = courseRepository.findEndTimeByCo_id(m.getKey());
+            one.put("end_time", time.getYear()+1900 + "-" + time.getMonth() + 1 + "-" + time.getDate());
+            list.add(one);
         }
-
-        return co_Tea;
+        return list;
     }
 
     @Override

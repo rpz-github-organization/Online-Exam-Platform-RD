@@ -243,4 +243,49 @@ public class ExamServiceImpl implements ExamService {
         result.put("stuInfo", stu);
         return result;
     }
+
+    public Map getExamInfo(Long exam_id, int option) {
+        Map res = new HashMap();
+        Exam exam = examRepository.findExamByExam_id(exam_id);
+        if (exam == null && option == 1) {
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "未添加该考试");
+        }
+        res.put("exam_id", exam_id);
+        res.put("exam_name", exam.getName());
+        res.put("begin_time", exam.getBegin_time());
+        res.put("last_time", exam.getLast_time());
+
+        //status
+        Exam.ProgressStatus progressStatus = exam.getProgress_status();
+        boolean isJudge = exam.is_judge();
+        if (progressStatus.equals(Exam.ProgressStatus.WILL) && !isJudge) {
+            res.put("status", "考试未开始");
+        }
+        else if (progressStatus.equals(Exam.ProgressStatus.ING) && !isJudge) {
+            res.put("status", "考试中");
+        }
+        else if (progressStatus.equals(Exam.ProgressStatus.DONE) && !isJudge) {
+            res.put("status", "考试结束未评分");
+        }
+        else if (progressStatus.equals(Exam.ProgressStatus.DONE) && isJudge) {
+            res.put("status", "考试结束已评分");
+        }
+        else {
+            res.put("status", "该考试状态不正常");
+        }
+
+        if (option == 1) {
+            //考生人数（选了课的人）
+            res.put("stu_number", 0);
+
+            //实际人数
+            HashSet num = stuExamRepository.getOneByExam_id(exam_id);
+            res.put("actual_number", num.size());
+        }
+        return res;
+    }
+
+    public List<Long> getExam(String co_id, String tea_id) {
+        return examRepository.findExamIdByCo_idAAndTea_id(co_id, tea_id);
+    }
 }

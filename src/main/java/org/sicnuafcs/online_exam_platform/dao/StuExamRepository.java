@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public interface  StuExamRepository extends JpaRepository<StuExam, String> {
@@ -29,4 +30,7 @@ public interface  StuExamRepository extends JpaRepository<StuExam, String> {
     @Transactional
     @Query("update StuExam u set u.score = :score where u.question_id = :question_id and u.exam_id = :exam_id and u.stu_id = :stu_id")
     void saveScore(@Param("score") int score, @Param("question_id") Long question_id, @Param("exam_id") Long exam_id, @Param("stu_id") String stu_id);
+
+    @Query("select u.stu_id from StuExam u where u.exam_id = ?1")
+    HashSet getOneByExam_id(long exam_id);
 }
