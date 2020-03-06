@@ -288,4 +288,45 @@ public class ExamServiceImpl implements ExamService {
     public List<Long> getExam(String co_id, String tea_id) {
         return examRepository.findExamIdByCo_idAAndTea_id(co_id, tea_id);
     }
+
+    @Override
+    public List getStuScoreInfo(Long exam_id, String stu_id) {
+        List<StuExam> stuExams = stuExamRepository.getByExam_idAndStu_id(exam_id, stu_id);
+        List<StuScoreInfo> ret = null;
+        //index 0为单选题 1是判断题 2是问答题 3是编程题
+        for (int i = 0; i < 4; i++) {
+            ret.add(new StuScoreInfo());
+        }
+        for (StuExam stuExam : stuExams) {
+            Map<String, Object> ques = null;
+            int type = -1;
+            if (stuExam.getType() == Question.Type.Single) {
+                type = 0;
+            } else if (stuExam.getType() == Question.Type.Judge) {
+                type = 1;
+            } else if (stuExam.getType() == Question.Type.Discussion) {
+                type = 2;
+            } else if (stuExam.getType() == Question.Type.Normal_Program || stuExam.getType() == Question.Type.SpecialJudge_Program) {
+                type = 3;
+            } else {
+                return null;
+            }
+            ret.get(type).setType(stuExam.getType());
+            int getScore = stuExam.getScore();
+            int correctScore = examQuestionRepository.findScoreById(stuExam.getQuestion_id(), exam_id);
+            //计算得到的分数
+            ret.get(type).setGet(ret.get(type).getGet() + getScore);
+            ret.get(type).setGet(ret.get(type).getTotal() + correctScore);
+            ques.put("num", stuExam.getNum());
+            if (getScore == 0) {
+                ques.put("status", 0); //错误
+            } else if (getScore == correctScore) {
+                ques.put("status", 1); //完全正确
+            } else  {
+                ques.put("status", 2);  //部分正确
+            }
+            ret.get(type).getDetail().add(ques);
+        }
+        return ret;
+    }
 }

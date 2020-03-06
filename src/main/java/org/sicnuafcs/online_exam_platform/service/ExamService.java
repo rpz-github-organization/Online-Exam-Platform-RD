@@ -15,4 +15,5 @@ public interface ExamService {
     Map getDiscussion(Long exam_id);
     Map getExamInfo(Long exam_id,int option);
     List<Long> getExam(String tea_id, String co_id);
+    List getStuScoreInfo(Long exam_id, String stu_id);
 }

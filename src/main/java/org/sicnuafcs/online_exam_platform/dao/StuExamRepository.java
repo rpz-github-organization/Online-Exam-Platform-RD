@@ -33,4 +33,6 @@ public interface  StuExamRepository extends JpaRepository<StuExam, String> {
 
     @Query("select u.stu_id from StuExam u where u.exam_id = ?1")
     HashSet getOneByExam_id(long exam_id);
+
+
 }

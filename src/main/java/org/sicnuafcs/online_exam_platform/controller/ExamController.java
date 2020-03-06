@@ -59,6 +59,8 @@ public class ExamController {
     TestCaseRepository testCaseRepository;
     @Autowired
     AuthorityCheckService authorityCheckService;
+    @Autowired
+    StudentRepository studentRepository;
 
     /**
      * 老师添加/更新题目
@@ -343,6 +345,37 @@ public class ExamController {
         int option = 1;
         Map res = examService.getExamInfo(exam_id, option);
         return AjaxResponse.success(res);
+    }
+    /**
+     * 学生成绩详情页
+     * 传入参数：试卷号、学号
+     */
+    @PostMapping("getStuScoreInfo")
+    public @ResponseBody AjaxResponse getStuScoreInfo(@RequestBody String str, HttpServletRequest httpServletRequest) {
+        try {
+            String stu_id = JSON.parseObject(str).get("stu_id").toString();
+            long exam_id = Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
+            Map<String, Object> ret = new HashMap<>();
+            Exam exam = examRepository.findExamByExam_id(exam_id);
+            if (exam == null) {
+                AjaxResponse.error(new CustomException(CustomExceptionType.SYSTEM_ERROR, "error exam_id!"));
+            }
+            if (!exam.is_judge() || exam.getProgress_status() != Exam.ProgressStatus.DONE) {
+                AjaxResponse.error(new CustomException(CustomExceptionType.SYSTEM_ERROR, "this exam is not judge! or is not done"));
+            }
+            List<Map<String,Object>> ques = examService.getStuScoreInfo(exam_id,stu_id);
+            String stu_name = studentRepository.findNameByStu_id(stu_id);
+            String tea_name = teacherRepository.getNameByTea_id(exam.getTea_id());
+            ret.put("name", exam.getName());
+            ret.put("stu_name", stu_name);
+            ret.put("tea_name", tea_name);
+            ret.put("begin_time", exam.getBegin_time());
+            ret.put("Ques", ques);
+            return AjaxResponse.success(ret);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return AjaxResponse.error(new CustomException(CustomExceptionType.SYSTEM_ERROR, e.getMessage()));
+        }
     }
 }
 
