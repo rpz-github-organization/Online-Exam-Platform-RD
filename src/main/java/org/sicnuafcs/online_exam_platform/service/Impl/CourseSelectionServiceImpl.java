@@ -1,5 +1,6 @@
 package org.sicnuafcs.online_exam_platform.service.Impl;
 
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.dozer.DozerBeanMapper;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomException;
@@ -144,4 +145,52 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
         return course;
     }
 
+    @Override
+    public void saveToStuCo(String res, String stu_id) {
+        if (stu_id == null) {
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "传入的学号不正确");
+        }
+        ArrayList<String> data = homePageService.String2List(res);
+        for (String in : data) {
+            Map map = JSON.parseObject(in);
+            String co_id = map.get("co_id").toString();
+            if (co_id == null) {
+                throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "传入的课程号不正确");
+            }
+            String tea_id = null;
+            tea_id = stuCoRepository.getTeaIdByStu_idAndAndCo_id(stu_id, co_id);
+            if (tea_id == null) {
+                //添加
+                StuCo stuCo = new StuCo();
+                stuCo.setCo_id(co_id);
+                stuCo.setStu_id(stu_id);
+                stuCo.setTea_id(map.get("tea_id").toString());
+                stuCoRepository.save(stuCo);
+            }
+            else {
+                throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "已选过课程");
+            }
+        }
+    }
+
+    @Override
+    public void quitCourse(String co_id, String tea_id, String stu_id) {
+        if (stu_id == null || co_id == null || tea_id == null) {
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "传入的学号/教师号/课程号不正确");
+        }
+        StuCo stuCo = new StuCo();
+        stuCo.setStu_id(stu_id);
+        stuCo.setCo_id(co_id);
+        stuCo.setTea_id(tea_id);
+        try {
+            if (stuCo == stuCoRepository.getOneById(co_id, tea_id, stu_id) || stuCoRepository.getOneById(co_id, tea_id, stu_id)!= null) {
+                stuCoRepository.delete(stuCo);
+            }
+            else {
+                throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "数据不匹配，删除失败");
+            }
+        }catch (Exception e) {
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "验证失败");
+        }
+    }
 }

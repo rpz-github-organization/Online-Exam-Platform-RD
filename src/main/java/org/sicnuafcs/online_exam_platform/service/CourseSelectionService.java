@@ -22,4 +22,8 @@ public interface CourseSelectionService {
     String getMajorName(String major_id);
 
     Course add(CourseVO courseVO);
+
+    void saveToStuCo(String str, String stu_id);
+
+    void quitCourse(String co_id, String tea_id, String stu_id);
 }
