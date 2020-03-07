@@ -292,13 +292,13 @@ public class ExamServiceImpl implements ExamService {
     @Override
     public List getStuScoreInfo(Long exam_id, String stu_id) {
         List<StuExam> stuExams = stuExamRepository.getByExam_idAndStu_id(exam_id, stu_id);
-        List<StuScoreInfo> ret = null;
+        List<StuScoreInfo> ret = new ArrayList<>();
         //index 0为单选题 1是判断题 2是问答题 3是编程题
         for (int i = 0; i < 4; i++) {
             ret.add(new StuScoreInfo());
         }
         for (StuExam stuExam : stuExams) {
-            Map<String, Object> ques = null;
+            Map<String, Object> ques = new HashMap<>();
             int type = -1;
             if (stuExam.getType() == Question.Type.Single) {
                 type = 0;
@@ -315,8 +315,10 @@ public class ExamServiceImpl implements ExamService {
             int getScore = stuExam.getScore();
             int correctScore = examQuestionRepository.findScoreById(stuExam.getQuestion_id(), exam_id);
             //计算得到的分数
-            ret.get(type).setGet(ret.get(type).getGet() + getScore);
-            ret.get(type).setGet(ret.get(type).getTotal() + correctScore);
+            int get = ret.get(type).getGet();
+            int total = ret.get(type).getTotal();
+            ret.get(type).setGet(get + getScore);
+            ret.get(type).setTotal(total + correctScore);
             ques.put("num", stuExam.getNum());
             if (getScore == 0) {
                 ques.put("status", 0); //错误
@@ -324,6 +326,10 @@ public class ExamServiceImpl implements ExamService {
                 ques.put("status", 1); //完全正确
             } else  {
                 ques.put("status", 2);  //部分正确
+            }
+            if (ret.get(type).getDetail() == null) {
+                List<Map<String, Object>> detail = new ArrayList<>();
+                ret.get(type).setDetail(detail);
             }
             ret.get(type).getDetail().add(ques);
         }
