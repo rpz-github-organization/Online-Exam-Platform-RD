@@ -61,7 +61,8 @@ public class ExamController {
     AuthorityCheckService authorityCheckService;
     @Autowired
     StudentRepository studentRepository;
-
+    @Autowired
+    ExamQuestionRepository examQuestionRepository;
     /**
      * 老师添加/更新题目
      * @param getQuestion
@@ -394,6 +395,55 @@ public class ExamController {
         examService.distributeExamToStudent(exam_id, co_id);
         log.info("为：" + exam_id + "考试分发试卷成功");
         return AjaxResponse.success("success");
+    }
+    /**
+     *教师获取学生题目结果
+     * @param str
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("/getQuestionTea")
+    public @ResponseBody
+    AjaxResponse getQuestionStu(@RequestBody String str, HttpServletRequest httpServletRequest) throws Exception {
+        authorityCheckService.checkStudentAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        try {
+            Question question;
+            StuExam stuExam;
+            ExamQuestion examQuestion;
+            Long exam_id = Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
+            Long question_id = Long.parseLong(JSON.parseObject(str).get("question_id").toString());
+            String stu_id = JSON.parseObject(str).get("stu_id").toString();
+            question = questionRepository.findById(question_id).get();
+            stuExam = stuExamRepository.getByExam_idAndStu_idAndQuestion_id(exam_id, stu_id, question_id);
+            if (question == null || stuExam == null) {
+                return AjaxResponse.error(new CustomException(CustomExceptionType.USER_INPUT_ERROR, "question wrong"));
+            }
+            int score = examQuestionRepository.findScoreById(question_id, exam_id);
+            Map<String, Object> ret = new HashMap<>();
+            ret.put("question_id", question.getQuestion_id());
+            ret.put("question", question.getQuestion());
+            ret.put("type", question.getType());
+            ret.put("answer", question.getAnswer());
+            ret.put("stu_answer", stuExam.getAnswer());
+            ret.put("options", question.getOptions());
+            ret.put("getScore", stuExam.getScore());
+            ret.put("score", score);
+            if (question.getType() == Question.Type.SpecialJudge_Program || question.getType() == Question.Type.Normal_Program) {
+                TestCase testCase = testCaseRepository.getOneByQuestion_id(question_id);
+                if (testCase != null) {
+                    if (testCase.getInput().size() > 0) {
+                        ret.put("input", testCase.getInput().get(0));
+                    }
+                    if (testCase.getOutput().size() > 0) {
+                        ret.put("output", testCase.getOutput().get(0));
+                    }
+                }
+            }
+            log.info("获取questionid为：" + question_id + "的题目成功");
+            return AjaxResponse.success(ret);
+        } catch (Exception e) {
+            return AjaxResponse.error(new CustomException(CustomExceptionType.SYSTEM_ERROR, e.getMessage()));
+        }
     }
 
 }
