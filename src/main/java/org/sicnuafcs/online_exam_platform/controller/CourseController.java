@@ -188,4 +188,29 @@ public class CourseController {
         }
         return AjaxResponse.success(res);
     }
+
+    @PostMapping("/saveToStuCo")
+    public @ResponseBody AjaxResponse saveToStuCo(@RequestBody String str, HttpServletRequest httpServletRequest) {
+        authorityCheckService.checkStudentAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        String stu_id = JSON.parseObject(str).get("stu_id").toString();
+        String data = JSON.parseObject(str).get("data").toString();
+        courseSelectionService.saveToStuCo(data, stu_id);
+        return AjaxResponse.success("success");
+    }
+
+    /**
+     * 学生退课
+     * @param str
+     * @param httpServletRequest
+     * @return
+     */
+    @PostMapping("/deleteCourse")
+    public @ResponseBody AjaxResponse quitCourse(@RequestBody String str, HttpServletRequest httpServletRequest) {
+        authorityCheckService.checkStudentAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        String stu_id = JSON.parseObject(str).get("stu_id").toString();
+        String co_id = JSON.parseObject(str).get("co_id").toString();
+        String tea_id = JSON.parseObject(str).get("tea_id").toString();
+        courseSelectionService.quitCourse(co_id, tea_id, stu_id);
+        return AjaxResponse.success("success");
+    }
 }

@@ -26,6 +26,7 @@ public interface  StuExamRepository extends JpaRepository<StuExam, String> {
 
     @Query("select u.answer from StuExam u where u.question_id = ?1 and u.exam_id = ?2 and u.stu_id = ?3")
     String getAnswerById(Long question_id, Long exam_id, String stu_id);
+
     @Modifying
     @Transactional
     @Query("update StuExam u set u.score = :score where u.question_id = :question_id and u.exam_id = :exam_id and u.stu_id = :stu_id")

@@ -352,6 +352,7 @@ public class ExamController {
      */
     @PostMapping("getStuScoreInfo")
     public @ResponseBody AjaxResponse getStuScoreInfo(@RequestBody String str, HttpServletRequest httpServletRequest) {
+        authorityCheckService.checkStudentAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
         try {
             String stu_id = JSON.parseObject(str).get("stu_id").toString();
             long exam_id = Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
@@ -377,5 +378,23 @@ public class ExamController {
             return AjaxResponse.error(new CustomException(CustomExceptionType.SYSTEM_ERROR, e.getMessage()));
         }
     }
+
+    /**
+     * 老师分发试卷
+     * @param str
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("/distributeExamToStudent")
+    public @ResponseBody
+    AjaxResponse distributeExamToStudent(@RequestBody String str, HttpServletRequest httpServletRequest) throws Exception {
+        authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        long exam_id =Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
+        String co_id = JSON.parseObject(str).get("co_id").toString();
+        examService.distributeExamToStudent(exam_id, co_id);
+        log.info("为：" + exam_id + "考试分发试卷成功");
+        return AjaxResponse.success("success");
+    }
+
 }
 
