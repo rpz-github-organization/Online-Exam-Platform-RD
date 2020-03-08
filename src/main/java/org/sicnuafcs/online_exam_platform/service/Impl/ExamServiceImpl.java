@@ -335,4 +335,16 @@ public class ExamServiceImpl implements ExamService {
         }
         return ret;
     }
+
+    @Override
+    public int getStuExamScore(Long exam_id, String stu_id) {
+        List<StuExam> stuExams = stuExamRepository.getByExam_idAndStu_id(exam_id, stu_id);
+        int total = 0;
+        for (StuExam stuExam : stuExams) {
+            if (stuExam.getScore() != null) {
+                total += stuExam.getScore();
+            }
+        }
+        return total;
+    }
 }

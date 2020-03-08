@@ -351,8 +351,8 @@ public class ExamController {
      * 学生成绩详情页
      * 传入参数：试卷号、学号
      */
-    @PostMapping("getStuScoreInfo")
-    public @ResponseBody AjaxResponse getStuScoreInfo(@RequestBody String str, HttpServletRequest httpServletRequest) {
+    @PostMapping("getStuExamInfo")
+    public @ResponseBody AjaxResponse getStuExamInfo(@RequestBody String str, HttpServletRequest httpServletRequest) {
         authorityCheckService.checkStudentAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
         try {
             String stu_id = JSON.parseObject(str).get("stu_id").toString();
@@ -368,9 +368,11 @@ public class ExamController {
             List<Map<String,Object>> ques = examService.getStuScoreInfo(exam_id,stu_id);
             String stu_name = studentRepository.findNameByStu_id(stu_id);
             String tea_name = teacherRepository.getNameByTea_id(exam.getTea_id());
+            String co_name = courseRepository.getNameByCo_id(exam.getCo_id());
             ret.put("name", exam.getName());
             ret.put("stu_name", stu_name);
             ret.put("tea_name", tea_name);
+            ret.put("co_name", co_name);
             ret.put("begin_time", exam.getBegin_time());
             ret.put("Ques", ques);
             return AjaxResponse.success(ret);
@@ -440,6 +442,38 @@ public class ExamController {
                 }
             }
             log.info("获取questionid为：" + question_id + "的题目成功");
+            return AjaxResponse.success(ret);
+        } catch (Exception e) {
+            return AjaxResponse.error(new CustomException(CustomExceptionType.SYSTEM_ERROR, e.getMessage()));
+        }
+    }
+    /**
+     * 学生成绩中心
+     * @param str
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("/getStuScoreInfo")
+    public @ResponseBody
+    AjaxResponse getStuScoreInfo(@RequestBody String str, HttpServletRequest httpServletRequest) throws Exception {
+        authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        try {
+            String stu_id = JSON.parseObject(str).get("stu_id").toString();
+            List<Long> exam_ids = stuExamRepository.findExam_idByStu_IdAAndStatus(stu_id, StuExam.Status.DONE);
+            log.info("exam_ids" + exam_ids.toString());
+            List<Exam> exams = examRepository.findExamsByExam_idAAndProgress_status(exam_ids, Exam.ProgressStatus.DONE);
+            List<Map<String, Object>> ret = new ArrayList<>();
+            for (Exam exam : exams) {
+                Map<String, Object> item = new HashMap<>();
+                item.put("name", exam.getName());
+                item.put("co_name", courseRepository.getNameByCo_id(exam.getCo_id()));
+                item.put("tea_name", teacherRepository.getNameByTea_id(exam.getTea_id()));
+                item.put("begin_time", exam.getBegin_time());
+                item.put("last_time", exam.getLast_time());
+                item.put("score", examService.getStuExamScore(exam.getExam_id(), stu_id));
+                item.put("exam_id", exam.getExam_id());
+                ret.add(item);
+            }
             return AjaxResponse.success(ret);
         } catch (Exception e) {
             return AjaxResponse.error(new CustomException(CustomExceptionType.SYSTEM_ERROR, e.getMessage()));
