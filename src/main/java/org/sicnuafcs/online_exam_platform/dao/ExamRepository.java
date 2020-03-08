@@ -29,4 +29,9 @@ public interface ExamRepository extends JpaRepository<Exam, String> {
     @Query("select u.exam_id from Exam  u where u.co_id = ?1 and u.tea_id = ?2")
     List<Long> findExamIdByCo_idAAndTea_id(String co_id, String tea_id);
 
+    @Query("select u from Exam u where u.tea_id = ?1 and u.progress_status = ?2")
+    List<Exam> findExamsByTea_idAndProgress_status(String Tea_id, Exam.ProgressStatus status);
+
+    @Query("select u.name from Exam u where u.exam_id = ?1")
+    String getNameByExam_id(Long exam_id);
 }

@@ -213,4 +213,32 @@ public class CourseController {
         courseSelectionService.quitCourse(co_id, tea_id, stu_id);
         return AjaxResponse.success("success");
     }
+
+    /**
+     * 教师获取评完分的试卷
+     * tea_id
+     * {exam_id,exam_name,begin_time,last_time,co_name}
+     */
+    @PostMapping("/getDoneExam")
+    public @ResponseBody AjaxResponse getDoneExam(@RequestBody String str, HttpServletRequest httpServletRequest) {
+        authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        String tea_id = JSON.parseObject(str).get("tea_id").toString();
+        ArrayList res = courseSelectionService.getDoneExam(tea_id);
+        return AjaxResponse.success(res);
+    }
+
+    /**
+     * 教师获取本堂考试所有学生成绩
+     * exam_id
+     * exam_name, data:{stu_id,stu_name,score}
+     */
+    @PostMapping("/getStuExam")
+    public @ResponseBody AjaxResponse getStuExam(@RequestBody String str, HttpServletRequest httpServletRequest) {
+        authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        Long exam_id = Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
+        Map res = new HashMap();
+        res.put("exam_name", examService.getExamName(exam_id));
+        res.put("data", courseSelectionService.getStuExam(exam_id));
+        return AjaxResponse.success(res);
+    }
 }

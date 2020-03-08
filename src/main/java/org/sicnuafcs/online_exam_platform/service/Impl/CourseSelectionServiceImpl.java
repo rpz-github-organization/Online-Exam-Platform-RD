@@ -6,11 +6,9 @@ import org.dozer.DozerBeanMapper;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomException;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomExceptionType;
 import org.sicnuafcs.online_exam_platform.dao.*;
-import org.sicnuafcs.online_exam_platform.model.Course;
-import org.sicnuafcs.online_exam_platform.model.CourseVO;
-import org.sicnuafcs.online_exam_platform.model.StuCo;
-import org.sicnuafcs.online_exam_platform.model.Student;
+import org.sicnuafcs.online_exam_platform.model.*;
 import org.sicnuafcs.online_exam_platform.service.CourseSelectionService;
+import org.sicnuafcs.online_exam_platform.service.ExamService;
 import org.sicnuafcs.online_exam_platform.service.HomePageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,6 +36,12 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
     HomePageService homePageService;
     @Autowired
     DozerBeanMapper dozerBeanMapper;
+    @Autowired
+    ExamRepository examRepository;
+    @Autowired
+    StuExamRepository stuExamRepository;
+    @Autowired
+    ExamService examService;
 
     @Override
     public String getClass_id(String stu_id) {
@@ -192,5 +196,37 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
         }catch (Exception e) {
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "验证失败");
         }
+    }
+
+    @Override
+    public ArrayList getDoneExam(String tea_id) {
+        ArrayList res = new ArrayList();
+        List<Exam> exams = examRepository.findExamsByTea_idAndProgress_status(tea_id, Exam.ProgressStatus.DONE);
+        for (Exam exam : exams) {
+            if (exam.is_judge()) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("exam_id", exam.getExam_id());
+                map.put("exam_name", exam.getName());
+                map.put("begin_time", exam.getBegin_time());
+                map.put("last_time", exam.getLast_time());
+                map.put("co_name", courseRepository.getNameByCo_id(exam.getCo_id()));
+                res.add(map);
+            }
+        }
+        return res;
+    }
+
+    @Override
+    public ArrayList getStuExam(Long exam_id) {
+        ArrayList res = new ArrayList();
+        HashSet<String> stuIds = stuExamRepository.getOneByExam_id(exam_id);
+        for (String stu_id : stuIds) {
+            Map map = new HashMap();
+            map.put("stu_id", stu_id);
+            map.put("stu_name", studentRepository.findNameByStu_id(stu_id));
+            map.put("score", examService.getStuExamScore(exam_id, stu_id));
+            res.add(map);
+        }
+        return res;
     }
 }

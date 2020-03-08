@@ -347,4 +347,9 @@ public class ExamServiceImpl implements ExamService {
         }
         return total;
     }
+
+    @Override
+    public String getExamName(Long exam_id) {
+        return examRepository.getNameByExam_id(exam_id);
+    }
 }

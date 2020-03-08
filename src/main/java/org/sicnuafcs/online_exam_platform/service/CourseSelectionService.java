@@ -26,4 +26,8 @@ public interface CourseSelectionService {
     void saveToStuCo(String str, String stu_id);
 
     void quitCourse(String co_id, String tea_id, String stu_id);
+
+    ArrayList getDoneExam(String tea_id);
+
+    ArrayList getStuExam(Long exam_id);
 }
