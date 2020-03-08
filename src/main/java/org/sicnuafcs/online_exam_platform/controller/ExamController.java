@@ -456,7 +456,7 @@ public class ExamController {
     @PostMapping("/getStuScoreInfo")
     public @ResponseBody
     AjaxResponse getStuScoreInfo(@RequestBody String str, HttpServletRequest httpServletRequest) throws Exception {
-        authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        authorityCheckService.checkStudentAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
         try {
             String stu_id = JSON.parseObject(str).get("stu_id").toString();
             List<Long> exam_ids = stuExamRepository.findExam_idByStu_IdAAndStatus(stu_id, StuExam.Status.DONE);
