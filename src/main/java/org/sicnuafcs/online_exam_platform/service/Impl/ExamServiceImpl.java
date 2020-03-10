@@ -46,10 +46,12 @@ public class ExamServiceImpl implements ExamService {
     public long saveToExam(Exam exam) throws Exception {
         //编辑试卷信息
         if (exam.getExam_id() != null) {
+            exam.setProgress_status(Exam.ProgressStatus.WILL);
             examRepository.save(exam);
             return exam.getExam_id();
         } else {
             long exam_id = redisUtils.incr("exam_id");
+            exam.setProgress_status(Exam.ProgressStatus.WILL);
             exam.setExam_id(exam_id);
             examRepository.save(exam);
             return exam_id;
