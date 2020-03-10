@@ -172,6 +172,7 @@ public class ExamController {
     AjaxResponse saveQuestionToExam(@Valid @RequestBody ExamQuestion examQuestion, HttpServletRequest httpServletRequest) throws Exception {
         authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
         examService.saveQuestionToExam(examQuestion);
+        examRepository.saveIsDistribute(examQuestion.getExam_id(), false);
         log.info("添加/编辑 试题到试卷成功");
         return AjaxResponse.success();
     }
@@ -367,7 +368,7 @@ public class ExamController {
             if (!exam.is_judge() || exam.getProgress_status() != Exam.ProgressStatus.DONE) {
                 throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "this exam is not judge! or is not done");
             }
-            List<Map<String,Object>> ques = examService.getStuScoreInfo(exam_id,stu_id);
+            List<Map<String,Object>> ques = examService.getStuQuesInfo(exam_id,stu_id);
             String stu_name = studentRepository.findNameByStu_id(stu_id);
             String tea_name = teacherRepository.getNameByTea_id(exam.getTea_id());
             String co_name = courseRepository.getNameByCo_id(exam.getCo_id());
@@ -411,7 +412,7 @@ public class ExamController {
     @PostMapping("/getQuestionTea")
     public @ResponseBody
     AjaxResponse getQuestionStu(@RequestBody String str, HttpServletRequest httpServletRequest) throws Exception {
-        authorityCheckService.checkStudentAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        //authorityCheckService.checkStudentAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
         try {
             Question question;
             StuExam stuExam;
