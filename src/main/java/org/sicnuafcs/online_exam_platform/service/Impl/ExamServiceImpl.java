@@ -293,12 +293,12 @@ public class ExamServiceImpl implements ExamService {
     }
 
     @Override
-    public List getStuScoreInfo(Long exam_id, String stu_id) {
+    public List getStuQuesInfo(Long exam_id, String stu_id) {
         List<StuExam> stuExams = stuExamRepository.getByExam_idAndStu_id(exam_id, stu_id);
         if (stuExams == null) {
             throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "该学生未参加/完成该考试");
         }
-        List<StuScoreInfo> ret = new ArrayList<>();
+        List<StuScoreInfo> ret = new LinkedList<>();
         //index 0为单选题 1是判断题 2是问答题 3是编程题
         for (int i = 0; i < 4; i++) {
             ret.add(new StuScoreInfo());

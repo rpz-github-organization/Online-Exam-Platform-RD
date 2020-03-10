@@ -34,7 +34,8 @@ public interface ExamRepository extends JpaRepository<Exam, String> {
 
     @Query("select u.name from Exam u where u.exam_id = ?1")
     String getNameByExam_id(Long exam_id);
-
-    @Query("update Exam u set u.is_distribute = ?2 where u.exam_id = ?1")
-    void saveIsDistribute(Long exam_id, boolean is_distribute);
+    @Modifying
+    @Transactional
+    @Query("update Exam u set u.is_distribute = :is_distribute where u.exam_id = :exam_id")
+    void saveIsDistribute(@Param("exam_id") Long exam_id, @Param("is_distribute") boolean is_distribute);
 }
