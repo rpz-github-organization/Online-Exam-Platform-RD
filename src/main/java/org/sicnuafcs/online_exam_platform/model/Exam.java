@@ -32,9 +32,9 @@ public class Exam implements Serializable {
     @Column
     private Long exam_id;
 
-    @Column(length = 16)
+    @Column
     @Enumerated(EnumType.STRING)
-    private ProgressStatus progress_status; //状态
+    private ProgressStatus progress_status = null; //状态
 
     private String name;
     private Long begin_time;//时间戳

@@ -138,6 +138,7 @@ public class CourseController {
             return AjaxResponse.error(new CustomException(CustomExceptionType.USER_INPUT_ERROR, "tea_id or co_id is null"));
         }
         List<Exam> exams = examRepository.findExamsByCo_idAAndTea_id(co_id, tea_id);
+        System.out.println(exams);
         Course course = courseRepository.findCourseByCo_id(co_id);
         List<Map<String, Object>> examRet = new ArrayList<>();
         Map<String, Object> examsInfo = new HashMap<>();
@@ -162,6 +163,7 @@ public class CourseController {
             examsInfo.put("begin_time", exam.getBegin_time());
             examsInfo.put("last_time", exam.getLast_time());
             examsInfo.put("is_judge", exam.is_judge());
+            examsInfo.put("exam_id", exam.getExam_id());
             examRet.add(examsInfo);
         }
         ret.put("exams", examRet);
