@@ -292,6 +292,9 @@ public class ExamServiceImpl implements ExamService {
     @Override
     public List getStuScoreInfo(Long exam_id, String stu_id) {
         List<StuExam> stuExams = stuExamRepository.getByExam_idAndStu_id(exam_id, stu_id);
+        if (stuExams == null) {
+            throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "该学生未参加/完成该考试");
+        }
         List<StuScoreInfo> ret = new ArrayList<>();
         //index 0为单选题 1是判断题 2是问答题 3是编程题
         for (int i = 0; i < 4; i++) {
@@ -320,6 +323,7 @@ public class ExamServiceImpl implements ExamService {
             ret.get(type).setGet(get + getScore);
             ret.get(type).setTotal(total + correctScore);
             ques.put("num", stuExam.getNum());
+            ques.put("question_id", stuExam.getQuestion_id());
             if (getScore == 0) {
                 ques.put("status", 0); //错误
             } else if (getScore == correctScore) {

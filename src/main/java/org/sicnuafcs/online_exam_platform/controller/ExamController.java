@@ -360,10 +360,10 @@ public class ExamController {
             Map<String, Object> ret = new HashMap<>();
             Exam exam = examRepository.findExamByExam_id(exam_id);
             if (exam == null) {
-                AjaxResponse.error(new CustomException(CustomExceptionType.SYSTEM_ERROR, "error exam_id!"));
+                throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "error exam_id!");
             }
             if (!exam.is_judge() || exam.getProgress_status() != Exam.ProgressStatus.DONE) {
-                AjaxResponse.error(new CustomException(CustomExceptionType.SYSTEM_ERROR, "this exam is not judge! or is not done"));
+                throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "this exam is not judge! or is not done");
             }
             List<Map<String,Object>> ques = examService.getStuScoreInfo(exam_id,stu_id);
             String stu_name = studentRepository.findNameByStu_id(stu_id);
@@ -375,6 +375,7 @@ public class ExamController {
             ret.put("co_name", co_name);
             ret.put("begin_time", exam.getBegin_time());
             ret.put("Ques", ques);
+            ret.put("grade", examService.getStuExamScore(exam.getExam_id(), stu_id));
             return AjaxResponse.success(ret);
         } catch (Exception e) {
             log.error(e.getMessage());
