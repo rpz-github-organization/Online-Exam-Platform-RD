@@ -279,7 +279,13 @@ public class ExamServiceImpl implements ExamService {
 
         if (option == 1) {
             //考生人数（选了课的人）
-            res.put("stu_number", 0);
+            int stu_num = 0;
+            if (exam.is_distribute() && exam.getProgress_status() == Exam.ProgressStatus.WILL) {
+                String co_id = exam.getCo_id();
+                String tea_id = exam.getTea_id();
+                stu_num = stuCoRepository.findByCo_idaAndTea_id(co_id, tea_id).size();
+            }
+            res.put("stu_number", stu_num);
 
             //实际人数
             HashSet num = stuExamRepository.getOneByExam_id(exam_id);
