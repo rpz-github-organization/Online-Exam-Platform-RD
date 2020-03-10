@@ -40,4 +40,5 @@ public class Exam implements Serializable {
     private Long begin_time;//时间戳
     private int last_time; //持续时间
     private boolean is_judge; //是否判分
+    private boolean is_distribute;//是否发布
 }

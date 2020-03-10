@@ -256,6 +256,7 @@ public class ExamServiceImpl implements ExamService {
         res.put("exam_name", exam.getName());
         res.put("begin_time", exam.getBegin_time());
         res.put("last_time", exam.getLast_time());
+        res.put("is_distribute", exam.is_distribute());
 
         //status
         Exam.ProgressStatus progressStatus = exam.getProgress_status();

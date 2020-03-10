@@ -398,6 +398,7 @@ public class ExamController {
         long exam_id =Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
         String co_id = JSON.parseObject(str).get("co_id").toString();
         examService.distributeExamToStudent(exam_id, co_id);
+        examRepository.saveIsDistribute(exam_id, true);
         log.info("为：" + exam_id + "考试分发试卷成功");
         return AjaxResponse.success("success");
     }
