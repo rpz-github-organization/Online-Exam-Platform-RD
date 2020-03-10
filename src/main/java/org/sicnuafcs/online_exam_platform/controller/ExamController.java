@@ -335,13 +335,13 @@ public class ExamController {
     }
 
     /**
-     * 学生考试详情页
+     * 老师查看 学生考试详情页
      * 考试id
      * 考试名字 时间 时长 状态（考试未开始 考试中 考试结束未评分 考试结束已评分）考生人数 实际考试人数
      */
     @PostMapping("/getExamInfo")
     public @ResponseBody AjaxResponse getExamInfo(@RequestBody String str, HttpServletRequest httpServletRequest) {
-        authorityCheckService.checkStudentAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
         long exam_id = Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
         int option = 1;
         Map res = examService.getExamInfo(exam_id, option);
