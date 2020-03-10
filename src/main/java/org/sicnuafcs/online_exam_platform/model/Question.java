@@ -33,22 +33,23 @@ public class Question implements Serializable {
     @Column
     private Long question_id;
 
-    @Column(length = 16, nullable = false)
+    @Column(length = 16)
     @NotBlank(message = "教师id不为空")
     private  String tea_id;
 
-    @Column(length = 16, nullable = false)
+    @Column(length = 16)
     private String question;
 
-    @Column(length = 128, nullable = false)
+    @Column(length = 128)
     private String tag;
 
     @Column(length = 256)
     private  String options;
 
-    @Column(nullable = false)
+    @Column
     private String answer;
 
+    @Column
     @Enumerated(EnumType.STRING)
     private Type type = null;
 

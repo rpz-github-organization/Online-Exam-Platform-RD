@@ -111,12 +111,14 @@ public class ExamController {
         }
 
         questionService.saveQuestion(getQuestion);  //保存到question表
-        try {
-            future.get();
-        } catch (Exception e) {
-            throw new CustomException(CustomExceptionType.OTHER_ERROR, e.getMessage());
-        }
 
+        if (getQuestion.getType() == (GetQuestion.Type.Normal_Program) || getQuestion.getType() == (GetQuestion.Type.SpecialJudge_Program)) {
+            try {
+                future.get();
+            } catch (Exception e) {
+                throw new CustomException(CustomExceptionType.OTHER_ERROR, e.getMessage());
+            }
+        }
         log.info("题目 添加/更新 成功");
         if (getQuestion.getType() == (GetQuestion.Type.Normal_Program) || getQuestion.getType() == (GetQuestion.Type.SpecialJudge_Program)) {
             judgeService.addTestCase(getQuestion);   //保存到test_case表
