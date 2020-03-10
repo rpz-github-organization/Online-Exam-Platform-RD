@@ -138,10 +138,8 @@ public class CourseController {
             return AjaxResponse.error(new CustomException(CustomExceptionType.USER_INPUT_ERROR, "tea_id or co_id is null"));
         }
         List<Exam> exams = examRepository.findExamsByCo_idAAndTea_id(co_id, tea_id);
-        System.out.println(exams);
         Course course = courseRepository.findCourseByCo_id(co_id);
         List<Map<String, Object>> examRet = new ArrayList<>();
-        Map<String, Object> examsInfo = new HashMap<>();
         Map<String, Object> ret = new HashMap<>();
         if (course != null) {
             ret.put("name", course.getName());
@@ -152,6 +150,7 @@ public class CourseController {
             return AjaxResponse.error(new CustomException(CustomExceptionType.USER_INPUT_ERROR, "do not exists course"));
         }
         for (Exam exam : exams) {
+            Map<String, Object> examsInfo = new HashMap<>();
             examsInfo.put("exam_name",exam.getName());
             if (exam.getProgress_status().equals(Exam.ProgressStatus.WILL)) {
                 examsInfo.put("status", 0);
