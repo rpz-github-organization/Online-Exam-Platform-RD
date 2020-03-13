@@ -492,7 +492,7 @@ public class ExamController {
      */
     @PostMapping("/getWholeExam")
     public @ResponseBody AjaxResponse getWholeExam(@RequestBody String str, HttpServletRequest httpServletRequest) {
-        authorityCheckService.checkStudentAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
         Long exam_id = Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
         Map res = examService.getWholeExam(exam_id);
         return AjaxResponse.success(res);
