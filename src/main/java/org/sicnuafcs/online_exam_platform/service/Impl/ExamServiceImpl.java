@@ -41,6 +41,8 @@ public class ExamServiceImpl implements ExamService {
     HomePageService homePageService;
     @Autowired
     DozerBeanMapper dozerBeanMapper;
+    @Autowired
+    TestCaseRepository testCaseRepository;
 
     @Override
     public long saveToExam(Exam exam) throws Exception {
@@ -364,5 +366,81 @@ public class ExamServiceImpl implements ExamService {
     @Override
     public String getExamName(Long exam_id) {
         return examRepository.getNameByExam_id(exam_id);
+    }
+
+    @Override
+    public Map getWholeExam(Long exam_id) {
+        Map result = new HashMap();
+
+        //single
+        ArrayList single = new ArrayList();
+        List<Long>  singleList = examQuestionRepository.getQuestionIdListByExam_idAndType(exam_id, Question.Type.Single);
+        for (Long question_id : singleList) {
+            Map map = new HashMap();
+            Question question = questionRepository.getOneByQuestion_id(question_id);
+            map.put("question", question.getQuestion());
+            map.put("question_id", question_id);
+            map.put("option", question.getOptions());
+            map.put("answer", question.getAnswer());
+            map.put("tag", question.getTag());
+            single.add(map);
+        }
+        result.put("single", single);
+        if (!singleList.isEmpty()) {
+            result.put("singleScore", examQuestionRepository.findScoreById(singleList.get(0), exam_id));
+        }
+        else {
+            result.put("singleScore", null);
+        }
+
+        //judge
+        ArrayList judge = new ArrayList();
+        List<Long>  judgeList = examQuestionRepository.getQuestionIdListByExam_idAndType(exam_id, Question.Type.Judge);
+        for (Long question_id : judgeList) {
+            Map map = new HashMap();
+            Question question = questionRepository.getOneByQuestion_id(question_id);
+            map.put("question", question.getQuestion());
+            map.put("question_id", question_id);
+            map.put("answer", question.getAnswer());
+            map.put("tag", question.getTag());
+            judge.add(map);
+        }
+        result.put("judge", judge);
+        if (!judgeList.isEmpty()) {
+            result.put("judgeScore", examQuestionRepository.findScoreById(judgeList.get(0), exam_id));
+        }else {
+            result.put("judgeScore", null);
+        }
+
+        //program
+        ArrayList program = new ArrayList();
+        List<Long> programList = examQuestionRepository.getQuestionIdListByExam_idAndType(exam_id, Question.Type.Normal_Program);
+        programList.addAll(examQuestionRepository.getQuestionIdListByExam_idAndType(exam_id, Question.Type.SpecialJudge_Program));
+        for (Long question_id : programList) {
+            Map map = new HashMap();
+            Question question = questionRepository.getOneByQuestion_id(question_id);
+            map.put("question", question.getQuestion());
+            map.put("question_id", question_id);
+            map.put("answer", question.getAnswer());
+            map.put("tag", question.getTag());
+            map.put("tip", question.getTip());
+            map.put("score", examQuestionRepository.findScoreById(question_id, exam_id));
+            //test_case
+            TestCase testCase = testCaseRepository.getOneByQuestion_id(question_id);
+            ArrayList<String> in = testCaseRepository.getOneByQuestion_id(question_id).getInput();
+            ArrayList<String> output = testCaseRepository.getOneByQuestion_id(question_id).getOutput();
+            ArrayList testcases = new ArrayList();
+            for (int i = 0; i < in.size(); i++) {
+                Map res = new HashMap();
+                res.put("input", in.get(i));
+                res.put("output", output.get(i));
+                testcases.add(res);
+            }
+            map.put("test_case", testcases);
+            program.add(map);
+        }
+        result.put("program", program);
+
+        return result;
     }
 }

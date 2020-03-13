@@ -403,6 +403,7 @@ public class ExamController {
         log.info("为：" + exam_id + "考试分发试卷成功");
         return AjaxResponse.success("success");
     }
+
     /**
      *教师获取学生题目结果
      * @param str
@@ -452,6 +453,7 @@ public class ExamController {
             return AjaxResponse.error(new CustomException(CustomExceptionType.SYSTEM_ERROR, e.getMessage()));
         }
     }
+
     /**
      * 学生成绩中心
      * @param str
@@ -485,5 +487,15 @@ public class ExamController {
         }
     }
 
+    /**
+     * 老师修改试卷 获取整张试卷
+     */
+    @PostMapping("/getWholeExam")
+    public @ResponseBody AjaxResponse getWholeExam(@RequestBody String str, HttpServletRequest httpServletRequest) {
+        authorityCheckService.checkStudentAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        Long exam_id = Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
+        Map res = examService.getWholeExam(exam_id);
+        return AjaxResponse.success(res);
+    }
 }
 
