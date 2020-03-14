@@ -178,7 +178,7 @@ public class ExamController {
     }
 
     /**
-     * 学生获取学生试卷
+     * 学生开始考试的时候 获取学生试卷
      * @param str
      * @return
      * @throws Exception
@@ -190,13 +190,8 @@ public class ExamController {
         //Long exam_id, String stu_id
         long exam_id =Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
         String stu_id = JSON.parseObject(str).get("stu_id").toString();
-//        System.out.println(str);
-//        System.out.println(exam_id);
-//        System.out.println(stu_id);
-        ArrayList<StuExam> stuExamArrayList = new ArrayList<>();
-        stuExamArrayList = stuExamRepository.getByExam_idAndStu_id(exam_id, stu_id);
-        log.info("获取学号为：" + stu_id + "同学的试卷成功");
-        return AjaxResponse.success(stuExamArrayList);
+        ArrayList res = examService.getStuExam(exam_id);
+        return AjaxResponse.success(res);
     }
 
     /**

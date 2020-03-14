@@ -19,4 +19,5 @@ public interface ExamService {
     int getStuExamScore(Long exam_id, String stu_id);
     String getExamName(Long exam_id);
     Map getWholeExam(Long exam_id);
+    ArrayList getStuExam(Long exam_id);
 }

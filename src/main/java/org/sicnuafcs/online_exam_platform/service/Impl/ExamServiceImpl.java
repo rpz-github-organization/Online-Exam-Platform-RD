@@ -443,4 +443,14 @@ public class ExamServiceImpl implements ExamService {
 
         return result;
     }
+
+    @Override
+    public ArrayList getStuExam(Long exam_id) {
+        ArrayList res = new ArrayList();
+        ArrayList<ExamQuestion> examQuestions = examQuestionRepository.findByExam_id(exam_id);
+        for (ExamQuestion examQuestion : examQuestions) {
+            res.add(examQuestion);
+        }
+        return res;
+    }
 }
