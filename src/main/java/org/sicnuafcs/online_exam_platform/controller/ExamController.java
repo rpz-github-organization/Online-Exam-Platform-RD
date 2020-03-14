@@ -509,5 +509,28 @@ public class ExamController {
         Map res = examService.getWholeExam(exam_id);
         return AjaxResponse.success(res);
     }
+
+    /**
+     *学生获取实时 考试 时间状态信息
+     * @param str
+     * @param httpServletRequest
+     * @return
+     */
+    @PostMapping("/getTimeAndStatus")
+    public @ResponseBody AjaxResponse getTimeAndStatus(@RequestBody String str, HttpServletRequest httpServletRequest) {
+        authorityCheckService.checkStudentAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        Long exam_id = Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
+        Map res = new HashMap();
+        Exam exam = examRepository.findExamByExam_id(exam_id);
+        res.put("begin_time", exam.getBegin_time());
+        res.put("last_time", exam.getLast_time());
+        if (exam.getProgress_status().equals(Exam.ProgressStatus.DONE)) {
+            res.put("status", "end");
+        }
+        else {
+            res.put("status", "ing");
+        }
+        return AjaxResponse.success(res);
+    }
 }
 
