@@ -39,6 +39,7 @@ public interface ExamRepository extends JpaRepository<Exam, String> {
 
     @Query("select u.name from Exam u where u.exam_id = ?1")
     String getNameByExam_id(Long exam_id);
+
     @Modifying
     @Transactional
     @Query("update Exam u set u.is_distribute = :is_distribute where u.exam_id = :exam_id")
@@ -46,4 +47,9 @@ public interface ExamRepository extends JpaRepository<Exam, String> {
 
     @Query("select u.last_time from Exam u where u.exam_id = ?1")
     int getLast_timeByExam_id(Long exam_id);
+
+    @Modifying
+    @Transactional
+    @Query("update Exam u set u._judge = :last_time where u.exam_id = :exam_id")
+    void saveIs_judge(@Param("exam_id") Long exam_id, @Param("last_time") boolean is_judge);
 }

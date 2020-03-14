@@ -310,7 +310,9 @@ public class ExamController {
             Long exam_id = req.getExam_id();
             for (StuExam stuExam: req.getScoreList()) {
                 stuExamRepository.saveScore(stuExam.getScore(), stuExam.getQuestion_id(), exam_id, stu_id);
+
             }
+            examRepository.saveIs_judge(exam_id, true);
             return AjaxResponse.success("success!");
         } catch (Exception e) {
             log.error(e.getMessage());
