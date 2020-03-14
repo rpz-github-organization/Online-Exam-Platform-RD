@@ -322,18 +322,28 @@ public class ExamController {
      * 教师改变考试状态
      */
     @PostMapping("/changeExamStatus")
-    public @ResponseBody AjaxResponse changeExamStatus(@RequestBody Exam req, HttpServletRequest httpServletRequest) {
+    public @ResponseBody AjaxResponse changeExamStatus(@RequestBody String str, HttpServletRequest httpServletRequest) {
         authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
         try {
-            if (req.getExam_id() != null && req.getProgress_status() != null) {
-                examRepository.saveStatus(req.getExam_id(), req.getProgress_status());
+            long exam_id = Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
+            int extend_time = Integer.parseInt(JSON.parseObject(str).get("extend_time").toString());
+            try {
+                if (extend_time == 0) {
+                    Exam.ProgressStatus progressStatus = null;
+                    progressStatus = Exam.ProgressStatus.DONE;
+                    examRepository.saveStatus(exam_id, progressStatus);
+                }
+                else {
+                    int last_time = examRepository.getLast_timeByExam_id(exam_id) + extend_time;
+                    examRepository.saveLast_time(exam_id, last_time);
+                }
                 return AjaxResponse.success("success!");
-            } else {
-                return AjaxResponse.error(new CustomException(CustomExceptionType.SYSTEM_ERROR, "examid or status empty!"));
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                return AjaxResponse.error(new CustomException(CustomExceptionType.SYSTEM_ERROR, e.getMessage()));
             }
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return AjaxResponse.error(new CustomException(CustomExceptionType.SYSTEM_ERROR, e.getMessage()));
+        }catch (Exception e) {
+            return AjaxResponse.error(new CustomException(CustomExceptionType.USER_INPUT_ERROR, "学号/延长时间为空!"));
         }
     }
 

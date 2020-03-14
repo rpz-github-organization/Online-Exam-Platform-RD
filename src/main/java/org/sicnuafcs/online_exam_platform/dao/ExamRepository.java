@@ -26,6 +26,11 @@ public interface ExamRepository extends JpaRepository<Exam, String> {
     @Query("update Exam u set u.progress_status = :status where u.exam_id = :exam_id")
     void saveStatus(@Param("exam_id") Long exam_id, @Param("status") Exam.ProgressStatus status);
 
+    @Modifying
+    @Transactional
+    @Query("update Exam u set u.last_time = :last_time where u.exam_id = :exam_id")
+    void saveLast_time(@Param("exam_id") Long exam_id, @Param("last_time") int last_time);
+
     @Query("select u.exam_id from Exam  u where u.co_id = ?1 and u.tea_id = ?2")
     List<Long> findExamIdByCo_idAAndTea_id(String co_id, String tea_id);
 
@@ -38,4 +43,7 @@ public interface ExamRepository extends JpaRepository<Exam, String> {
     @Transactional
     @Query("update Exam u set u.is_distribute = :is_distribute where u.exam_id = :exam_id")
     void saveIsDistribute(@Param("exam_id") Long exam_id, @Param("is_distribute") boolean is_distribute);
+
+    @Query("select u.last_time from Exam u where u.exam_id = ?1")
+    int getLast_timeByExam_id(Long exam_id);
 }
