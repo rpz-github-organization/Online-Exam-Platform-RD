@@ -457,7 +457,7 @@ public class ExamServiceImpl implements ExamService {
             map.put("answer", question.getAnswer());
             map.put("tag", question.getTag());
             map.put("score", examQuestionRepository.findScoreById(question_id, exam_id));
-            program.add(map);
+            discussion.add(map);
         }
         if (!discussionList.isEmpty()) {
             result.put("discussion", discussion);
