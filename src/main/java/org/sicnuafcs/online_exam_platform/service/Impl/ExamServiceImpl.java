@@ -439,7 +439,32 @@ public class ExamServiceImpl implements ExamService {
             map.put("test_case", testcases);
             program.add(map);
         }
-        result.put("program", program);
+        if (!programList.isEmpty()) {
+            result.put("program", program);
+        }
+        else {
+            result.put("program", null);
+        }
+
+        //discussion
+        ArrayList discussion = new ArrayList();
+        List<Long> discussionList = examQuestionRepository.getQuestionIdListByExam_idAndType(exam_id, Question.Type.Discussion);
+        for (Long question_id : discussionList) {
+            Map map = new HashMap();
+            Question question = questionRepository.getOneByQuestion_id(question_id);
+            map.put("question", question.getQuestion());
+            map.put("question_id", question_id);
+            map.put("answer", question.getAnswer());
+            map.put("tag", question.getTag());
+            map.put("score", examQuestionRepository.findScoreById(question_id, exam_id));
+            program.add(map);
+        }
+        if (!discussionList.isEmpty()) {
+            result.put("discussion", discussion);
+        }
+        else {
+            result.put("discussion", null);
+        }
 
         return result;
     }
