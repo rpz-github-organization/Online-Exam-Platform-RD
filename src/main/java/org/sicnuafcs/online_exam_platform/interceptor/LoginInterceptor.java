@@ -27,7 +27,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             if (userInfo == null) {
             log.info("没有登录");
 //            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "没有登录或登录失败");
-            response.sendError(400,"没有登录或登陆失败");
+            response.sendError(401,"没有登录或登陆失败");
             return false;
         }else {
             log.info("已登录，用户信息："+userInfo);
