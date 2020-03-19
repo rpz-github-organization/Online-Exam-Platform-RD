@@ -155,6 +155,23 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "传入的学号不正确");
         }
         ArrayList<String> data = homePageService.String2List(res);
+
+        //查重
+        ArrayList<String> coList = new ArrayList();
+        for (String in : data) {
+            Map map = JSON.parseObject(in);
+            String co_id = map.get("co_id").toString();
+            coList.add(co_id);
+        }
+        if (coList.isEmpty()) {
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "课程选择为空");
+        }
+        HashSet hashSet = new HashSet(coList);
+        if (hashSet.size() != coList.size()) {
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "课程选择重复");
+        }
+
+
         for (String in : data) {
             Map map = JSON.parseObject(in);
             String co_id = map.get("co_id").toString();

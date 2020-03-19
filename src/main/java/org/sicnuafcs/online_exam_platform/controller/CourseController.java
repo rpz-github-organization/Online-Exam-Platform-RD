@@ -190,6 +190,12 @@ public class CourseController {
         return AjaxResponse.success(res);
     }
 
+    /**
+     * 学生选课
+     * @param str
+     * @param httpServletRequest
+     * @return
+     */
     @PostMapping("/saveToStuCo")
     public @ResponseBody AjaxResponse saveToStuCo(@RequestBody String str, HttpServletRequest httpServletRequest) {
         authorityCheckService.checkStudentAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
