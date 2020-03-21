@@ -5,10 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.sicnuafcs.online_exam_platform.config.exception.AjaxResponse;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomException;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomExceptionType;
-import org.sicnuafcs.online_exam_platform.dao.CourseRepository;
-import org.sicnuafcs.online_exam_platform.dao.ExamRepository;
-import org.sicnuafcs.online_exam_platform.dao.StuCoRepository;
-import org.sicnuafcs.online_exam_platform.dao.TeacherRepository;
+import org.sicnuafcs.online_exam_platform.dao.*;
 import org.sicnuafcs.online_exam_platform.model.*;
 import org.sicnuafcs.online_exam_platform.service.AuthorityCheckService;
 import org.sicnuafcs.online_exam_platform.service.CourseSelectionService;
@@ -41,6 +38,8 @@ public class CourseController {
     AuthorityCheckService authorityCheckService;
     @Autowired
     ExamService examService;
+    @Autowired
+    TeaCoRepository teaCoRepository;
 
 
     /**
@@ -111,15 +110,32 @@ public class CourseController {
 
     /**
      * 老师添加/更新课程
-     * @param courseVO
+     * @param str
      * @return
      */
     @RequestMapping("/add")
     public @ResponseBody
-    AjaxResponse add(@RequestBody CourseVO courseVO, HttpServletRequest httpServletRequest) {
+    AjaxResponse add(@RequestBody String str, HttpServletRequest httpServletRequest) {
         authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
-        Course course1 = courseSelectionService.add(courseVO);
+        String tea_id = JSON.parseObject(str).get("tea_id").toString();
+        String co_id = JSON.parseObject(str).get("co_id").toString();
+        TeaCo teaCo = new TeaCo();
+        teaCo.setCo_id(co_id);
+        teaCo.setTea_id(tea_id);
+        teaCoRepository.save(teaCo);
         return AjaxResponse.success("success");
+    }
+    /**
+     * 老师添加/更新课程,获取未教授课程
+     * @param tea_id
+     * @return
+     */
+    @RequestMapping("/getCourseNotTea")
+    public @ResponseBody
+    AjaxResponse getCourseNotTea(@RequestBody String tea_id, HttpServletRequest httpServletRequest) {
+        authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        List<Object> ret = courseSelectionService.getCourseNotTea(tea_id);
+        return AjaxResponse.success(ret);
     }
 
     /**

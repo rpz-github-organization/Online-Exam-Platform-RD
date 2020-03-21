@@ -27,7 +27,7 @@ import java.util.List;
  * @create 2020/2/17 18:17
  */
 
-@Configuration
+//@Configuration
 @EnableScheduling
 public class JudgeServerBeatHeartConfig {
 
