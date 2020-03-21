@@ -4,6 +4,7 @@ import org.sicnuafcs.online_exam_platform.model.Course;
 import org.sicnuafcs.online_exam_platform.model.CourseVO;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public interface CourseSelectionService {
@@ -30,4 +31,5 @@ public interface CourseSelectionService {
     ArrayList getDoneExam(String tea_id);
 
     ArrayList getStuExam(Long exam_id);
+    List<Object> getCourseNotTea(String tea_id);
 }

@@ -246,4 +246,34 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
         }
         return res;
     }
+
+    @Override
+    public List<Object> getCourseNotTea(String tea_id) {
+        List<Object> ret = new ArrayList<>();
+        //获取教师教授的课程id
+        List<String> co_list = teaCoRepository.findCo_idByTea_Id(tea_id);
+        List<Course> courses = new ArrayList<>();
+        //获取教师未教授的课程
+        if (co_list.isEmpty()) {
+            courses = courseRepository.findCourse();
+        } else {
+            log.info(co_list.toString());
+            courses = courseRepository.findCourseByCo_idNotIn(co_list);
+        }
+        for (Course course : courses) {
+            Map<String, Object> courseMap = new HashMap<>();
+            courseMap.put("co_id", course.getCo_id());
+            courseMap.put("name", course.getName());
+            courseMap.put("credit", course.getCredit());
+            courseMap.put("school_hour", course.getSchool_hour());
+            ArrayList<String> majors = homePageService.String2List(course.getMajor());
+            List<String> majors_name = new ArrayList<>();
+            for (String mayjor_id : majors) {
+                majors_name.add(majorRepository.getNameByMajor_id(mayjor_id));
+            }
+            courseMap.put("mayjor", majors_name);
+            ret.add(courseMap);
+        }
+        return ret;
+    }
 }
