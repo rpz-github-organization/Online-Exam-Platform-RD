@@ -127,13 +127,14 @@ public class CourseController {
     }
     /**
      * 老师添加/更新课程,获取未教授课程
-     * @param tea_id
+     * @param str
      * @return
      */
     @RequestMapping("/getCourseNotTea")
     public @ResponseBody
-    AjaxResponse getCourseNotTea(@RequestBody String tea_id, HttpServletRequest httpServletRequest) {
+    AjaxResponse getCourseNotTea(@RequestBody String str, HttpServletRequest httpServletRequest) {
         authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        String tea_id = JSON.parseObject(str).get("tea_id").toString();
         List<Object> ret = courseSelectionService.getCourseNotTea(tea_id);
         return AjaxResponse.success(ret);
     }
