@@ -171,6 +171,12 @@ public class ExamController {
     public @ResponseBody
     AjaxResponse saveQuestionToExam(@Valid @RequestBody ExamQuestion examQuestion, HttpServletRequest httpServletRequest) throws Exception {
         authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+
+        //检测是否已经发布
+        Long exam_id = examQuestion.getExam_id();
+        if (examRepository.getIs_distributeByExam_id(exam_id)) {
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "该考试已经发布 不能修改题目！");
+        }
         examService.saveQuestionToExam(examQuestion);
         examRepository.saveIsDistribute(examQuestion.getExam_id(), false);
         log.info("添加/编辑 试题到试卷成功");
