@@ -55,4 +55,7 @@ public interface ExamRepository extends JpaRepository<Exam, String> {
 
     @Query("select u.is_distribute from Exam u where u.exam_id = ?1")
     boolean getIs_distributeByExam_id(Long exam_id);
+
+    @Query("select u from Exam u")
+    List<Exam> getExams();
 }
