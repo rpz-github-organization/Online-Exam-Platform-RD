@@ -299,7 +299,7 @@ public class ExamServiceImpl implements ExamService {
             res.put("stu_number", stu_num);
 
             //实际人数
-            HashSet num = stuExamRepository.getStuIdByExam_id(exam_id);
+            List<String> num = stuExamRepository.findStu_idByStu_IdAAndStatus(exam_id, StuExam.Status.DONE);
             res.put("actual_number", num.size());
         }
         return res;
