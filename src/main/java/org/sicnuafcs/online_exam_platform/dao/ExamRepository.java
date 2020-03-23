@@ -24,7 +24,7 @@ public interface ExamRepository extends JpaRepository<Exam, String> {
     @Modifying
     @Transactional
     @Query("update Exam u set u.progress_status = :status where u.exam_id = :exam_id")
-    void saveStatus(@Param("exam_id") Long exam_id, @Param("status") Exam.ProgressStatus status);
+    void saveStatus(@Param("exam_id") Long exam_id, @Param("progress_status") Exam.ProgressStatus status);
 
     @Modifying
     @Transactional

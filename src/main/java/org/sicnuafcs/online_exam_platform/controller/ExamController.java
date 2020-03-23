@@ -488,6 +488,9 @@ public class ExamController {
             String stu_id = JSON.parseObject(str).get("stu_id").toString();
             List<Long> exam_ids = stuExamRepository.findExam_idByStu_IdAAndStatus(stu_id, StuExam.Status.DONE);
             log.info("exam_ids" + exam_ids.toString());
+            if (exam_ids.isEmpty()) {
+                return AjaxResponse.success();
+            }
             List<Exam> exams = examRepository.findExamsByExam_idAAndProgress_status(exam_ids, Exam.ProgressStatus.DONE);
             List<Map<String, Object>> ret = new ArrayList<>();
             for (Exam exam : exams) {
