@@ -15,7 +15,7 @@ import java.util.List;
 @Component
 @EnableScheduling
 @EnableAsync
-public class SchedulingConfig {
+public class ChangeExamProgressStatusConfig {
     @Autowired
     ExamRepository examRepository;
 

@@ -394,7 +394,13 @@ public class ExamServiceImpl implements ExamService {
             map.put("tag", question.getTag());
             single.add(map);
         }
-        result.put("single", single);
+        if (single.isEmpty()) {
+            result.put("single", null);
+        }
+        else{
+            result.put("single", single);
+        }
+
         if (!singleList.isEmpty()) {
             result.put("singleScore", examQuestionRepository.findScoreById(singleList.get(0), exam_id));
         }
@@ -414,7 +420,13 @@ public class ExamServiceImpl implements ExamService {
             map.put("tag", question.getTag());
             judge.add(map);
         }
-        result.put("judge", judge);
+        if (judge.isEmpty()) {
+            result.put("judge", null);
+        }
+        else {
+            result.put("judge", judge);
+        }
+
         if (!judgeList.isEmpty()) {
             result.put("judgeScore", examQuestionRepository.findScoreById(judgeList.get(0), exam_id));
         }else {
