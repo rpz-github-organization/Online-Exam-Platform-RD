@@ -252,12 +252,19 @@ public class ExamController {
      * @param str
      * @return
      * @throws Exception
+     * status 1 可以参加考试
+     * status 0 考试未开始
+     * status -1 考试已结束
+     * is_handIn 是否已交卷 0已交 1未交
      */
     @PostMapping("/stuExamInfo")
     public @ResponseBody
     AjaxResponse stuExamInfo(@RequestBody String str, HttpServletRequest httpServletRequest) throws Exception {
         authorityCheckService.checkStudentAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        Map m = (Map) httpServletRequest.getSession().getAttribute("userInfo");
+        String stu_id = (String) m.get("id");
         long exam_id = Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
+
         Exam exam = examRepository.findExamByExam_id(exam_id);
         log.info("exam:" + exam.toString());
         Map<String, Object> ret = new HashMap<>();
@@ -273,6 +280,16 @@ public class ExamController {
         } else{
             ret.put("status", -1);
         }
+        //is_handIn
+        int is_handIn = 0;
+        List<StuExam.Status> status = stuExamRepository.getStatusByExam_idAndAndStu_id(exam_id, stu_id);
+        for (StuExam.Status s : status) {
+            if (s.equals(StuExam.Status.DONE)) {
+                is_handIn = 1;
+                break;
+            }
+        }
+        ret.put("is_handIn", is_handIn);
         return AjaxResponse.success(ret);
     }
 
