@@ -304,7 +304,15 @@ public class ExamController {
         String stu_id = (String) m.get("id");
         long exam_id = Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
         String data = JSON.parseObject(str).get("data").toString();
-        examService.saveToStuExam(data, exam_id, stu_id);
+        boolean is_haveDiscussion = examService.saveToStuExam(data, exam_id, stu_id);
+        //选择判断评分
+        examService.judgeGeneralQuestion(exam_id, stu_id);
+//
+//        //判断是否有讨论题
+//        if (!is_haveDiscussion) {
+//            //如果没有讨论题
+//            examRepository.saveIs_judge(exam_id, true);
+//        }
         return AjaxResponse.success("success");
     }
 
@@ -338,6 +346,7 @@ public class ExamController {
 
             }
             examRepository.saveIs_judge(exam_id, true);
+
             return AjaxResponse.success("success!");
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -511,6 +520,9 @@ public class ExamController {
             List<Exam> exams = examRepository.findExamsByExam_idAAndProgress_status(exam_ids, Exam.ProgressStatus.DONE);
             List<Map<String, Object>> ret = new ArrayList<>();
             for (Exam exam : exams) {
+                if (!exam.is_judge()) {
+                    continue;
+                }
                 Map<String, Object> item = new HashMap<>();
                 item.put("name", exam.getName());
                 item.put("co_name", courseRepository.getNameByCo_id(exam.getCo_id()));

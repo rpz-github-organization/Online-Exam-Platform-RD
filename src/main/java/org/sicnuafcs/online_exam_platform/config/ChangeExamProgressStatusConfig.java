@@ -37,6 +37,9 @@ public class ChangeExamProgressStatusConfig {
                     if (end_time < time) {
                         examRepository.saveStatus(exam.getExam_id(), Exam.ProgressStatus.DONE);
                     }
+                    if (exam.getBegin_time() <= time) {  //如果考试开始时间但是考试状态为will
+                        examRepository.saveStatus(exam.getExam_id(), Exam.ProgressStatus.ING);
+                    }
                 }
             }
         }

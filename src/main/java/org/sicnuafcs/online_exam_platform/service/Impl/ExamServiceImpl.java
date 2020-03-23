@@ -74,7 +74,7 @@ public class ExamServiceImpl implements ExamService {
     }
 
     @Override
-    public void distributeExamToStudent(long exma_id, String co_id) throws Exception {
+    public void distributeExamToStudent(long exma_id, String co_id) {
         ArrayList<String> studentList = (ArrayList<String>)stuCoRepository.findByCo_id(co_id);
         ArrayList<ExamQuestion> singleList = examQuestionRepository.findByExam_idAndType(exma_id, Question.Type.Single);
         ArrayList<ExamQuestion> judgeList = examQuestionRepository.findByExam_idAndType(exma_id, Question.Type.Judge);
@@ -130,11 +130,12 @@ public class ExamServiceImpl implements ExamService {
             }
         }
     }
+
     //选择题判断题 自动判分
-    public void judgeGeneralQuestion(long exam_id) throws Exception {
-        ArrayList<StuExam> stuExams = stuExamRepository.getByExam_id(exam_id);
+    public void judgeGeneralQuestion(long exam_id, String stu_id) {
+        ArrayList<StuExam> stuExams = stuExamRepository.getByExam_idAndStu_id(exam_id, stu_id);
         for (StuExam stuExam : stuExams) {
-            if (stuExam.getType() != Question.Type.Single || stuExam.getType() != Question.Type.Judge) {
+            if (stuExam.getType() != Question.Type.Single && stuExam.getType() != Question.Type.Judge) {
                 continue;
             }
             long question_id = stuExam.getQuestion_id();
@@ -143,6 +144,7 @@ public class ExamServiceImpl implements ExamService {
             } else {
                 stuExam.setScore(0);
             }
+            stuExamRepository.save(stuExam);
         }
     }
 
@@ -175,7 +177,8 @@ public class ExamServiceImpl implements ExamService {
         }
     }
 
-    public void saveToStuExam(String data, Long exam_id, String stu_id) {
+    public boolean saveToStuExam(String data, Long exam_id, String stu_id) {
+        boolean is_haveDiscussion = false;
         ArrayList<String> stuExams= homePageService.String2List(data);
         for (String in : stuExams) {
             Map map = JSON.parseObject(in);
@@ -197,6 +200,7 @@ public class ExamServiceImpl implements ExamService {
                     break;
                 case "Discussion":
                     stuExam.setType(Question.Type.Discussion);
+                    is_haveDiscussion = true;
                     break;
                 case "Normal_Program":
                     stuExam.setType(Question.Type.Normal_Program);
@@ -213,6 +217,7 @@ public class ExamServiceImpl implements ExamService {
             stuExam.setStatus(StuExam.Status.DONE);
             stuExamRepository.save(stuExam);
         }
+        return is_haveDiscussion;
     }
 
     public Map getDiscussion(Long exam_id) {
