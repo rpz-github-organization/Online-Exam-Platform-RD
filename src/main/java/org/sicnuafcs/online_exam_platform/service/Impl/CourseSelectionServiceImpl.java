@@ -236,7 +236,7 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
     @Override
     public ArrayList getStuExam(Long exam_id) {
         ArrayList res = new ArrayList();
-        HashSet<String> stuIds = stuExamRepository.getOneByExam_id(exam_id);
+        HashSet<String> stuIds = stuExamRepository.getStuIdByExam_id(exam_id);
         for (String stu_id : stuIds) {
             Map map = new HashMap();
             map.put("stu_id", stu_id);
