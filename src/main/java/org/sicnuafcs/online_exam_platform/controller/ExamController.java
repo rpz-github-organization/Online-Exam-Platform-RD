@@ -505,6 +505,7 @@ public class ExamController {
      * @param str
      * @return
      * @throws Exception
+     * 只有该考试 老师 已结束阅卷 才能查看到成绩
      */
     @PostMapping("/getStuScoreInfo")
     public @ResponseBody

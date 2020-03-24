@@ -32,13 +32,10 @@ public class ChangeExamProgressStatusConfig {
                         examRepository.saveStatus(exam.getExam_id(), Exam.ProgressStatus.ING);
                     }
                 }
-                else if (exam.getProgress_status().equals(Exam.ProgressStatus.ING)) {
+                if (exam.getProgress_status().equals(Exam.ProgressStatus.ING)) {
                     Long end_time = exam.getBegin_time() + exam.getLast_time() * minute;
                     if (end_time < time) {
                         examRepository.saveStatus(exam.getExam_id(), Exam.ProgressStatus.DONE);
-                    }
-                    if (exam.getBegin_time() <= time) {  //如果考试开始时间但是考试状态为will
-                        examRepository.saveStatus(exam.getExam_id(), Exam.ProgressStatus.ING);
                     }
                 }
             }
