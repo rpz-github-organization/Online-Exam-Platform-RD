@@ -407,7 +407,11 @@ public class ExamServiceImpl implements ExamService {
         }
 
         if (!singleList.isEmpty()) {
-            result.put("singleScore", examQuestionRepository.findScoreById(singleList.get(0), exam_id));
+            try {
+                result.put("singleScore", examQuestionRepository.findScoreById(singleList.get(0), exam_id));
+            }catch (Exception e) {
+                result.put("singleScore", 0);
+            }
         }
         else {
             result.put("singleScore", null);
@@ -433,7 +437,11 @@ public class ExamServiceImpl implements ExamService {
         }
 
         if (!judgeList.isEmpty()) {
-            result.put("judgeScore", examQuestionRepository.findScoreById(judgeList.get(0), exam_id));
+            try {
+                result.put("judgeScore", examQuestionRepository.findScoreById(judgeList.get(0), exam_id));
+            }catch (Exception e) {
+                result.put("judgeScore", 0);
+            }
         }else {
             result.put("judgeScore", null);
         }
@@ -450,7 +458,11 @@ public class ExamServiceImpl implements ExamService {
             map.put("answer", question.getAnswer());
             map.put("tag", question.getTag());
             map.put("tip", question.getTip());
-            map.put("score", examQuestionRepository.findScoreById(question_id, exam_id));
+            try{
+                map.put("score", examQuestionRepository.findScoreById(question_id, exam_id));
+            } catch (Exception e) {
+                map.put("score", 0);
+            }
             //test_case
             TestCase testCase = testCaseRepository.getOneByQuestion_id(question_id);
             ArrayList<String> in = testCaseRepository.getOneByQuestion_id(question_id).getInput();
@@ -482,7 +494,12 @@ public class ExamServiceImpl implements ExamService {
             map.put("question_id", question_id);
             map.put("answer", question.getAnswer());
             map.put("tag", question.getTag());
-            map.put("score", examQuestionRepository.findScoreById(question_id, exam_id));
+            try {
+                map.put("score", examQuestionRepository.findScoreById(question_id, exam_id));
+            }catch (Exception e) {
+                map.put("score", 0);
+            }
+
             discussion.add(map);
         }
         if (!discussionList.isEmpty()) {
