@@ -54,13 +54,11 @@ public class ExamServiceImpl implements ExamService {
         } else {
             long exam_id = redisUtils.incr("exam_id");
             //判断redis的exam_id值是否为目前数据库最大
-            long max = examRepository.getMaxExamId();
-            System.out.println(exam_id);
-            if (max >= exam_id) {
+            Long max = examRepository.getMaxExamId();
+            if (max != null && max >= exam_id) {
                 exam_id = max + 1;
                 redisUtils.set("exam_id", max + 1);
             }
-
             exam.setProgress_status(Exam.ProgressStatus.WILL);
             exam.setExam_id(exam_id);
             examRepository.save(exam);
