@@ -402,6 +402,9 @@ public class ExamController {
             if (exam == null) {
                 throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "error exam_id!");
             }
+            if (!exam.is_judge() || exam.getProgress_status() != Exam.ProgressStatus.DONE) {
+                throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "this exam is not judge! or is not done");
+            }
             List<Map<String,Object>> ques = examService.getStuQuesInfo(exam_id,stu_id);
             String stu_name = studentRepository.findNameByStu_id(stu_id);
             String tea_name = teacherRepository.getNameByTea_id(exam.getTea_id());
@@ -412,11 +415,7 @@ public class ExamController {
             ret.put("co_name", co_name);
             ret.put("begin_time", exam.getBegin_time());
             ret.put("Ques", ques);
-            if (!exam.is_judge() || exam.getProgress_status() != Exam.ProgressStatus.DONE) {
-                ret.put("grade", 0);
-            } else {
-                ret.put("grade", examService.getStuExamScore(exam.getExam_id(), stu_id));
-            }
+            ret.put("grade", examService.getStuExamScore(exam.getExam_id(), stu_id));
             return AjaxResponse.success(ret);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -512,6 +511,9 @@ public class ExamController {
             List<Exam> exams = examRepository.findExamsByExam_idAAndProgress_status(exam_ids, Exam.ProgressStatus.DONE);
             List<Map<String, Object>> ret = new ArrayList<>();
             for (Exam exam : exams) {
+                if (exam.is_judge() == false) {
+                    continue;
+                }
                 Map<String, Object> item = new HashMap<>();
                 item.put("name", exam.getName());
                 item.put("co_name", courseRepository.getNameByCo_id(exam.getCo_id()));
