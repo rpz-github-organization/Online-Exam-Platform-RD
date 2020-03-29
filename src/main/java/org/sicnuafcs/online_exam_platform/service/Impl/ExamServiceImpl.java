@@ -74,6 +74,9 @@ public class ExamServiceImpl implements ExamService {
     @Override
     public void distributeExamToStudent(long exma_id, String co_id) throws Exception {
         ArrayList<String> studentList = (ArrayList<String>)stuCoRepository.findByCo_id(co_id);
+        if (studentList == null) {
+            return;
+        }
         ArrayList<ExamQuestion> singleList = examQuestionRepository.findByExam_idAndType(exma_id, Question.Type.Single);
         ArrayList<ExamQuestion> judgeList = examQuestionRepository.findByExam_idAndType(exma_id, Question.Type.Judge);
         ArrayList<ExamQuestion> discussList = examQuestionRepository.findByExam_idAndType(exma_id, Question.Type.Discussion);
