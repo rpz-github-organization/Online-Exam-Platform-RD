@@ -378,15 +378,13 @@ public class ExamServiceImpl implements ExamService {
         }
         if (single.isEmpty()) {
             result.put("single", null);
-        }
-        else{
+        } else {
             result.put("single", single);
         }
 
         if (!singleList.isEmpty()) {
             result.put("singleScore", examQuestionRepository.findScoreById(singleList.get(0), exam_id));
-        }
-        else {
+        } else {
             result.put("singleScore", null);
         }
 
@@ -404,14 +402,13 @@ public class ExamServiceImpl implements ExamService {
         }
         if (judge.isEmpty()) {
             result.put("judge", null);
-        }
-        else {
+        } else {
             result.put("judge", judge);
         }
 
         if (!judgeList.isEmpty()) {
             result.put("judgeScore", examQuestionRepository.findScoreById(judgeList.get(0), exam_id));
-        }else {
+        } else {
             result.put("judgeScore", null);
         }
 
@@ -444,8 +441,7 @@ public class ExamServiceImpl implements ExamService {
         }
         if (!programList.isEmpty()) {
             result.put("program", program);
-        }
-        else {
+        } else {
             result.put("program", null);
         }
 
