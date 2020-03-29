@@ -86,6 +86,9 @@ public class HomePageServiceimpl implements HomePageService {
     public List<CourseVO> findTeaById(String tea_id) {
         //获取教师所授课程
         List<String> co_idList = teaCoRepository.findCo_idByTea_Id(tea_id);
+        if (co_idList.isEmpty()) {
+            return null;
+        }
         List<Course> course = courseRepository.findCourseByCo_idIn(co_idList);
         List<CourseVO> courses = new ArrayList<>();
         for (int i = 0; i < course.size(); i++) {
