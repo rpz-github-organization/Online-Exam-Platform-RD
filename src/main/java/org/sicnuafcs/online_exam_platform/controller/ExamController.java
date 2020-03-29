@@ -79,8 +79,8 @@ public class ExamController {
         if (question_id == null) {
             question_id = redisUtils.incr("question_id");   //添加题目 id不存在 就新建一个question_id
             //判断redis的question_id值是否为目前数据库最大
-            long max = questionRepository.getMaxQuestion_id();
-            if (max >= question_id) {
+            Long max = questionRepository.getMaxQuestion_id();
+            if (max != null && max >= question_id) {
                 question_id = max + 1;
                 redisUtils.set("question_id", max + 1);
             }
