@@ -30,9 +30,10 @@ public class HomePageServiceimpl implements HomePageService {
     private DozerBeanMapper dozerBeanMapper;
 
     @Override
-    public List<Exam> findStuById(String stu_id, int status) {
+    public List<Object> findStuById(String stu_id, int status) {
 
         List<Exam> exams = new ArrayList<>();
+        List<Object> ret = new ArrayList<>();
         if(status == 0){
             StuExam.Status stuExam_status = StuExam.Status.WILL;
             Exam.ProgressStatus exam_status = Exam.ProgressStatus.ING;
@@ -66,7 +67,14 @@ public class HomePageServiceimpl implements HomePageService {
             }
             exams = examRepository.findExamsByExam_idAAndProgress_status(exam_idList,exam_status);
         }
-        return exams;
+        for (Exam exam : exams) {
+            Map<String, Object> item = new HashMap<>();
+            String co_name = courseRepository.getNameByCo_id(exam.getCo_id());
+            item.put("exam", exam);
+            item.put("co_name", co_name);
+            ret.add(item);
+        }
+        return ret;
 
     }
 

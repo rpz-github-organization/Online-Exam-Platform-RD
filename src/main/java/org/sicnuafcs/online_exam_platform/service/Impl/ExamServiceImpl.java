@@ -182,32 +182,7 @@ public class ExamServiceImpl implements ExamService {
             Map map = JSON.parseObject(in);
             StuExam stuExam = new StuExam();
             stuExam.setQuestion_id(Long.parseLong(map.get("question_id").toString()));
-            String type = map.get("type").toString();
-            switch (type) {
-                case "Single":
-                    stuExam.setType(Question.Type.Single);
-                    break;
-                case "MultipleChoice":
-                    stuExam.setType(Question.Type.MultipleChoice);
-                    break;
-                case "Judge":
-                    stuExam.setType(Question.Type.Judge);
-                    break;
-                case "FillInTheBlank":
-                    stuExam.setType(Question.Type.FillInTheBlank);
-                    break;
-                case "Discussion":
-                    stuExam.setType(Question.Type.Discussion);
-                    break;
-                case "Normal_Program":
-                    stuExam.setType(Question.Type.Normal_Program);
-                    stuExam.setScore(Integer.parseInt(map.get("score").toString()));
-                    break;
-                case "SpecialJudge_Program":
-                    stuExam.setType(Question.Type.SpecialJudge_Program);
-                    stuExam.setScore(Integer.parseInt(map.get("score").toString()));
-                    break;
-            }
+            stuExam.setType(questionRepository.findTypeByQuestion_id(stuExam.getQuestion_id()));
             stuExam.setAnswer(map.get("answer").toString());
             stuExam.setExam_id(exam_id);
             stuExam.setStu_id(stu_id);
@@ -225,6 +200,9 @@ public class ExamServiceImpl implements ExamService {
 
         //题目部分
         List<Long> questionIdList = examQuestionRepository.getQuestionIdListByExam_idAndType(exam_id, Question.Type.Discussion);
+        if (questionIdList == null) {
+            return null;
+        }
         ArrayList<Map> questions = new ArrayList<>();
         for (Long question_id : questionIdList) {
             Map<String, Object> question = new HashMap<>();
@@ -238,6 +216,9 @@ public class ExamServiceImpl implements ExamService {
 
         //学生信息部分
         ArrayList<String> stuIdList = stuExamRepository.getStu_idByQuestion_idAndExam_id(questionIdList.get(0), exam_id);
+        if (stuIdList == null) {
+            return null;
+        }
         ArrayList<Map> stu = new ArrayList<>();
         for (String stu_id : stuIdList) {
             Map<String, Object> stuExam = new HashMap<>();

@@ -560,5 +560,19 @@ public class ExamController {
         }
         return AjaxResponse.success(res);
     }
+    /**
+     *教师完成评分
+     * @param str
+     * @param httpServletRequest
+     * @return
+     */
+    @PostMapping("/completeJudge")
+    public @ResponseBody AjaxResponse completeJudge(@RequestBody String str, HttpServletRequest httpServletRequest) {
+        authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        Long exam_id = Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
+        examRepository.saveIs_judge(exam_id, true);
+        return AjaxResponse.success("success!");
+    }
+
 }
 

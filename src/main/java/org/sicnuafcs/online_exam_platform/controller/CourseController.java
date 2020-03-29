@@ -126,6 +126,23 @@ public class CourseController {
         return AjaxResponse.success("success");
     }
     /**
+     * 老师退课
+     * @param str
+     * @return
+     */
+    @RequestMapping("/remove")
+    public @ResponseBody
+    AjaxResponse remove(@RequestBody String str, HttpServletRequest httpServletRequest) {
+        authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        String tea_id = JSON.parseObject(str).get("tea_id").toString();
+        String co_id = JSON.parseObject(str).get("co_id").toString();
+        TeaCo teaCo = new TeaCo();
+        teaCo.setCo_id(co_id);
+        teaCo.setTea_id(tea_id);
+        teaCoRepository.delete(teaCo);
+        return AjaxResponse.success("success");
+    }
+    /**
      * 老师添加/更新课程,获取未教授课程
      * @param str
      * @return
