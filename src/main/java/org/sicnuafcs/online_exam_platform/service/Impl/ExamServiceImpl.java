@@ -54,13 +54,11 @@ public class ExamServiceImpl implements ExamService {
         } else {
             long exam_id = redisUtils.incr("exam_id");
             //判断redis的exam_id值是否为目前数据库最大
-            long max = examRepository.getMaxExamId();
-            System.out.println(exam_id);
-            if (max >= exam_id) {
+            Long max = examRepository.getMaxExamId();
+            if (max != null && max >= exam_id) {
                 exam_id = max + 1;
                 redisUtils.set("exam_id", max + 1);
             }
-
             exam.setProgress_status(Exam.ProgressStatus.WILL);
             exam.setExam_id(exam_id);
             examRepository.save(exam);
@@ -74,8 +72,11 @@ public class ExamServiceImpl implements ExamService {
     }
 
     @Override
-    public void distributeExamToStudent(long exma_id, String co_id) {
+    public void distributeExamToStudent(long exma_id, String co_id) throws Exception {
         ArrayList<String> studentList = (ArrayList<String>)stuCoRepository.findByCo_id(co_id);
+        if (studentList == null) {
+            return;
+        }
         ArrayList<ExamQuestion> singleList = examQuestionRepository.findByExam_idAndType(exma_id, Question.Type.Single);
         ArrayList<ExamQuestion> judgeList = examQuestionRepository.findByExam_idAndType(exma_id, Question.Type.Judge);
         ArrayList<ExamQuestion> discussList = examQuestionRepository.findByExam_idAndType(exma_id, Question.Type.Discussion);
@@ -130,12 +131,11 @@ public class ExamServiceImpl implements ExamService {
             }
         }
     }
-
     //选择题判断题 自动判分
-    public void judgeGeneralQuestion(long exam_id, String stu_id) {
-        ArrayList<StuExam> stuExams = stuExamRepository.getByExam_idAndStu_id(exam_id, stu_id);
+    public void judgeGeneralQuestion(long exam_id) throws Exception {
+        ArrayList<StuExam> stuExams = stuExamRepository.getByExam_id(exam_id);
         for (StuExam stuExam : stuExams) {
-            if (stuExam.getType() != Question.Type.Single && stuExam.getType() != Question.Type.Judge) {
+            if (stuExam.getType() != Question.Type.Single || stuExam.getType() != Question.Type.Judge) {
                 continue;
             }
             long question_id = stuExam.getQuestion_id();
@@ -144,7 +144,6 @@ public class ExamServiceImpl implements ExamService {
             } else {
                 stuExam.setScore(0);
             }
-            stuExamRepository.save(stuExam);
         }
     }
 
@@ -177,47 +176,19 @@ public class ExamServiceImpl implements ExamService {
         }
     }
 
-    public boolean saveToStuExam(String data, Long exam_id, String stu_id) {
-        boolean is_haveDiscussion = false;
+    public void saveToStuExam(String data, Long exam_id, String stu_id) {
         ArrayList<String> stuExams= homePageService.String2List(data);
         for (String in : stuExams) {
             Map map = JSON.parseObject(in);
             StuExam stuExam = new StuExam();
             stuExam.setQuestion_id(Long.parseLong(map.get("question_id").toString()));
-            String type = map.get("type").toString();
-            switch (type) {
-                case "Single":
-                    stuExam.setType(Question.Type.Single);
-                    break;
-                case "MultipleChoice":
-                    stuExam.setType(Question.Type.MultipleChoice);
-                    break;
-                case "Judge":
-                    stuExam.setType(Question.Type.Judge);
-                    break;
-                case "FillInTheBlank":
-                    stuExam.setType(Question.Type.FillInTheBlank);
-                    break;
-                case "Discussion":
-                    stuExam.setType(Question.Type.Discussion);
-                    is_haveDiscussion = true;
-                    break;
-                case "Normal_Program":
-                    stuExam.setType(Question.Type.Normal_Program);
-                    stuExam.setScore(Integer.parseInt(map.get("score").toString()));
-                    break;
-                case "SpecialJudge_Program":
-                    stuExam.setType(Question.Type.SpecialJudge_Program);
-                    stuExam.setScore(Integer.parseInt(map.get("score").toString()));
-                    break;
-            }
+            stuExam.setType(questionRepository.findTypeByQuestion_id(stuExam.getQuestion_id()));
             stuExam.setAnswer(map.get("answer").toString());
             stuExam.setExam_id(exam_id);
             stuExam.setStu_id(stu_id);
             stuExam.setStatus(StuExam.Status.DONE);
             stuExamRepository.save(stuExam);
         }
-        return is_haveDiscussion;
     }
 
     public Map getDiscussion(Long exam_id) {
@@ -229,6 +200,9 @@ public class ExamServiceImpl implements ExamService {
 
         //题目部分
         List<Long> questionIdList = examQuestionRepository.getQuestionIdListByExam_idAndType(exam_id, Question.Type.Discussion);
+        if (questionIdList == null) {
+            return null;
+        }
         ArrayList<Map> questions = new ArrayList<>();
         for (Long question_id : questionIdList) {
             Map<String, Object> question = new HashMap<>();
@@ -242,6 +216,9 @@ public class ExamServiceImpl implements ExamService {
 
         //学生信息部分
         ArrayList<String> stuIdList = stuExamRepository.getStu_idByQuestion_idAndExam_id(questionIdList.get(0), exam_id);
+        if (stuIdList == null) {
+            return null;
+        }
         ArrayList<Map> stu = new ArrayList<>();
         for (String stu_id : stuIdList) {
             Map<String, Object> stuExam = new HashMap<>();
@@ -401,19 +378,13 @@ public class ExamServiceImpl implements ExamService {
         }
         if (single.isEmpty()) {
             result.put("single", null);
-        }
-        else{
+        } else {
             result.put("single", single);
         }
 
         if (!singleList.isEmpty()) {
-            try {
-                result.put("singleScore", examQuestionRepository.findScoreById(singleList.get(0), exam_id));
-            }catch (Exception e) {
-                result.put("singleScore", 0);
-            }
-        }
-        else {
+            result.put("singleScore", examQuestionRepository.findScoreById(singleList.get(0), exam_id));
+        } else {
             result.put("singleScore", null);
         }
 
@@ -431,18 +402,13 @@ public class ExamServiceImpl implements ExamService {
         }
         if (judge.isEmpty()) {
             result.put("judge", null);
-        }
-        else {
+        } else {
             result.put("judge", judge);
         }
 
         if (!judgeList.isEmpty()) {
-            try {
-                result.put("judgeScore", examQuestionRepository.findScoreById(judgeList.get(0), exam_id));
-            }catch (Exception e) {
-                result.put("judgeScore", 0);
-            }
-        }else {
+            result.put("judgeScore", examQuestionRepository.findScoreById(judgeList.get(0), exam_id));
+        } else {
             result.put("judgeScore", null);
         }
 
@@ -458,11 +424,7 @@ public class ExamServiceImpl implements ExamService {
             map.put("answer", question.getAnswer());
             map.put("tag", question.getTag());
             map.put("tip", question.getTip());
-            try{
-                map.put("score", examQuestionRepository.findScoreById(question_id, exam_id));
-            } catch (Exception e) {
-                map.put("score", 0);
-            }
+            map.put("score", examQuestionRepository.findScoreById(question_id, exam_id));
             //test_case
             TestCase testCase = testCaseRepository.getOneByQuestion_id(question_id);
             ArrayList<String> in = testCaseRepository.getOneByQuestion_id(question_id).getInput();
@@ -479,8 +441,7 @@ public class ExamServiceImpl implements ExamService {
         }
         if (!programList.isEmpty()) {
             result.put("program", program);
-        }
-        else {
+        } else {
             result.put("program", null);
         }
 
@@ -494,12 +455,7 @@ public class ExamServiceImpl implements ExamService {
             map.put("question_id", question_id);
             map.put("answer", question.getAnswer());
             map.put("tag", question.getTag());
-            try {
-                map.put("score", examQuestionRepository.findScoreById(question_id, exam_id));
-            }catch (Exception e) {
-                map.put("score", 0);
-            }
-
+            map.put("score", examQuestionRepository.findScoreById(question_id, exam_id));
             discussion.add(map);
         }
         if (!discussionList.isEmpty()) {

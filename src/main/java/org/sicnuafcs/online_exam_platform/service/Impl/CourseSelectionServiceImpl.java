@@ -112,9 +112,9 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
             one.put("tea_id", m.getValue());
             one.put("tea_name", teacher);
             Timestamp time = courseRepository.findBeginTimeByCo_id(m.getKey());
-            one.put("begin_time", time.getYear()+1900 + "-" + time.getMonth() + 1 + "-" + time.getDate());
+            one.put("begin_time", 0);
             time = courseRepository.findEndTimeByCo_id(m.getKey());
-            one.put("end_time", time.getYear()+1900 + "-" + time.getMonth() + 1 + "-" + time.getDate());
+            one.put("end_time", 0);
             list.add(one);
         }
         return list;

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface HomePageService {
-    List<Exam> findStuById(String stu_id, int status) ;
+    List<Object> findStuById(String stu_id, int status) ;
 
     List<CourseVO> findTeaById(String tea_id);
 

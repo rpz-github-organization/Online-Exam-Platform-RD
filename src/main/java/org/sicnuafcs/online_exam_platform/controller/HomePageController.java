@@ -42,7 +42,7 @@ public class HomePageController {
         //Long exam_id, String stu_id
         String stu_id = JSON.parseObject(str).get("stu_id").toString();
         Integer status = Integer.valueOf(JSON.parseObject(str).get("status").toString());
-        List<Exam> json = homePageService.findStuById(stu_id,status);
+        List<Object> json = homePageService.findStuById(stu_id,status);
         return AjaxResponse.success(json);
 
     }

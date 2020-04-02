@@ -79,8 +79,8 @@ public class ExamController {
         if (question_id == null) {
             question_id = redisUtils.incr("question_id");   //添加题目 id不存在 就新建一个question_id
             //判断redis的question_id值是否为目前数据库最大
-            long max = questionRepository.getMaxQuestion_id();
-            if (max >= question_id) {
+            Long max = questionRepository.getMaxQuestion_id();
+            if (max != null && max >= question_id) {
                 question_id = max + 1;
                 redisUtils.set("question_id", max + 1);
             }
@@ -304,15 +304,7 @@ public class ExamController {
         String stu_id = (String) m.get("id");
         long exam_id = Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
         String data = JSON.parseObject(str).get("data").toString();
-        boolean is_haveDiscussion = examService.saveToStuExam(data, exam_id, stu_id);
-        //选择判断评分
-        examService.judgeGeneralQuestion(exam_id, stu_id);
-//
-//        //判断是否有讨论题
-//        if (!is_haveDiscussion) {
-//            //如果没有讨论题
-//            examRepository.saveIs_judge(exam_id, true);
-//        }
+        examService.saveToStuExam(data, exam_id, stu_id);
         return AjaxResponse.success("success");
     }
 
@@ -346,7 +338,6 @@ public class ExamController {
 
             }
             examRepository.saveIs_judge(exam_id, true);
-
             return AjaxResponse.success("success!");
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -505,7 +496,6 @@ public class ExamController {
      * @param str
      * @return
      * @throws Exception
-     * 只有该考试 老师 已结束阅卷 才能查看到成绩
      */
     @PostMapping("/getStuScoreInfo")
     public @ResponseBody
@@ -521,7 +511,7 @@ public class ExamController {
             List<Exam> exams = examRepository.findExamsByExam_idAAndProgress_status(exam_ids, Exam.ProgressStatus.DONE);
             List<Map<String, Object>> ret = new ArrayList<>();
             for (Exam exam : exams) {
-                if (!exam.is_judge()) {
+                if (exam.is_judge() == false) {
                     continue;
                 }
                 Map<String, Object> item = new HashMap<>();
@@ -573,5 +563,19 @@ public class ExamController {
         }
         return AjaxResponse.success(res);
     }
+    /**
+     *教师完成评分
+     * @param str
+     * @param httpServletRequest
+     * @return
+     */
+    @PostMapping("/completeJudge")
+    public @ResponseBody AjaxResponse completeJudge(@RequestBody String str, HttpServletRequest httpServletRequest) {
+        authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        Long exam_id = Long.parseLong(JSON.parseObject(str).get("exam_id").toString());
+        examRepository.saveIs_judge(exam_id, true);
+        return AjaxResponse.success("success!");
+    }
+
 }
 
