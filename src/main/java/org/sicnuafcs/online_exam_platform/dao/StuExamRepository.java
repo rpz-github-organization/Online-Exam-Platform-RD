@@ -40,4 +40,7 @@ public interface  StuExamRepository extends JpaRepository<StuExam, String> {
 
     @Query("select u.status from StuExam u where u.exam_id = ?1 and u.stu_id = ?2")
     List<StuExam.Status> getStatusByExam_idAndAndStu_id(Long exam_id, String stu_id);
+
+    @Query("select u from StuExam u where u.exam_id = ?1")
+    ArrayList<StuExam> getByExam_id(long exam_id);
 }
