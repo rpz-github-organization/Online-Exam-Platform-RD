@@ -10,7 +10,7 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class HandInScore {
+public class GetHandInScore {
     public String stu_id;
     public Long exam_id;
     List<StuExam> scoreList;

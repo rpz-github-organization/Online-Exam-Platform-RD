@@ -200,7 +200,7 @@ public class ExamServiceImpl implements ExamService {
 
         //题目部分
         List<Long> questionIdList = examQuestionRepository.getQuestionIdListByExam_idAndType(exam_id, Question.Type.Discussion);
-        if (questionIdList == null) {
+        if (questionIdList == null || questionIdList.isEmpty()) {
             return null;
         }
         ArrayList<Map> questions = new ArrayList<>();
@@ -215,8 +215,9 @@ public class ExamServiceImpl implements ExamService {
         result.put("question", questions);
 
         //学生信息部分
+        System.out.println(questionIdList);
         ArrayList<String> stuIdList = stuExamRepository.getStu_idByQuestion_idAndExam_id(questionIdList.get(0), exam_id);
-        if (stuIdList == null) {
+        if (stuIdList == null || stuIdList.isEmpty()) {
             return null;
         }
         ArrayList<Map> stu = new ArrayList<>();

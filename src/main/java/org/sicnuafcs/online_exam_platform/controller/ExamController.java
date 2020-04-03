@@ -3,7 +3,6 @@ package org.sicnuafcs.online_exam_platform.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.loadtime.Aj;
 import org.sicnuafcs.online_exam_platform.config.DozerBeanMapperConfigure;
 import org.sicnuafcs.online_exam_platform.config.exception.AjaxResponse;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomException;
@@ -21,11 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.spring.web.json.Json;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.Future;
 
@@ -328,7 +325,7 @@ public class ExamController {
      * @return
      */
     @PostMapping("/handInScore")
-    public @ResponseBody AjaxResponse handInScore(@RequestBody HandInScore req, HttpServletRequest httpServletRequest) {
+    public @ResponseBody AjaxResponse handInScore(@RequestBody GetHandInScore req, HttpServletRequest httpServletRequest) {
         authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
         try {
             String stu_id = req.getStu_id();
