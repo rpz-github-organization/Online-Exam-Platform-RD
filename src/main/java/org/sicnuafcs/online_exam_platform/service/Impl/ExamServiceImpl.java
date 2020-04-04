@@ -321,7 +321,14 @@ public class ExamServiceImpl implements ExamService {
                 return null;
             }
             ret.get(type).setType(stuExam.getType());
-            int getScore = stuExam.getScore();
+
+            //如果score为空
+            int getScore = 0;
+            try{
+                getScore = stuExam.getScore();
+            }catch (Exception ignored) {
+            }
+
             int correctScore = examQuestionRepository.findScoreById(stuExam.getQuestion_id(), exam_id);
             //计算得到的分数
             int get = ret.get(type).getGet();
