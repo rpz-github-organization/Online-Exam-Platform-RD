@@ -145,7 +145,7 @@ public class ExamServiceImpl implements ExamService {
             } else {
                 stuExam.setScore(0);
             }
-            stuExamRepository.save(stuExam);
+            stuExamRepository.saveScore(stuExam.getScore(),stuExam.getQuestion_id(),stuExam.getExam_id(),stuExam.getStu_id());
         }
 
     }
@@ -179,6 +179,7 @@ public class ExamServiceImpl implements ExamService {
         }
     }
 
+    //学生交卷
     public void saveToStuExam(String data, Long exam_id, String stu_id) {
         ArrayList<String> stuExams= homePageService.String2List(data);
         for (String in : stuExams) {
@@ -190,6 +191,7 @@ public class ExamServiceImpl implements ExamService {
             stuExam.setExam_id(exam_id);
             stuExam.setStu_id(stu_id);
             stuExam.setStatus(StuExam.Status.DONE);
+            stuExam.setScore(stuExamRepository.getByExam_idAndStu_idAndQuestion_id(exam_id, stu_id, stuExam.getQuestion_id()).getScore());
             stuExamRepository.save(stuExam);
         }
     }

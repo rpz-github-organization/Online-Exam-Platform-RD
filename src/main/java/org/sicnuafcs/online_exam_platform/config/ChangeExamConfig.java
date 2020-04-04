@@ -52,7 +52,7 @@ public class ChangeExamConfig {
                     }
                 }
                 if (exam.getProgress_status().equals(Exam.ProgressStatus.DONE)) {
-                    //如果时间到 判断是否已经阅卷
+                    //如果考试时间到 判断是否已经阅卷
                     if (!exam.is_judge() && exam.is_distribute()) {
                         //如果未阅卷
                         List types = examQuestionRepository.getTypeByExam_id(exam.getExam_id());
