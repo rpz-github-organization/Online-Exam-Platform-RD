@@ -131,15 +131,16 @@ public class ExamServiceImpl implements ExamService {
             }
         }
     }
+
     //选择题判断题 自动判分
     public void judgeGeneralQuestion(long exam_id) {
         ArrayList<StuExam> stuExams = stuExamRepository.getByExam_id(exam_id);
         for (StuExam stuExam : stuExams) {
-            if (stuExam.getType() != Question.Type.Single || stuExam.getType() != Question.Type.Judge) {
+            if (!stuExam.getType().equals(Question.Type.Single) && !stuExam.getType().equals(Question.Type.Judge)) {
                 continue;
             }
             long question_id = stuExam.getQuestion_id();
-            if (stuExam.getAnswer().equals(questionRepository.findAnswerById(question_id))){
+            if (stuExam.getAnswer() != null && stuExam.getAnswer().equals(questionRepository.findAnswerById(question_id))){
                 stuExam.setScore(examQuestionRepository.findScoreById(question_id, exam_id));
             } else {
                 stuExam.setScore(0);
