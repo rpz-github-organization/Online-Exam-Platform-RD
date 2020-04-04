@@ -11,7 +11,7 @@ public interface ExamService {
     long saveToExam(Exam exam) throws Exception;
     void saveQuestionToExam(ExamQuestion examQuestion) throws Exception;
     void distributeExamToStudent(long exma_id, String co_id) throws Exception;
-    void judgeGeneralQuestion(long exam_id)  throws Exception;
+    void judgeGeneralQuestion(long exam_id);
     void saveToStuExam(String data, Long exam_id, String stu_id);
     Map getDiscussion(Long exam_id);
     Map getExamInfo(Long exam_id,int option);

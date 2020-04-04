@@ -132,7 +132,7 @@ public class ExamServiceImpl implements ExamService {
         }
     }
     //选择题判断题 自动判分
-    public void judgeGeneralQuestion(long exam_id) throws Exception {
+    public void judgeGeneralQuestion(long exam_id) {
         ArrayList<StuExam> stuExams = stuExamRepository.getByExam_id(exam_id);
         for (StuExam stuExam : stuExams) {
             if (stuExam.getType() != Question.Type.Single || stuExam.getType() != Question.Type.Judge) {
@@ -144,7 +144,9 @@ public class ExamServiceImpl implements ExamService {
             } else {
                 stuExam.setScore(0);
             }
+            stuExamRepository.save(stuExam);
         }
+
     }
 
     //打乱题目顺序
@@ -379,13 +381,19 @@ public class ExamServiceImpl implements ExamService {
         }
         if (single.isEmpty()) {
             result.put("single", null);
-        } else {
+        }
+        else{
             result.put("single", single);
         }
 
         if (!singleList.isEmpty()) {
-            result.put("singleScore", examQuestionRepository.findScoreById(singleList.get(0), exam_id));
-        } else {
+            try {
+                result.put("singleScore", examQuestionRepository.findScoreById(singleList.get(0), exam_id));
+            }catch (Exception e) {
+                result.put("singleScore", 0);
+            }
+        }
+        else {
             result.put("singleScore", null);
         }
 
@@ -403,13 +411,18 @@ public class ExamServiceImpl implements ExamService {
         }
         if (judge.isEmpty()) {
             result.put("judge", null);
-        } else {
+        }
+        else {
             result.put("judge", judge);
         }
 
         if (!judgeList.isEmpty()) {
-            result.put("judgeScore", examQuestionRepository.findScoreById(judgeList.get(0), exam_id));
-        } else {
+            try {
+                result.put("judgeScore", examQuestionRepository.findScoreById(judgeList.get(0), exam_id));
+            }catch (Exception e) {
+                result.put("judgeScore", 0);
+            }
+        }else {
             result.put("judgeScore", null);
         }
 
@@ -425,7 +438,11 @@ public class ExamServiceImpl implements ExamService {
             map.put("answer", question.getAnswer());
             map.put("tag", question.getTag());
             map.put("tip", question.getTip());
-            map.put("score", examQuestionRepository.findScoreById(question_id, exam_id));
+            try{
+                map.put("score", examQuestionRepository.findScoreById(question_id, exam_id));
+            } catch (Exception e) {
+                map.put("score", 0);
+            }
             //test_case
             TestCase testCase = testCaseRepository.getOneByQuestion_id(question_id);
             ArrayList<String> in = testCaseRepository.getOneByQuestion_id(question_id).getInput();
@@ -442,7 +459,8 @@ public class ExamServiceImpl implements ExamService {
         }
         if (!programList.isEmpty()) {
             result.put("program", program);
-        } else {
+        }
+        else {
             result.put("program", null);
         }
 
@@ -456,7 +474,12 @@ public class ExamServiceImpl implements ExamService {
             map.put("question_id", question_id);
             map.put("answer", question.getAnswer());
             map.put("tag", question.getTag());
-            map.put("score", examQuestionRepository.findScoreById(question_id, exam_id));
+            try {
+                map.put("score", examQuestionRepository.findScoreById(question_id, exam_id));
+            }catch (Exception e) {
+                map.put("score", 0);
+            }
+
             discussion.add(map);
         }
         if (!discussionList.isEmpty()) {
