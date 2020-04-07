@@ -59,7 +59,7 @@ public class LoginServiceImpl implements LoginService {
             }
         }
         log.info("用户不存在");
-        throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "用户不存在");
+        throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "用户不存在/密码错误");
     }
 
     //手机号加密码
@@ -94,7 +94,7 @@ public class LoginServiceImpl implements LoginService {
             }
         }
         log.info("用户不存在");
-        throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "用户不存在");      //用户不存在
+        throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "用户不存在/密码错误");      //用户不存在
     }
 
 }
