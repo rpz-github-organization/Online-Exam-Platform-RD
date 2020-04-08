@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ExamRepository extends JpaRepository<Exam, String> {
-    @Query("select u from Exam u where u.exam_id in (:examIdList) and u.progress_status = (:status)")
+    @Query("select u from Exam u where u.exam_id in (:examIdList) and u.progress_status = (:status) order by u.begin_time desc ")
     List<Exam> findExamsByExam_idAAndProgress_status(List<Long> examIdList,Exam.ProgressStatus status);
     @Query("select u from Exam u where u.exam_id = ?1")
     Exam findExamByExam_id(Long exam_id);
@@ -34,7 +34,7 @@ public interface ExamRepository extends JpaRepository<Exam, String> {
     @Query("select u.exam_id from Exam  u where u.co_id = ?1 and u.tea_id = ?2")
     List<Long> findExamIdByCo_idAAndTea_id(String co_id, String tea_id);
 
-    @Query("select u from Exam u where u.tea_id = ?1 and u.progress_status = ?2")
+    @Query("select u from Exam u where u.tea_id = ?1 and u.progress_status = ?2 order by u.begin_time desc")
     List<Exam> findExamsByTea_idAndProgress_status(String Tea_id, Exam.ProgressStatus status);
 
     @Query("select u.name from Exam u where u.exam_id = ?1")
@@ -61,7 +61,7 @@ public interface ExamRepository extends JpaRepository<Exam, String> {
     @Query("select u.is_distribute from Exam u where u.exam_id = ?1")
     boolean getIs_distributeByExam_id(Long exam_id);
 
-    @Query("select u from Exam u")
+    @Query("select u from Exam u order by u.begin_time desc ")
     List<Exam> getExams();
 
     @Query("select max(u.exam_id) from Exam u")
