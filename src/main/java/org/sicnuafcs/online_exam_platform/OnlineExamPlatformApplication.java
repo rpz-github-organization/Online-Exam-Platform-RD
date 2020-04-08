@@ -9,6 +9,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @SpringBootApplication
 @EnableRedisHttpSession     //启用redis session存储
 @EnableCaching              //启用缓存
+@EnableAsync
 public class OnlineExamPlatformApplication {
 
     public static void main(String[] args) {
