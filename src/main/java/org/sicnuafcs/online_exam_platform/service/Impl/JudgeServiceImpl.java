@@ -384,70 +384,73 @@ public class JudgeServiceImpl implements JudgeService {
 
     public JudgeResult transformToResult(JSONObject json, String stu_id, String code, String language, Long question_id, Long exam_id) {
         JudgeResult judgeResult = new JudgeResult();
-        String err = json.getString("err");
-        if (err == null) {
-            //编译成功
-            judgeResult.setCompile_error(false);
-            judgeResult.setError_message(null);
+        try {
+            String err = json.getString("err");
+            if (err == null) {
+                //编译成功
+                judgeResult.setCompile_error(false);
+                judgeResult.setError_message(null);
 
-            judgeResult.setCode(code);
-            judgeResult.setLanguage(language);
+                judgeResult.setCode(code);
+                judgeResult.setLanguage(language);
 
-            //获取用户名
-            judgeResult.setUsername(studentRepository.findNameByStu_id(stu_id));
+                //获取用户名
+                judgeResult.setUsername(studentRepository.findNameByStu_id(stu_id));
 
-            //获取测试用例结果列表
-            int count = 0;
-            int right = 0;  //正确测试用例的个数
-            ArrayList<TestCaseRes> list = new ArrayList<>();
-            JSONArray test_case_res = json.getJSONArray("data");
-            for (Object test_case : test_case_res) {
-                TestCaseRes testCaseRes = new TestCaseRes();
-                JSONObject res = (JSONObject) test_case;
-                testCaseRes.setCase_num(Integer.valueOf(res.get("test_case").toString()));
-                testCaseRes.setRun_time(res.get("real_time").toString() + "ms");
-                testCaseRes.setMemory(res.get("memory").toString() + "KB");  //单位
-                int result = Integer.parseInt(res.get("result").toString());
-                String judgeres = getJudgeResult(result);
-                if (judgeres.equals("答案正确")) {
-                    right++;
+                //获取测试用例结果列表
+                int count = 0;
+                int right = 0;  //正确测试用例的个数
+                ArrayList<TestCaseRes> list = new ArrayList<>();
+                JSONArray test_case_res = json.getJSONArray("data");
+                for (Object test_case : test_case_res) {
+                    TestCaseRes testCaseRes = new TestCaseRes();
+                    JSONObject res = (JSONObject) test_case;
+                    testCaseRes.setCase_num(Integer.valueOf(res.get("test_case").toString()));
+                    testCaseRes.setRun_time(res.get("real_time").toString() + "ms");
+                    testCaseRes.setMemory(res.get("memory").toString() + "KB");  //单位
+                    int result = Integer.parseInt(res.get("result").toString());
+                    String judgeres = getJudgeResult(result);
+                    if (judgeres.equals("答案正确")) {
+                        right++;
+                    }
+                    testCaseRes.setResult(judgeres);
+                    list.add(testCaseRes);
+                    count++;
                 }
-                testCaseRes.setResult(judgeres);
-                list.add( testCaseRes);
-                count++;
+                judgeResult.setTest_case_res(list);
+
+                //状态 分数
+                int Full = examQuestionRepository.findScoreById(question_id, exam_id);
+                Integer r_score = stuExamRepository.getByExam_idAndStu_idAndQuestion_id(exam_id, stu_id, question_id).getScore();
+                if (right == count) {
+                    judgeResult.setStatus("答案正确");
+                    judgeResult.setScore(Full);
+                    stuExamRepository.saveScore(Full, question_id, exam_id, stu_id);
+                } else if (right < count && right > 0) {
+                    judgeResult.setStatus("部分正确");
+                    judgeResult.setScore(right * Full / count);
+                    if (r_score == null || r_score < right * Full / count) {
+                        stuExamRepository.saveScore(right * Full / count, question_id, exam_id, stu_id);
+                    }
+                } else if (right == 0) {
+                    judgeResult.setStatus("答案错误");
+                    judgeResult.setScore(0);
+                    if (r_score == null || r_score == 0) {
+                        stuExamRepository.saveScore(0, question_id, exam_id, stu_id);
+                    }
+                }
+
+                //题号
+                judgeResult.setNum(examQuestionRepository.findNumById(question_id, exam_id));
+            } else {
+                //编译失败
+                judgeResult.setCompile_error(true);
+                judgeResult.setError_message(json.getString("data"));
             }
-            judgeResult.setTest_case_res(list);
-
-            //状态 分数
-            int Full = examQuestionRepository.findScoreById(question_id, exam_id);
-            Integer r_score = stuExamRepository.getByExam_idAndStu_idAndQuestion_id(exam_id, stu_id, question_id).getScore();
-            if (right == count) {
-                judgeResult.setStatus("答案正确");
-                judgeResult.setScore(Full);
-                stuExamRepository.saveScore(Full, question_id, exam_id,stu_id);
-            }else if (right < count && right > 0) {
-                judgeResult.setStatus("部分正确");
-                judgeResult.setScore(right * Full / count);
-                if (r_score == null || r_score < right * Full / count) {
-                    stuExamRepository.saveScore(right * Full / count, question_id, exam_id, stu_id);
-                }
-            }else if (right == 0) {
-                judgeResult.setStatus("答案错误");
-                judgeResult.setScore(0);
-                if (r_score == null || r_score == 0) {
-                    stuExamRepository.saveScore(0, question_id, exam_id, stu_id);
-                }
-            }
-
-            //题号
-            judgeResult.setNum(examQuestionRepository.findNumById(question_id, exam_id));
-        } else {
-            //编译失败
-            judgeResult.setCompile_error(true);
-            judgeResult.setError_message(json.getString("data"));
+            return judgeResult;
+        }catch (Exception e) {
+            throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "判题结果为空");
         }
-        return judgeResult;
-
     }
 
     public ArrayList<String> getFileNames(Long question_id) {
