@@ -94,7 +94,7 @@ public class ExamController {
                 } else {
                     type = 2;
                 }
-                future = judgeService.writeFile(question_id, type, getQuestion);
+                judgeService.saveProgramQustionFile(question_id, type, getQuestion);
             }
         }
         else {
@@ -110,19 +110,12 @@ public class ExamController {
                 } else {
                     type = 2;
                 }
-                future = judgeService.writeFile(question_id, type, getQuestion);
+                judgeService.saveProgramQustionFile(question_id, type, getQuestion);
             }
         }
 
         questionService.saveQuestion(getQuestion);  //保存到question表
 
-        if (getQuestion.getType() == (GetQuestion.Type.Normal_Program) || getQuestion.getType() == (GetQuestion.Type.SpecialJudge_Program)) {
-            try {
-                future.get();
-            } catch (Exception e) {
-                throw new CustomException(CustomExceptionType.OTHER_ERROR, e.getMessage());
-            }
-        }
         log.info("题目 添加/更新 成功");
         if (getQuestion.getType() == (GetQuestion.Type.Normal_Program) || getQuestion.getType() == (GetQuestion.Type.SpecialJudge_Program)) {
             judgeService.addTestCase(getQuestion);   //保存到test_case表

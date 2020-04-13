@@ -3,6 +3,7 @@ package org.sicnuafcs.online_exam_platform.service.Impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.sicnuafcs.online_exam_platform.config.JudgeConfig.JudgeConfig;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomException;
@@ -25,7 +26,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 /**
  * <p>Description:  xx</p>
@@ -36,7 +37,6 @@ import java.util.concurrent.Future;
  */
 
 @Slf4j
-@EnableAsync
 @Service
 public class JudgeServiceImpl implements JudgeService {
     @Autowired
@@ -49,6 +49,12 @@ public class JudgeServiceImpl implements JudgeService {
     StudentRepository studentRepository;
     @Autowired
     ExamQuestionRepository examQuestionRepository;
+
+    //负责文件写入的线程池
+    //TODO 需交将此处改为手动设置参数，创建线程池
+    ExecutorService saveFileExecutor = Executors.newCachedThreadPool();
+    //保证并发不出现异常
+    static final Map<Long,String> saveStatusMap = new ConcurrentHashMap<>();
 
     public com.alibaba.fastjson.JSONObject judge(String src, String language, Long testCaseId) {
         if (language == null || language.length() == 0) {
@@ -130,15 +136,9 @@ public class JudgeServiceImpl implements JudgeService {
         testCaseRepository.save(testCase);
     }
 
-    //异步
-    @Async
-    public Future<String> writeFile(Long question_id, int type,GetQuestion getQuestion) throws InterruptedException {
+    private void writeFile(Long question_id, int type,GetQuestion getQuestion) throws InterruptedException {
         //保存的文件名字
         ArrayList<String> fileNames = new ArrayList<>();
-
-        if (question_id == null) {
-            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "题号不能为空");
-        }
 
         //从getQuestion中获取in out输入输出数组，并写入文件
         ArrayList<String> in = new ArrayList<>();
@@ -161,7 +161,8 @@ public class JudgeServiceImpl implements JudgeService {
                     bw.flush();
                     bw.close();
                 } catch (IOException e) {
-                    return new AsyncResult<>("创建in文件失败");
+                    saveStatusMap.put(question_id, "创建in文件失败");
+                    return;
                     //throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "创建in文件失败");
                 }
                 fileNames.add(i + ".in");
@@ -174,7 +175,8 @@ public class JudgeServiceImpl implements JudgeService {
                         bw.flush();
                         bw.close();
                     } catch (IOException e) {
-                        return new AsyncResult<>("创建out文件失败");
+                        saveStatusMap.put(question_id, "创建out文件失败");
+                        return;
                         //throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "创建out文件失败");
                     }
                     fileNames.add(i + ".out");
@@ -234,20 +236,42 @@ public class JudgeServiceImpl implements JudgeService {
                 bw.flush();
                 bw.close();
             } catch (IOException e) {
-                return new AsyncResult<>("创建info文件失败");
+                saveStatusMap.put(question_id, "创建info文件失败");
+                return;
                 //throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "创建info文件失败");
             }
         }
         else {
-            return new AsyncResult<>("题目重复");
+            saveStatusMap.put(question_id, "题目重复");
+            return;
             //throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "题目重复");
         }
         log.info("写入文件成功");
-        return new AsyncResult<>("写入文件成功");
+        saveStatusMap.put(question_id, "写入文件成功");
+        return;
 
 //        //将文件放入docker中
 //        addToDocker(path, question_id, fileNames);
 //        log.info("放入docker成功");
+    }
+
+    @Override
+    public void saveProgramQustionFile(Long question_id, int type, GetQuestion getQuestion) {
+        if (question_id == null) {
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "题号不能为空");
+        }
+        saveStatusMap.put(question_id,"正在创建");
+
+        saveFileExecutor.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    writeFile(question_id,type,getQuestion);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
 //    public void addToDocker(String path, Long question_id, ArrayList<String> fileNames) {

@@ -23,8 +23,9 @@ public interface JudgeService {
 
     void addTestCase(GetQuestion getQuestion);
 
-    Future<String> writeFile(Long question_id, int type, GetQuestion getQuestion) throws InterruptedException;
+    //Future<String> writeFile(Long question_id, int type, GetQuestion getQuestion) throws InterruptedException;
 
+    void saveProgramQustionFile(Long question_id, int type, GetQuestion getQuestion);
 //    void addToDocker(String path, Long question_id, ArrayList<String> fileNames);
 
     void deleteFile(Long question_id);
