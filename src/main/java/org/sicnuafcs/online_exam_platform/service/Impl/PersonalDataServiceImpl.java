@@ -204,7 +204,7 @@ public class PersonalDataServiceImpl implements PersonalDataService {
     public void checkTeacherEmail(String email) {
         //如果邮箱格式不正确（正则表达式验证）
         String result = email.substring(email.length()-13,email.length());
-        if (!(email.matches("[\\w\\.\\-]+@([\\w\\-]+\\.)+[\\w\\-]+") && result.equals("@sicnu.edu.cn"))) {
+        if (!(email.matches("[\\w\\.\\-]+@([\\w\\-]+\\.)+[\\w\\-]+") && result.equals("@edu.cn"))) {
 //            if (!(email.matches("[\\w\\.\\-]+@([\\w\\-]+\\.)+[\\w\\-]+"))) {
             log.info("邮箱格式不正确");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"邮箱格式不正确");

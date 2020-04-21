@@ -100,7 +100,7 @@ public class RegisterServiceImpl implements RegisterService {
         }
 
         //工号长度固定为10位 密码不少于8位
-        if (teacher.getTea_id().length() != 10) {
+        if (teacher.getTea_id().length() != 8) {
             log.info("工号位数错误");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"工号位数错误");
         }
@@ -111,7 +111,7 @@ public class RegisterServiceImpl implements RegisterService {
 
         //邮箱格式验证
         String result = teacher.getEmail().substring(teacher.getEmail().length()-13,teacher.getEmail().length());
-        if (!(teacher.getEmail().matches("[\\w\\.\\-]+@([\\w\\-]+\\.)+[\\w\\-]+") && result.equals("@sicnu.edu.cn"))) {
+        if (!(teacher.getEmail().matches("[\\w\\.\\-]+@([\\w\\-]+\\.)+[\\w\\-]+") && result.equals("@edu.cn"))) {
             log.info("邮箱格式不正确");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"邮箱格式不正确");
         }
@@ -162,7 +162,7 @@ public class RegisterServiceImpl implements RegisterService {
     public void sendTeacherEmail(String receiver) throws Exception {
         //如果邮箱格式不正确（正则表达式验证）
         String result = receiver.substring(receiver.length()-13,receiver.length());
-        if (!(receiver.matches("[\\w\\.\\-]+@([\\w\\-]+\\.)+[\\w\\-]+") && result.equals("@sicnu.edu.cn"))) {
+        if (!(receiver.matches("[\\w\\.\\-]+@([\\w\\-]+\\.)+[\\w\\-]+") && result.equals("@edu.cn"))) {
             log.info("邮箱格式不正确");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"邮箱格式不正确");
         }

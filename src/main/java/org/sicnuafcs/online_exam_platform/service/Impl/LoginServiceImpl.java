@@ -24,11 +24,6 @@ public class LoginServiceImpl implements LoginService {
     //学号或者工号加密码
     @Override
     public Login LoginId(Login login) {
-        //因为学号/工号/手机号没分开 所以需要校验学号位数
-        if (login.getKeyword().length() != 10) {
-            log.info("学号/工号位数问题");
-            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "学号/工号位数问题");
-        }
 
         Teacher tea = teacherRepository.findTeacherByTea_id(login.getKeyword());
         Student stu = studentRepository.findStudentByStu_id(login.getKeyword());
