@@ -45,7 +45,7 @@ public class SendMailServiceImpl implements SendMailService {
     public void sendEmail(String receiver) throws MailSendException {
         //初始化邮件信息类
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-        simpleMailMessage.setSubject("验证码");      //设置邮件标题
+        simpleMailMessage.setSubject("[Online Exam Platform] 邮箱验证");      //设置邮件标题
         simpleMailMessage.setTo(receiver);    //设置收件人
         simpleMailMessage.setFrom(sender);    //设置发件人
 
