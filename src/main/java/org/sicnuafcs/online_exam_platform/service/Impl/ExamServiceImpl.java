@@ -194,6 +194,10 @@ public class ExamServiceImpl implements ExamService {
             stuExam.setScore(stuExamRepository.getByExam_idAndStu_idAndQuestion_id(exam_id, stu_id, stuExam.getQuestion_id()).getScore());
             stuExamRepository.save(stuExam);
         }
+        ArrayList<Long> allQuestion_id = stuExamRepository.getQuestion_idList(exam_id,stu_id);
+        for (Long question_id : allQuestion_id) {
+            stuExamRepository.saveStatus(StuExam.Status.DONE, question_id, exam_id, stu_id);
+        }
     }
 
     public Map getDiscussion(Long exam_id) {
