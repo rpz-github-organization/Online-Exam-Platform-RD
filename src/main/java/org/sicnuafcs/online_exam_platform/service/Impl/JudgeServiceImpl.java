@@ -11,6 +11,7 @@ import org.sicnuafcs.online_exam_platform.config.exception.CustomExceptionType;
 import org.sicnuafcs.online_exam_platform.dao.*;
 import org.sicnuafcs.online_exam_platform.model.*;
 import org.sicnuafcs.online_exam_platform.service.JudgeService;
+import org.sicnuafcs.online_exam_platform.util.LoadBalanceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
@@ -26,6 +27,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 import java.util.concurrent.*;
 
 /**
@@ -61,8 +63,8 @@ public class JudgeServiceImpl implements JudgeService {
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "编程语言不能为空");
         }
 
-        String url = "http://121.36.18.182:10085/judge";
-
+        String url = LoadBalanceUtils.GetUrl(testCaseId);
+        log.info("url:"+url);
         RestTemplate restTemplate = new RestTemplate();
 
         JSONObject jsonObject = new JSONObject();
@@ -90,7 +92,7 @@ public class JudgeServiceImpl implements JudgeService {
         body.put("test_case_id",testCaseId.toString());
         body.put("output", true);
         String jsonStr = JSON.toJSONString(body);
-        String result = doPost("http://121.36.18.182:10085/judge", jsonStr);
+        String result = doPost(url, jsonStr);
         log.info("result" + result);
         log.info("strjson" + jsonStr);
         return JSON.parseObject(result);
@@ -341,8 +343,8 @@ public class JudgeServiceImpl implements JudgeService {
             conn.setDoOutput(true);
             conn.setDoInput(true);
             //设置连接超时时间和读取超时时间
-            conn.setConnectTimeout(30000);
-            conn.setReadTimeout(10000);
+            //conn.setConnectTimeout(30000);
+            //conn.setReadTimeout(10000);
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setRequestProperty("Accept", "application/json");
             conn.setRequestProperty("X-Judge-Server-Token", "b82fd881d1303ba9794e19b7f4a5e2b79231d065f744e72172ad9ee792909126");
