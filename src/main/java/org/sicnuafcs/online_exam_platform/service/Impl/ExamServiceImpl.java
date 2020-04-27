@@ -185,6 +185,7 @@ public class ExamServiceImpl implements ExamService {
         for (String in : stuExams) {
             Map map = JSON.parseObject(in);
             StuExam stuExam = new StuExam();
+            stuExam.setNum(Integer.parseInt(map.get("num").toString()));
             stuExam.setQuestion_id(Long.parseLong(map.get("question_id").toString()));
             stuExam.setType(questionRepository.findTypeByQuestion_id(stuExam.getQuestion_id()));
             stuExam.setAnswer(map.get("answer").toString());
