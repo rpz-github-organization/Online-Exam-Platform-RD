@@ -119,6 +119,7 @@ public class ExamServiceImpl implements ExamService {
                 stuExam.setQuestion_id(normal_program.getQuestion_id());
                 stuExam.setType(Question.Type.Normal_Program);
                 stuExam.setNum(normal_program.getNum());
+                stuExam.setScore(0);
                 stuExamRepository.save(stuExam);
             }
             for (ExamQuestion specialJudge_program : specialJudge_programList) {
@@ -127,6 +128,7 @@ public class ExamServiceImpl implements ExamService {
                 stuExam.setQuestion_id(specialJudge_program.getQuestion_id());
                 stuExam.setType(Question.Type.SpecialJudge_Program);
                 stuExam.setNum(specialJudge_program.getNum());
+                stuExam.setScore(0);
                 stuExamRepository.save(stuExam);
             }
         }
