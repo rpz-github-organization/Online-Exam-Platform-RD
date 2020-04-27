@@ -5,6 +5,7 @@ import org.dozer.Mapper;
 import org.mindrot.jbcrypt.BCrypt;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomException;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomExceptionType;
+import org.sicnuafcs.online_exam_platform.dao.MajorInstitudeRepository;
 import org.sicnuafcs.online_exam_platform.dao.StudentRepository;
 import org.sicnuafcs.online_exam_platform.dao.TeacherRepository;
 import org.sicnuafcs.online_exam_platform.model.Student;
@@ -28,11 +29,14 @@ public class RegisterServiceImpl implements RegisterService {
     TeacherRepository teacherRepository;
     @Autowired
     SendMailService sendMailService;
+    @Autowired
+    MajorInstitudeRepository majorInstitudeRepository;
 
 
     @Override
     public void saveStudent(Student student) throws Exception {
-        Student stu = studentRepository.findStudentByStu_id(student.getStu_id());
+        String stu_id = student.getStu_id();
+        Student stu = studentRepository.findStudentByStu_id(stu_id);
         //用户已存在
         if (stu != null) {
             log.info("用户已存在");
@@ -54,27 +58,27 @@ public class RegisterServiceImpl implements RegisterService {
             log.info("邮箱格式不正确");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"邮箱格式不正确");
         }
+//
+//        //验证手机号（老师学生表里是否唯一） 电子邮箱是否存在
+//        Student stu1 = studentRepository.findStudentByEmail(student.getEmail());
+//        if (stu1 != null) {
+//            log.info("该邮箱已被注册");
+//            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱已被注册");
+//        }
+//
+//        Student stu2 = studentRepository.findStudentByTelephone(student.getTelephone());
+//        Teacher tea2 = teacherRepository.findTeacherByTelephone(student.getTelephone());
+//        if (stu2 != null || tea2 != null) {
+//            log.info("该电话已被注册");
+//            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该电话已被注册");
+//        }
 
-        //验证手机号（老师学生表里是否唯一） 电子邮箱是否存在
-        Student stu1 = studentRepository.findStudentByEmail(student.getEmail());
-        if (stu1 != null) {
-            log.info("该邮箱已被注册");
-            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱已被注册");
-        }
 
-        Student stu2 = studentRepository.findStudentByTelephone(student.getTelephone());
-        Teacher tea2 = teacherRepository.findTeacherByTelephone(student.getTelephone());
-        if (stu2 != null || tea2 != null) {
-            log.info("该电话已被注册");
-            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该电话已被注册");
-        }
-
-
-        //邮箱验证：验证码和邮箱是否一致；
-        if(!sendMailService.verification(student.getEmail(),student.getCode())){
-            log.info("邮箱验证不一样");
-            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"邮箱验证失败");
-        }
+//        //邮箱验证：验证码和邮箱是否一致；
+//        if(!sendMailService.verification(student.getEmail(),student.getCode())){
+//            log.info("邮箱验证不一样");
+//            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"邮箱验证失败");
+//        }
 
         //密码加密存储
         try {
@@ -87,6 +91,20 @@ public class RegisterServiceImpl implements RegisterService {
 
         //存入数据库
         student.setAuthority(0);
+
+        //设置class_id institude_id major_id
+        int grade = Integer.parseInt(stu_id.substring(0,4));
+        String institude_id = stu_id.substring(4,6);
+        String class_id = stu_id.substring(6,8);
+        System.out.println(grade + " " + institude_id + " " + class_id);
+        student.setInstitute_id(institude_id);
+        student.setClass_id(class_id);
+        student.setGrade(grade);
+
+        String major_id = majorInstitudeRepository.findMajorIdByClass_idAndGradeAndInstitude_id(class_id, grade, institude_id);
+        student.setMajor_id(major_id);
+
+
         studentRepository.save(student);
 
     }
