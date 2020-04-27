@@ -377,13 +377,14 @@ public class ExamController {
         Map res = examService.getExamInfo(exam_id, option);
         return AjaxResponse.success(res);
     }
+
     /**
-     * 学生成绩详情页
+     * 学生/学生查看 学生成绩详情页
      * 传入参数：试卷号、学号
      */
     @PostMapping("getStuExamInfo")
     public @ResponseBody AjaxResponse getStuExamInfo(@RequestBody String str, HttpServletRequest httpServletRequest) {
-        authorityCheckService.checkStudentAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        authorityCheckService.checkLoginStatus(httpServletRequest.getSession().getAttribute("userInfo"));
         try {
             String stu_id = JSON.parseObject(str).get("stu_id").toString();
             long exam_id = Long.parseLong(JSON.parseObject(str).get("exam_id").toString());

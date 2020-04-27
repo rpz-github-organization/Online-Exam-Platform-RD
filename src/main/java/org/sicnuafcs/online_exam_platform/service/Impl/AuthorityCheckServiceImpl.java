@@ -29,4 +29,13 @@ public class AuthorityCheckServiceImpl implements AuthorityCheckService {
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "该用户无权限");
         }
     }
+
+    @Override
+    public void checkLoginStatus(Object user) {
+        Map userInfo = (Map)user;
+        int authority = Integer.parseInt(userInfo.get("authority").toString());
+        if (authority != 1 && authority != 0) {
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "该用户无权限");
+        }
+    }
 }
