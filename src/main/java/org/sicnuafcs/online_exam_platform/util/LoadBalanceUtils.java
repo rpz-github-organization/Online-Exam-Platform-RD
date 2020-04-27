@@ -1,8 +1,5 @@
 package org.sicnuafcs.online_exam_platform.util;
 
-import sun.lwawt.macosx.CSystemTray;
-import sun.misc.Cleaner;
-
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;

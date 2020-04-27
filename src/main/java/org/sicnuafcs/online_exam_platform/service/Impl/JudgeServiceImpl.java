@@ -184,6 +184,7 @@ public class JudgeServiceImpl implements JudgeService {
                     fileNames.add(i + ".out");
                 }
             }
+
             //创建info文件
             JSONObject info = new JSONObject();
             JSONObject test_cases = new JSONObject();
@@ -305,7 +306,10 @@ public class JudgeServiceImpl implements JudgeService {
             String path1 = path + "/" + fileName;
             File file = new File(path1);
             if (file.exists()) {
-                file.delete();
+                boolean res = file.delete();
+                if (!res) {
+                    throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "in/out文件删除失败");
+                }
             }
             else {
                 log.info("文件不存在");
@@ -314,7 +318,10 @@ public class JudgeServiceImpl implements JudgeService {
         }
         File file = new File(path + "/info");
         if (file.exists()) {
-            file.delete();
+            boolean res = file.delete();
+            if (!res) {
+                throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "info文件删除失败");
+            }
         }
         else {
             log.info("info文件不存在");
@@ -322,7 +329,10 @@ public class JudgeServiceImpl implements JudgeService {
         }
         File files = new File(path);
         if (files.exists()) {
-            files.delete();
+            boolean res = files.delete();
+            if (!res) {
+                throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "文件夹删除失败");
+            }
         }
         else {
             log.info("目录不存在");
