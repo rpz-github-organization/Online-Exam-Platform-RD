@@ -379,7 +379,7 @@ public class ExamController {
     }
 
     /**
-     * 学生/学生查看 学生成绩详情页
+     * 学生/老师查看 学生成绩详情页
      * 传入参数：试卷号、学号
      */
     @PostMapping("getStuExamInfo")

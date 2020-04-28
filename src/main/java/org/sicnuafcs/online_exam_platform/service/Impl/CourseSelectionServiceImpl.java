@@ -244,6 +244,18 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
             map.put("score", examService.getStuExamScore(exam_id, stu_id));
             res.add(map);
         }
+
+        //对结果进行排序
+        Collections.sort(res, new Comparator<Map>() {
+            @Override
+            public int compare(Map m1, Map m2) {
+                int diff = (int)m1.get("score") - (int)m2.get("score");
+                if (diff < 0) return 1;
+                else if (diff > 0) return -1;
+                return 0;
+            }
+        });
+
         return res;
     }
 

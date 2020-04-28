@@ -199,6 +199,18 @@ public class CourseController {
             examsInfo.put("exam_id", exam.getExam_id());
             examRet.add(examsInfo);
         }
+
+        //对结果进行排序
+        Collections.sort(examRet, new Comparator<Map>() {
+            @Override
+            public int compare(Map m1, Map m2) {
+                int diff = (int)m1.get("status") - (int)m2.get("status");
+                if (diff > 0) return 1;
+                else if (diff < 0) return -1;
+                return 0;
+            }
+        });
+
         ret.put("exams", examRet);
         ret.put("tea_id", tea_id);
         ret.put("teacherName", teacherRepository.getNameByTea_id(tea_id));
