@@ -187,11 +187,17 @@ public class CourseController {
             Map<String, Object> examsInfo = new HashMap<>();
             examsInfo.put("exam_name",exam.getName());
             if (exam.getProgress_status().equals(Exam.ProgressStatus.WILL)) {
+                examsInfo.put("sort_id",0);
                 examsInfo.put("status", 0);
             } else if (exam.getProgress_status().equals(Exam.ProgressStatus.ING)) {
+                examsInfo.put("sort_id",1);
                 examsInfo.put("status", 1);
             } else {
                 examsInfo.put("status", 2);
+                if (exam.is_judge()) {
+                    examsInfo.put("sort_id",3);
+                }
+                else examsInfo.put("sort_id",2);
             }
             examsInfo.put("begin_time", exam.getBegin_time());
             examsInfo.put("last_time", exam.getLast_time());
@@ -204,7 +210,7 @@ public class CourseController {
         Collections.sort(examRet, new Comparator<Map>() {
             @Override
             public int compare(Map m1, Map m2) {
-                int diff = (int)m1.get("status") - (int)m2.get("status");
+                int diff = (int)m1.get("sort_id") - (int)m2.get("sort_id");
                 if (diff > 0) return 1;
                 else if (diff < 0) return -1;
                 return 0;
