@@ -470,7 +470,7 @@ public class JudgeServiceImpl implements JudgeService {
                 } else if (right < count && right > 0) {
                     judgeResult.setStatus("部分正确");
                     judgeResult.setScore(right * Full / count);
-                    if (r_score == null || r_score < right * Full / count) {
+                    if (r_score == null || r_score <= right * Full / count) {
                         stuExamRepository.saveScore(right * Full / count, question_id, exam_id, stu_id);
                         stuExamRepository.saveAnswer(code, question_id, exam_id, stu_id);
                     }

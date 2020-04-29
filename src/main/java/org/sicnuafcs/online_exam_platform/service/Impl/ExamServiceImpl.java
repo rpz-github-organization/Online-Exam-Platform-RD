@@ -188,13 +188,18 @@ public class ExamServiceImpl implements ExamService {
             Map map = JSON.parseObject(in);
             StuExam stuExam = new StuExam();
             stuExam.setNum(Integer.parseInt(map.get("num").toString()));
-            stuExam.setQuestion_id(Long.parseLong(map.get("question_id").toString()));
+
+            Long question_id = Long.parseLong(map.get("question_id").toString());
+            stuExam.setQuestion_id(question_id);
             stuExam.setType(questionRepository.findTypeByQuestion_id(stuExam.getQuestion_id()));
-            stuExam.setAnswer(map.get("answer").toString());
+            if (stuExamRepository.getScoreById(question_id,exam_id,stu_id) == null) {
+                stuExam.setAnswer(map.get("answer").toString());
+            }
+
             stuExam.setExam_id(exam_id);
             stuExam.setStu_id(stu_id);
             stuExam.setStatus(StuExam.Status.DONE);
-            stuExam.setScore(stuExamRepository.getByExam_idAndStu_idAndQuestion_id(exam_id, stu_id, stuExam.getQuestion_id()).getScore());
+            stuExam.setScore(stuExamRepository.getScoreById(question_id, exam_id, stu_id));
             stuExamRepository.save(stuExam);
         }
         ArrayList<Long> allQuestion_id = stuExamRepository.getQuestion_idList(exam_id,stu_id);
