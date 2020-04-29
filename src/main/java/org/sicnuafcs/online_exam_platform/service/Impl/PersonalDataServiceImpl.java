@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.mindrot.jbcrypt.BCrypt;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomException;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomExceptionType;
+import org.sicnuafcs.online_exam_platform.dao.MajorRepository;
 import org.sicnuafcs.online_exam_platform.dao.StudentRepository;
 import org.sicnuafcs.online_exam_platform.dao.TeacherRepository;
 import org.sicnuafcs.online_exam_platform.model.Student;
@@ -27,6 +28,8 @@ public class PersonalDataServiceImpl implements PersonalDataService {
     StudentRepository studentRepository;
     @Autowired
     SendMailService sendMailService;
+    @Autowired
+    MajorRepository majorRepository;
 
     @Override
     public Optional<Teacher> getTeacherData(String ID) {
@@ -41,6 +44,8 @@ public class PersonalDataServiceImpl implements PersonalDataService {
         Optional<Student> studentList = studentRepository.findById(ID);
         studentList.get().setPassword(null);
         studentList.get().setCode(null);
+        String majorId = studentList.get().getMajor_id();
+        studentList.get().setMajor_id(majorRepository.getNameByMajor_id(majorId));
         return studentList;
     }
 
