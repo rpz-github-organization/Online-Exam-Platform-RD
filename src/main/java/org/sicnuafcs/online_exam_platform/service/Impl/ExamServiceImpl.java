@@ -195,6 +195,9 @@ public class ExamServiceImpl implements ExamService {
             if (stuExamRepository.getScoreById(question_id,exam_id,stu_id) == null) {
                 stuExam.setAnswer(map.get("answer").toString());
             }
+            else {
+                stuExam.setAnswer(stuExamRepository.getAnswerById(question_id, exam_id, stu_id));
+            }
 
             stuExam.setExam_id(exam_id);
             stuExam.setStu_id(stu_id);
