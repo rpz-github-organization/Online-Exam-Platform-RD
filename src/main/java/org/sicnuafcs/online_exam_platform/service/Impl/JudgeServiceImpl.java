@@ -24,6 +24,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -443,7 +444,10 @@ public class JudgeServiceImpl implements JudgeService {
                     JSONObject res = (JSONObject) test_case;
                     testCaseRes.setCase_num(Integer.valueOf(res.get("test_case").toString()));
                     testCaseRes.setRun_time(res.get("real_time").toString() + "ms");
-                    testCaseRes.setMemory(res.get("memory").toString() + "KB");  //单位
+                    Double memory = Double.parseDouble(res.get("memory").toString()) /1024 /1024;
+                    DecimalFormat df = new DecimalFormat("0.00");
+                    String memoryStr = df.format(memory.floatValue());
+                    testCaseRes.setMemory(memoryStr  + "MB");  //单位
                     int result = Integer.parseInt(res.get("result").toString());
                     String judgeres = getJudgeResult(result);
                     if (judgeres.equals("答案正确")) {
