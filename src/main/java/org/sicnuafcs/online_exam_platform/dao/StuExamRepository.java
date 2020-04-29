@@ -51,4 +51,10 @@ public interface  StuExamRepository extends JpaRepository<StuExam, String> {
     @Transactional
     @Query("update StuExam u set u.status = :status where u.question_id = :question_id and u.exam_id = :exam_id and u.stu_id = :stu_id")
     void saveStatus(@Param("status") StuExam.Status status, @Param("question_id") Long question_id, @Param("exam_id") Long exam_id, @Param("stu_id") String stu_id);
+
+    @Modifying
+    @Transactional
+    @Query("update StuExam u set u.answer = :answer where u.question_id = :question_id and u.exam_id = :exam_id and u.stu_id = :stu_id")
+    void saveAnswer(@Param("answer") String answer, @Param("question_id") Long question_id, @Param("exam_id") Long exam_id, @Param("stu_id") String stu_id);
+
 }

@@ -424,7 +424,7 @@ public class JudgeServiceImpl implements JudgeService {
         try {
             String err = json.getString("err");
             if (err == null) {
-                //编译成功
+                //编译成功 返回的json串
                 judgeResult.setCompile_error(false);
                 judgeResult.setError_message(null);
 
@@ -459,24 +459,27 @@ public class JudgeServiceImpl implements JudgeService {
                 }
                 judgeResult.setTest_case_res(list);
 
-                //状态 分数
+                //状态 分数 代码 语言
                 int Full = examQuestionRepository.findScoreById(question_id, exam_id);
-                Integer r_score = stuExamRepository.getByExam_idAndStu_idAndQuestion_id(exam_id, stu_id, question_id).getScore();
+                Integer r_score = stuExamRepository.getByExam_idAndStu_idAndQuestion_id(exam_id, stu_id, question_id).getScore();  //数据库存储的分数
                 if (right == count) {
                     judgeResult.setStatus("答案正确");
                     judgeResult.setScore(Full);
                     stuExamRepository.saveScore(Full, question_id, exam_id, stu_id);
+                    stuExamRepository.saveAnswer(code, question_id, exam_id, stu_id);
                 } else if (right < count && right > 0) {
                     judgeResult.setStatus("部分正确");
                     judgeResult.setScore(right * Full / count);
                     if (r_score == null || r_score < right * Full / count) {
                         stuExamRepository.saveScore(right * Full / count, question_id, exam_id, stu_id);
+                        stuExamRepository.saveAnswer(code, question_id, exam_id, stu_id);
                     }
                 } else if (right == 0) {
                     judgeResult.setStatus("答案错误");
                     judgeResult.setScore(0);
                     if (r_score == null || r_score == 0) {
                         stuExamRepository.saveScore(0, question_id, exam_id, stu_id);
+                        stuExamRepository.saveAnswer(code, question_id, exam_id, stu_id);
                     }
                 }
 
