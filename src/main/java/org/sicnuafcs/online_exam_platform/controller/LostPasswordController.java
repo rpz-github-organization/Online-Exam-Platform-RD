@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.persistence.NonUniqueResultException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
@@ -74,17 +75,17 @@ public class LostPasswordController {
         String email = (String) params.get("email");
 
         Teacher tea = teacherRepository.findTeacherByEmail(email);
-        Student stu = studentRepository.findStudentByEmail(email);
-        if (tea == null && stu == null) {
-            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱未被注册");
-        }
-        else if (tea == null && stu != null) {
+        try {
+            Student stu = studentRepository.findStudentByEmail(email);
+            if (tea == null && stu == null) {
+                throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "该邮箱未被注册");
+            } else if (tea == null && stu != null) {
                 //学生重置密码
                 String newPassword = (String) params.get("password");
 
                 if (newPassword.length() < 8) {
                     log.info("密码位数过少");
-                    throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"密码位数过少");
+                    throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "密码位数过少");
                 }
                 if (BCrypt.checkpw(newPassword, stu.getPassword())) {
                     throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "和原始密码重复");
@@ -93,33 +94,37 @@ public class LostPasswordController {
                 try {
                     stu.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
                     log.info("密码加密成功");
-                }catch (Exception e) {
+                } catch (Exception e) {
                     log.info("密码加密失败");
-                    throw new CustomException(CustomExceptionType.SYSTEM_ERROR,"密码加密失败");
+                    throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "密码加密失败");
                 }
                 studentRepository.save(stu);
-            }
-        else if (tea != null && stu == null) {
-            String newPassword = (String) params.get("password");
-            //邮箱验证：验证码和邮箱是否一致；
-            if (newPassword.length() < 8) {
-                log.info("密码位数过少");
-                throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"密码位数过少");
-            }
-            if (BCrypt.checkpw(newPassword, tea.getPassword())) {
-                throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "和原始密码重复");
-            }
+            } else if (tea != null && stu == null) {
+                String newPassword = (String) params.get("password");
+                //邮箱验证：验证码和邮箱是否一致；
+                if (newPassword.length() < 8) {
+                    log.info("密码位数过少");
+                    throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "密码位数过少");
+                }
+                if (BCrypt.checkpw(newPassword, tea.getPassword())) {
+                    throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "和原始密码重复");
+                }
 
-            try {
-                tea.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
-                log.info("密码加密成功");
-            }catch (Exception e) {
-                log.info("密码加密失败");
-                throw new CustomException(CustomExceptionType.SYSTEM_ERROR,"密码加密失败");
-            }
+                try {
+                    tea.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+                    log.info("密码加密成功");
+                } catch (Exception e) {
+                    log.info("密码加密失败");
+                    throw new CustomException(CustomExceptionType.SYSTEM_ERROR, "密码加密失败");
+                }
 
-            teacherRepository.save(tea);
+                teacherRepository.save(tea);
+            }
+            return AjaxResponse.success();
+        }catch (NonUniqueResultException e) {
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱已存在且不唯一");
+        } catch (Exception e) {
+            throw new CustomException(CustomExceptionType.SYSTEM_ERROR,"系统未知异常");
         }
-        return AjaxResponse.success();
     }
 }

@@ -15,7 +15,7 @@ public interface StudentRepository extends JpaRepository<Student, String> {
     Student findStudentByStu_id(String stu_id);
 
     @Query("select u from Student u where u.email = ?1")
-    Student findStudentByEmail(String email);
+    Student findStudentByEmail(String email) throws Exception;
 
     @Query("select u from  Student u where u.telephone = ?1")
     Student findStudentByTelephone(String telephone);

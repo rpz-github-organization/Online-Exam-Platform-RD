@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.persistence.NonUniqueResultException;
 import java.util.Map;
 import java.util.Optional;
 @Slf4j
@@ -178,18 +179,24 @@ public class PersonalDataServiceImpl implements PersonalDataService {
             log.info("邮箱验证不一致");
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"邮箱验证失败");
         }
-        //邮箱验证：是否唯一
-        Student emailList = studentRepository.findStudentByEmail(newEmail);
-        if (emailList != null && !emailList.getStu_id().equals(ID)) {
-            log.info("该邮箱已被注册");
-            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱已被注册");
+        try {
+            //邮箱验证：是否唯一
+            Student emailList = studentRepository.findStudentByEmail(newEmail);
+            if (emailList != null && !emailList.getStu_id().equals(ID)) {
+                log.info("该邮箱已被注册");
+                throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "该邮箱已被注册");
+            }
+            Student student = studentRepository.findById(ID).get();
+            student.setEmail(newEmail);
+            Student newStudent = studentRepository.save(student);
+            newStudent.setPassword(null);
+            newStudent.setCode(null);
+            return newStudent;
+        }catch (NonUniqueResultException e) {
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱已存在且不唯一");
+        } catch (Exception e) {
+            throw new CustomException(CustomExceptionType.SYSTEM_ERROR,"系统未知异常");
         }
-        Student student = studentRepository.findById(ID).get();
-        student.setEmail(newEmail);
-        Student newStudent =studentRepository.save(student);
-        newStudent.setPassword(null);
-        newStudent.setCode(null);
-        return newStudent;
     }
     //确保本人操作 或者 验证新的邮箱是否使用
     @Override

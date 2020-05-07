@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.persistence.NonUniqueResultException;
 
 @Slf4j
 @Service
@@ -193,10 +194,18 @@ public class RegisterServiceImpl implements RegisterService {
     @Override
     public void checkStudentRepeat(String email) {
         //如果邮箱在student表里已存在
-        if (studentRepository.findStudentByEmail(email) != null) {
-            log.info("该邮箱已存在");
-            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱已存在");
+        try{
+            Student student = studentRepository.findStudentByEmail(email);
+            if (student != null) {
+                log.info("该邮箱已存在");
+                throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱已存在");
+            }
+        }catch (NonUniqueResultException e) {
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱已存在且不唯一");
+        } catch (Exception e) {
+            throw new CustomException(CustomExceptionType.SYSTEM_ERROR,"系统未知异常");
         }
+
     }
     @Override
     public  void sendStudentEmail(String receiver) throws Exception {
