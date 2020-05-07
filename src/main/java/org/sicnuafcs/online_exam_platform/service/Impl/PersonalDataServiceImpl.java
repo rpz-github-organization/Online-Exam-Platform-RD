@@ -193,7 +193,7 @@ public class PersonalDataServiceImpl implements PersonalDataService {
             newStudent.setCode(null);
             return newStudent;
         }catch (NonUniqueResultException e) {
-            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱已存在且不唯一");
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱已存在");
         } catch (Exception e) {
             throw new CustomException(CustomExceptionType.SYSTEM_ERROR,"系统未知异常");
         }

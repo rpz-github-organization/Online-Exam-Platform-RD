@@ -42,18 +42,24 @@ public class LostPasswordController {
      * @throws Exception
      */
     @PostMapping("/sendEmail")
-    public @ResponseBody AjaxResponse sendStudentEmail(@RequestBody Map<String, Object> params) throws Exception {
+    public @ResponseBody AjaxResponse sendStudentEmail(@RequestBody Map<String, Object> params) {
         String email = (String) params.get("email");
         //验证是否被注册过
         Teacher tea = teacherRepository.findTeacherByEmail(email);
-        Student stu = studentRepository.findStudentByEmail(email);
-        if (tea == null && stu == null) {
-            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱未被注册");
-        }
+        try {
+            Student stu = studentRepository.findStudentByEmail(email);
+            if (tea == null && stu == null) {
+                throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "该邮箱未被注册");
+            }
 
-        personalDataService.checkStudentEmail(email);
-        log.info("发送邮件成功");
-        return AjaxResponse.success();
+            personalDataService.checkStudentEmail(email);
+            log.info("发送邮件成功");
+            return AjaxResponse.success();
+        }catch (NonUniqueResultException e) {
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱已存在");
+        } catch (Exception e) {
+            throw new CustomException(CustomExceptionType.SYSTEM_ERROR,"系统未知异常");
+        }
     }
 
     /**
@@ -122,7 +128,7 @@ public class LostPasswordController {
             }
             return AjaxResponse.success();
         }catch (NonUniqueResultException e) {
-            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱已存在且不唯一");
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR,"该邮箱已存在");
         } catch (Exception e) {
             throw new CustomException(CustomExceptionType.SYSTEM_ERROR,"系统未知异常");
         }
