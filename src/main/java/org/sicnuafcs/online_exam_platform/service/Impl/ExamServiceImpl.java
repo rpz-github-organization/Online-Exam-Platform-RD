@@ -221,7 +221,7 @@ public class ExamServiceImpl implements ExamService {
         //题目部分
         List<Long> questionIdList = examQuestionRepository.getQuestionIdListByExam_idAndType(exam_id, Question.Type.Discussion);
         if (questionIdList == null || questionIdList.isEmpty()) {
-            return null;
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "无需阅卷 系统将自动评卷");
         }
         ArrayList<Map> questions = new ArrayList<>();
         for (Long question_id : questionIdList) {
