@@ -41,7 +41,7 @@ public class ChangeExamConfig {
         if (!exams.isEmpty()) {
             for (Exam exam : exams) {
                 if (exam.getProgress_status().equals(Exam.ProgressStatus.WILL)) {
-                    if (exam.getBegin_time() <= time) {  //如果考试开始时间但是考试状态为will
+                    if (exam.getBegin_time() <= time && exam.is_distribute()) {  //如果考试开始时间 并且试卷已发布 但是考试状态为will
                         examRepository.saveStatus(exam.getExam_id(), Exam.ProgressStatus.ING);
                     }
                 }
