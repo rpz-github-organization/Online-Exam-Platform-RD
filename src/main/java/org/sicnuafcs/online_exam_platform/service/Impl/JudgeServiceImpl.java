@@ -10,6 +10,7 @@ import org.sicnuafcs.online_exam_platform.config.exception.CustomException;
 import org.sicnuafcs.online_exam_platform.config.exception.CustomExceptionType;
 import org.sicnuafcs.online_exam_platform.dao.*;
 import org.sicnuafcs.online_exam_platform.model.*;
+import org.sicnuafcs.online_exam_platform.service.HomePageService;
 import org.sicnuafcs.online_exam_platform.service.JudgeService;
 import org.sicnuafcs.online_exam_platform.util.LoadBalanceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,8 @@ public class JudgeServiceImpl implements JudgeService {
     StudentRepository studentRepository;
     @Autowired
     ExamQuestionRepository examQuestionRepository;
+    @Autowired
+    HomePageService homePageService;
 
     //负责文件写入的线程池
     //TODO 需交将此处改为手动设置参数，创建线程池
@@ -135,7 +138,7 @@ public class JudgeServiceImpl implements JudgeService {
             in.add(toTestCase.getInput());
             out.add(toTestCase.getOutput());
         }
-        TestCase testCase = new TestCase(getQuestion.getQuestion_id(), in, out);
+        TestCase testCase = new TestCase(getQuestion.getQuestion_id(), homePageService.List2String(in), homePageService.List2String(out));
         testCaseRepository.save(testCase);
     }
 
@@ -151,7 +154,7 @@ public class JudgeServiceImpl implements JudgeService {
             out.add(toTestCase.getOutput());
         }
         //先创建该id的目录
-        String path = "/home/user/ojSystemSvr/test_cases/"+question_id;
+        String path = "/home/user/ojSystem/test_cases/"+question_id;
         File f = new File(path);
         if (!f.exists()) {
             f.mkdirs();
@@ -503,7 +506,7 @@ public class JudgeServiceImpl implements JudgeService {
             throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "题号不能为空");
         }
         //获取in 输入数组
-        ArrayList<String> in = testCaseRepository.getOneByQuestion_id(question_id).getInput();
+        ArrayList<String> in = homePageService.String2List(testCaseRepository.getOneByQuestion_id(question_id).getInput());
         for (int i = 1; i <= in.size(); i++) {
             fileNames.add(i + ".in");
             fileNames.add(i + ".out");

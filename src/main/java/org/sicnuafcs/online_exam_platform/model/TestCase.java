@@ -11,7 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.util.ArrayList;
 
 @Data
 @AllArgsConstructor
@@ -24,7 +23,7 @@ public class TestCase implements Serializable {
     @Column
     private Long question_id;
     @Column
-    private ArrayList input;
+    private String input;
     @Column
-    private ArrayList output;
+    private String output;
 }

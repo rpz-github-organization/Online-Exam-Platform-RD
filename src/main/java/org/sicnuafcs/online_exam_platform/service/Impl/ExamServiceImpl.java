@@ -470,8 +470,8 @@ public class ExamServiceImpl implements ExamService {
             }
             //test_case
             TestCase testCase = testCaseRepository.getOneByQuestion_id(question_id);
-            ArrayList<String> in = testCaseRepository.getOneByQuestion_id(question_id).getInput();
-            ArrayList<String> output = testCaseRepository.getOneByQuestion_id(question_id).getOutput();
+            ArrayList<String> in = homePageService.String2List(testCaseRepository.getOneByQuestion_id(question_id).getInput());
+            ArrayList<String> output = homePageService.String2List(testCaseRepository.getOneByQuestion_id(question_id).getOutput());
             ArrayList testcases = new ArrayList();
             for (int i = 0; i < in.size(); i++) {
                 Map res = new HashMap();

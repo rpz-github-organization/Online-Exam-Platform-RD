@@ -11,10 +11,7 @@ import org.sicnuafcs.online_exam_platform.dao.QuestionRepository;
 import org.sicnuafcs.online_exam_platform.dao.StuExamRepository;
 import org.sicnuafcs.online_exam_platform.dao.*;
 import org.sicnuafcs.online_exam_platform.model.*;
-import org.sicnuafcs.online_exam_platform.service.AuthorityCheckService;
-import org.sicnuafcs.online_exam_platform.service.ExamService;
-import org.sicnuafcs.online_exam_platform.service.JudgeService;
-import org.sicnuafcs.online_exam_platform.service.QuestionService;
+import org.sicnuafcs.online_exam_platform.service.*;
 import org.sicnuafcs.online_exam_platform.util.RedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -60,6 +57,9 @@ public class ExamController {
     StudentRepository studentRepository;
     @Autowired
     ExamQuestionRepository examQuestionRepository;
+    @Autowired
+    HomePageService homePageService;
+
     /**
      * 老师添加/更新题目
      * @param getQuestion
@@ -225,11 +225,14 @@ public class ExamController {
         if (question.getType() == Question.Type.SpecialJudge_Program || question.getType() == Question.Type.Normal_Program) {
             TestCase testCase = testCaseRepository.getOneByQuestion_id(question_id);
             if (testCase != null) {
-                if (testCase.getInput().size() > 0 ) {
-                    ret.put("input", testCase.getInput().get(0));
+                ArrayList<String> in = homePageService.String2List(testCase.getInput());
+                ArrayList<String> output = homePageService.String2List(testCase.getOutput());
+
+                if (in.size() > 0 ) {
+                    ret.put("input", in.get(0));
                 }
-                if (testCase.getOutput().size() > 0) {
-                    ret.put("output", testCase.getOutput().get(0));
+                if (output.size() > 0) {
+                    ret.put("output", output.get(0));
                 }
             }
         }
@@ -467,11 +470,13 @@ public class ExamController {
             if (question.getType() == Question.Type.SpecialJudge_Program || question.getType() == Question.Type.Normal_Program) {
                 TestCase testCase = testCaseRepository.getOneByQuestion_id(question_id);
                 if (testCase != null) {
-                    if (testCase.getInput().size() > 0) {
-                        ret.put("input", testCase.getInput().get(0));
+                    ArrayList<String> in = homePageService.String2List(testCase.getInput());
+                    ArrayList<String> output = homePageService.String2List(testCase.getOutput());
+                    if (in.size() > 0) {
+                        ret.put("input", in.get(0));
                     }
-                    if (testCase.getOutput().size() > 0) {
-                        ret.put("output", testCase.getOutput().get(0));
+                    if (output.size() > 0) {
+                        ret.put("output", output.get(0));
                     }
                 }
             }
