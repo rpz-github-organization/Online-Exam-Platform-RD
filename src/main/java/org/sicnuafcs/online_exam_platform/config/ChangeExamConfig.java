@@ -33,7 +33,7 @@ public class ChangeExamConfig {
     StuExamRepository stuExamRepository;
 
     @Async
-    @Scheduled(fixedDelay = 1000 * 30)  //间隔半分钟
+    @Scheduled(fixedDelay = 1000 * 1)  //间隔半分钟
     public void changeExamProgressStatus() throws InterruptedException {
         List<Exam> exams = examRepository.getExams();
         Long time = System.currentTimeMillis();
@@ -80,7 +80,7 @@ public class ChangeExamConfig {
                 }
             }
         }
-        Thread.sleep(1000 * 8 * 30);
+        Thread.sleep(1000 * 8 * 1);
     }
 
 }
