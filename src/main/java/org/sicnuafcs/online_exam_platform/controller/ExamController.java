@@ -138,6 +138,22 @@ public class ExamController {
         log.info("添加/更新 试卷成功");
         return AjaxResponse.success(exam_id);
     }
+    /**
+     * 老师删除考试
+     * @param exam
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("/delExam")
+    public @ResponseBody
+    AjaxResponse dekExam(@Valid @RequestBody Exam exam, HttpServletRequest httpServletRequest) throws Exception {
+        authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        examRepository.deleteByExam_id(exam.getExam_id());
+        examQuestionRepository.deleteByExam_id(exam.getExam_id());
+        stuExamRepository.deleteByExam_id(exam.getExam_id());
+        log.info("删除 试卷成功");
+        return AjaxResponse.success("success!");
+    }
 
     /**
      * 学生编程题判题

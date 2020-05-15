@@ -1,10 +1,13 @@
 package org.sicnuafcs.online_exam_platform.dao;
 
+import io.lettuce.core.dynamic.annotation.Param;
 import org.sicnuafcs.online_exam_platform.model.ExamQuestion;
 import org.sicnuafcs.online_exam_platform.model.Question;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,4 +24,9 @@ public interface ExamQuestionRepository extends JpaRepository<ExamQuestion, Stri
     ArrayList<ExamQuestion> findByExam_id(Long exam_id);
     @Query("select u.type from ExamQuestion u where u.exam_id = ?1")
     List<Question.Type> getTypeByExam_id(Long Exam_id);
+
+    @Transactional
+    @Modifying
+    @Query("delete from ExamQuestion u where u.exam_id = :exam_id")
+    void deleteByExam_id(@Param("exam_id") Long exam_id);
 }

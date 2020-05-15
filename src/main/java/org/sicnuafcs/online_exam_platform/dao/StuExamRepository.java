@@ -59,4 +59,9 @@ public interface  StuExamRepository extends JpaRepository<StuExam, String> {
 
     @Query("select u.score from StuExam u where u.question_id = ?1 and u.exam_id = ?2 and u.stu_id = ?3")
     Integer getScoreById(Long question_id, Long exam_id, String stu_id);
+
+    @Transactional
+    @Modifying
+    @Query("delete from StuExam u where u.exam_id = :exam_id")
+    void deleteByExam_id(@Param("exam_id") Long exam_id);
 }

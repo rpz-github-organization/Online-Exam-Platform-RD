@@ -66,4 +66,9 @@ public interface ExamRepository extends JpaRepository<Exam, String> {
 
     @Query("select max(u.exam_id) from Exam u")
     Long getMaxExamId();
+
+    @Transactional
+    @Modifying
+    @Query("delete from Exam u where u.exam_id = :exam_id")
+    void deleteByExam_id(@Param("exam_id") Long exam_id);
 }
