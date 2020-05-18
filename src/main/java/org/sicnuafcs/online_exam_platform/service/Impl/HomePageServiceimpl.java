@@ -70,8 +70,10 @@ public class HomePageServiceimpl implements HomePageService {
         for (Exam exam : exams) {
             Map<String, Object> item = new HashMap<>();
             String co_name = courseRepository.getNameByCo_id(exam.getCo_id());
+            String tea_name = teaRepository.getNameByTea_id(exam.getTea_id());
             item.put("exam", exam);
             item.put("co_name", co_name);
+            item.put("tea_name", tea_name);
             ret.add(item);
         }
         return ret;
