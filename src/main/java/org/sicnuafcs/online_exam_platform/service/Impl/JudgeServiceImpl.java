@@ -450,7 +450,7 @@ public class JudgeServiceImpl implements JudgeService {
                     Double memory = Double.parseDouble(res.get("memory").toString()) /1024 /1024;
                     DecimalFormat df = new DecimalFormat("0.00");
                     String memoryStr = df.format(memory.floatValue());
-                    testCaseRes.setMemory(memoryStr  + "MB");  //单位
+                    testCaseRes.setMemory(memoryStr  + "KB");  //单位
                     int result = Integer.parseInt(res.get("result").toString());
                     String judgeres = getJudgeResult(result);
                     if (judgeres.equals("答案正确")) {
