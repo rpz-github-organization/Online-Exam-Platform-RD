@@ -187,8 +187,14 @@ public class CourseController {
             Map<String, Object> examsInfo = new HashMap<>();
             examsInfo.put("exam_name",exam.getName());
             if (exam.getProgress_status().equals(Exam.ProgressStatus.WILL)) {
-                examsInfo.put("sort_id",0);
-                examsInfo.put("status", 0);
+                if (exam.is_distribute() == false) {
+                    examsInfo.put("sort_id",0);
+                    examsInfo.put("status", 3);
+                } else {
+                    examsInfo.put("sort_id", 0);
+                    examsInfo.put("status", 0);
+                }
+
             } else if (exam.getProgress_status().equals(Exam.ProgressStatus.ING)) {
                 examsInfo.put("sort_id",1);
                 examsInfo.put("status", 1);
