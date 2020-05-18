@@ -34,7 +34,6 @@ public class Question implements Serializable {
     private Long question_id;
 
     @Column(length = 16)
-    @NotBlank(message = "教师id不为空")
     private  String tea_id;
 
     @Column(length = 16)

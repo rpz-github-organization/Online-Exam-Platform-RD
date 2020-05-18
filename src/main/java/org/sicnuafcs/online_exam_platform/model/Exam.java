@@ -21,11 +21,9 @@ public class Exam implements Serializable {
     }
 
     @Column
-    @NotBlank(message = "课程号不能为空")
     private String co_id; //课程id
 
     @Column
-    @NotBlank(message = "工号不能为空")
     private String tea_id; //教师id
 
     @Id
