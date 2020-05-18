@@ -209,6 +209,28 @@ public class ExamController {
         log.info("添加/编辑 试题到试卷成功");
         return AjaxResponse.success();
     }
+    /**
+     * 老师修改选择/判断题分数
+     * @param examQuestion
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("/modifyQuestionsScore")
+    public @ResponseBody
+    AjaxResponse modifyQuestionsScore(@Valid @RequestBody ExamQuestion examQuestion, HttpServletRequest httpServletRequest) throws Exception {
+        authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        //检测是否已经发布
+        Long exam_id = examQuestion.getExam_id();
+        if (examRepository.getIs_distributeByExam_id(exam_id)) {
+            throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "该考试已经发布 不能修改题目！");
+        }
+        if(examQuestion.getExam_id() == null || examQuestion.getType() == null || examQuestion.getScore() == 0) {
+            return AjaxResponse.error(new CustomException(CustomExceptionType.USER_INPUT_ERROR, "param is null"));
+        }
+        examQuestionRepository.updateScore(examQuestion.getExam_id(), examQuestion.getType(), examQuestion.getScore());
+        log.info("修改试题分数成功");
+        return AjaxResponse.success();
+    }
 
     /**
      * 学生开始考试的时候 获取学生试卷

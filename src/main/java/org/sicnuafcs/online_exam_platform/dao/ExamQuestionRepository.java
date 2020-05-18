@@ -24,6 +24,10 @@ public interface ExamQuestionRepository extends JpaRepository<ExamQuestion, Stri
     ArrayList<ExamQuestion> findByExam_id(Long exam_id);
     @Query("select u.type from ExamQuestion u where u.exam_id = ?1")
     List<Question.Type> getTypeByExam_id(Long Exam_id);
+    @Transactional
+    @Modifying
+    @Query("update ExamQuestion u set u.score = :score where u.exam_id = :exam_id and u.type = :type")
+    void updateScore(@Param("exam_id") Long exam_id, @Param("type") Question.Type type, @Param("score") int score);
 
     @Transactional
     @Modifying
