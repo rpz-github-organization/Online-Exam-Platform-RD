@@ -18,15 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-
-/**
- * <p>Description:  Some utils for operate docker</p>
- *
- * @author Hobert
- * @version 1.0
- * @create 2020/2/3 17:33
- */
-
 public class DockerUtils {
 
     private static DockerClient dockerClient;

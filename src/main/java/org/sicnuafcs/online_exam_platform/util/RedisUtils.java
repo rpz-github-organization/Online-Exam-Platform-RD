@@ -9,14 +9,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
-/**
- * <p>Description:  xx</p>
- *
- * @author Hobert
- * @version 1.0
- * @create 2020/2/5 17:44
- */
-
 @Component
 public class RedisUtils {
 

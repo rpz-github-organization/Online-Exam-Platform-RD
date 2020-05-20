@@ -5,14 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * <p>Description:  xx</p>
- *
- * @author Hobert-Li
- * @version 1.0
- * @create 2020/2/6 20:36
- */
-
 @Data
 @Builder
 @AllArgsConstructor

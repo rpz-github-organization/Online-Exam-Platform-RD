@@ -32,14 +32,6 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.*;
 
-/**
- * <p>Description:  xx</p>
- *
- * @author Hobert-Li
- * @version 1.0
- * @create 2020/2/6 18:12
- */
-
 @Slf4j
 @Service
 public class JudgeServiceImpl implements JudgeService {

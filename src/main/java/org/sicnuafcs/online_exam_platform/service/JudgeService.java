@@ -9,14 +9,6 @@ import org.springframework.scheduling.annotation.AsyncResult;
 import java.util.ArrayList;
 import java.util.concurrent.Future;
 
-/**
- * <p>Description:  xx</p>
- *
- * @author Hobert-Li
- * @version 1.0
- * @create 2020/2/6 18:11
- */
-
 public interface JudgeService {
 
     JSONObject judge(String src, String language, Long testCaseId);

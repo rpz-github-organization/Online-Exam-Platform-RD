@@ -3,14 +3,6 @@ package org.sicnuafcs.online_exam_platform.config.JudgeConfig;
 import lombok.*;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * <p>Description:  xx</p>
- *
- * @author Hobert-Li
- * @version 1.0
- * @create 2020/2/6 18:29
- */
-
 @Configuration
 public class JudgeConfig {
 

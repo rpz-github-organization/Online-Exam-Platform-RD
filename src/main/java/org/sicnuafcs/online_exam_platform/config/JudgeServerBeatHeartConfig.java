@@ -19,14 +19,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
-/**
- * <p>Description:  xx</p>
- *
- * @author Hobert-Li
- * @version 1.0
- * @create 2020/2/17 18:17
- */
-
 //@Configuration
 @EnableScheduling
 public class JudgeServerBeatHeartConfig {
