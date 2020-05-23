@@ -31,7 +31,7 @@ public interface ExamRepository extends JpaRepository<Exam, String> {
     @Query("update Exam u set u.last_time = :last_time where u.exam_id = :exam_id")
     void saveLast_time(@Param("exam_id") Long exam_id, @Param("last_time") int last_time);
 
-    @Query("select u.exam_id from Exam  u where u.co_id = ?1 and u.tea_id = ?2")
+    @Query("select u.exam_id from Exam  u where u.co_id = ?1 and u.tea_id = ?2 order by u.begin_time desc")
     List<Long> findExamIdByCo_idAAndTea_id(String co_id, String tea_id);
 
     @Query("select u from Exam u where u.tea_id = ?1 and u.progress_status = ?2 order by u.begin_time desc")
