@@ -18,7 +18,7 @@ public interface ExamRepository extends JpaRepository<Exam, String> {
     List<Exam> findExamsByExam_idAAndProgress_status(List<Long> examIdList,Exam.ProgressStatus status);
     @Query("select u from Exam u where u.exam_id = ?1")
     Exam findExamByExam_id(Long exam_id);
-    @Query("select u from Exam  u where u.co_id = ?1 and u.tea_id = ?2")
+    @Query("select u from Exam  u where u.co_id = ?1 and u.tea_id = ?2 order by u.begin_time desc")
     List<Exam> findExamsByCo_idAAndTea_id(String co_id, String tea_id);
 
     @Modifying
