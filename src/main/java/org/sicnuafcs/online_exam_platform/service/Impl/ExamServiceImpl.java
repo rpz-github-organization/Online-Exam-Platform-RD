@@ -72,8 +72,8 @@ public class ExamServiceImpl implements ExamService {
     }
 
     @Override
-    public void distributeExamToStudent(long exma_id, String co_id) throws Exception {
-        ArrayList<String> studentList = (ArrayList<String>)stuCoRepository.findByCo_id(co_id);
+    public void distributeExamToStudent(long exma_id, String co_id, String tea_id) throws Exception {
+        ArrayList<String> studentList = (ArrayList<String>)stuCoRepository.findByCo_idaAndTea_id(co_id, tea_id);
         if (studentList == null) {
             return;
         }
