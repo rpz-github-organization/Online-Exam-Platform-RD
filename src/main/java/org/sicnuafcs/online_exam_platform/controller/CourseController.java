@@ -107,8 +107,11 @@ public class CourseController {
         authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
         String tea_id = JSON.parseObject(str).get("tea_id").toString();
         String co_id = JSON.parseObject(str).get("co_id").toString();
-        if (tea_id == "" || co_id == "") {
-            AjaxResponse.error(new CustomException(CustomExceptionType.USER_INPUT_ERROR, "tea_id or co_id is null"));
+        if (tea_id == "") {
+            AjaxResponse.error(new CustomException(CustomExceptionType.USER_INPUT_ERROR, "tea_id is null"));
+        }
+        if (co_id == "") {
+            AjaxResponse.error(new CustomException(CustomExceptionType.USER_INPUT_ERROR, "co_id is null"));
         }
         TeaCo teaCo = new TeaCo();
         teaCo.setCo_id(co_id);
