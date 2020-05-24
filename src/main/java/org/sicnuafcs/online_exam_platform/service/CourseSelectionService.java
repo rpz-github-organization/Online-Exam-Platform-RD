@@ -2,6 +2,7 @@ package org.sicnuafcs.online_exam_platform.service;
 
 import org.sicnuafcs.online_exam_platform.model.Course;
 import org.sicnuafcs.online_exam_platform.model.CourseVO;
+import org.sicnuafcs.online_exam_platform.model.StuCo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,11 +15,8 @@ public interface CourseSelectionService {
 
     ArrayList<String> getAllCourse_id(String major_id);
 
-    Map<String, String> getChosenCoId_TeaId(String stu_id);
-
-    ArrayList<Map> getIdAndName(Map<String, String> coId_TeaId);
-
-    Map<String, String> getAllCoId_TeaId(ArrayList<String> course_id);
+    ArrayList<Map> getChosenCoId_TeaId(List<StuCo> stuCos);
+    ArrayList<Map> getUnChooesCoId_TeaId(List<StuCo> stuCos, String major_id);
 
     String getMajorName(String major_id);
 

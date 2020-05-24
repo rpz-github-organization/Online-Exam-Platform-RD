@@ -42,6 +42,8 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
     StuExamRepository stuExamRepository;
     @Autowired
     ExamService examService;
+    @Autowired
+    CourseSelectionService courseSelectionService;
 
     @Override
     public String getClass_id(String stu_id) {
@@ -80,58 +82,56 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
         List<Course> courses = courseRepository.findAll();  //所有课程
         for (int i = 0; i < courses.size(); i++) {
             ArrayList<String> majors = homePageService.String2List(courses.get(i).getMajor());  //每个课程对应的所有的专业
-            if (majors.contains(major_id)) {
+            if (majors.contains(major_id) && !course.contains(courses.get(i).getCo_id())) {
                 course.add(courses.get(i).getCo_id());
             }
         }
         return course;
     }
 
-    @Override
-    //在stu_co表里根据stu_id 获取学生 已经选择 的课程和老师，co_id和tea_id;
-    public Map<String, String> getChosenCoId_TeaId(String stu_id) {
-        Map<String, String> coId_teaId = new IdentityHashMap<>();
-        List<StuCo> stu_cos = stuCoRepository.getStu_coByStu_id(stu_id);
-        for (int i = 0; i < stu_cos.size(); i++) {
-            String id = new String(stu_cos.get(i).getCo_id());
-            coId_teaId.put(id, stu_cos.get(i).getTea_id());
-        }
-        return coId_teaId;
-    }
 
     @Override
     //key(co_id)到course中得到name  value(tea_id)到teacher中得到name
-    public ArrayList<Map> getIdAndName(Map<String, String> coId_TeaId) {
+    public ArrayList<Map> getChosenCoId_TeaId(List<StuCo> stuCos) {
         ArrayList<Map> list = new ArrayList();
-        for (Map.Entry<String, String> m : coId_TeaId.entrySet()) {
+        for (StuCo stuCo : stuCos) {
             Map<String, Object> one = new HashMap();
-            String course = new String(courseRepository.getNameByCo_id(m.getKey()));
-            String teacher = new String(teacherRepository.getNameByTea_id(m.getValue()));
-            one.put("co_id", m.getKey());
+            String course = courseRepository.getNameByCo_id(stuCo.getCo_id());
+            String teacher = teacherRepository.getNameByTea_id(stuCo.getTea_id());
+            one.put("co_id", stuCo.getCo_id());
             one.put("co_name", course);
-            one.put("tea_id", m.getValue());
+            one.put("tea_id", stuCo.getTea_id());
             one.put("tea_name", teacher);
-            Timestamp time = courseRepository.findBeginTimeByCo_id(m.getKey());
             one.put("begin_time", 0);
-            time = courseRepository.findEndTimeByCo_id(m.getKey());
             one.put("end_time", 0);
             list.add(one);
         }
         return list;
     }
-
     @Override
-    //在tea_co类中 根据co_id获取tea_id，与co_id(地址)对应成map
-    public Map<String, String> getAllCoId_TeaId(ArrayList<String> course_id) {  //course_id从course表里已读取出来
-        Map<String, String> coId_teaId = new IdentityHashMap<>();
-        for (String co_id : course_id) {
-            List<String> tea_ids = teaCoRepository.getTea_idByCo_id(co_id);
-            for (int i = 0; i < tea_ids.size(); i++) {
-                    String id = new String(co_id);
-                    coId_teaId.put(id, tea_ids.get(i));
-                }
+    //key(co_id)到course中得到name  value(tea_id)到teacher中得到name
+    public ArrayList<Map> getUnChooesCoId_TeaId(List<StuCo> stuCos, String major_id) {
+        List<String> allCourse_id = courseSelectionService.getAllCourse_id(major_id);  //在course表里获取专业major_id对应的全部课程co_id
+        for (StuCo stuCo : stuCos) {
+            if (allCourse_id.contains(stuCo.getCo_id())) {
+                allCourse_id.remove(stuCo.getCo_id());
             }
-        return coId_teaId;
+        }
+        List<TeaCo> teaCos = teaCoRepository.findByCo_id(allCourse_id);
+        ArrayList<Map> list = new ArrayList();
+        for (TeaCo teaCo : teaCos) {
+            Map<String, Object> one = new HashMap();
+            String course = courseRepository.getNameByCo_id(teaCo.getCo_id());
+            String teacher = teacherRepository.getNameByTea_id(teaCo.getTea_id());
+            one.put("co_id", teaCo.getCo_id());
+            one.put("co_name", course);
+            one.put("tea_id", teaCo.getTea_id());
+            one.put("tea_name", teacher);
+            one.put("begin_time", 0);
+            one.put("end_time", 0);
+            list.add(one);
+        }
+        return list;
     }
 
     @Override
