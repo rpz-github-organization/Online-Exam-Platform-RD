@@ -154,7 +154,7 @@ public class ExamServiceImpl implements ExamService {
 
     //打乱题目顺序
     public  void randomCommon(ArrayList<ExamQuestion> questionsList) {
-        log.info("size:", questionsList.size());
+        log.info("size:"+ questionsList.size());
         int n = questionsList.size();
         int count = 0;
         Random random = new Random(1000);
@@ -164,7 +164,6 @@ public class ExamServiceImpl implements ExamService {
         }
         while (count < n) {
             num = random.nextInt(n+1);
-            num++;
             boolean flag = true;
             log.info("num:" + num);
             //判断是否已经存在
