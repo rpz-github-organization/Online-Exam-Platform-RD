@@ -17,5 +17,8 @@ public interface TeaCoRepository extends JpaRepository<TeaCo,String> {
     @Query("select u.tea_id from TeaCo u where u.co_id = ?1")
     List<String> getTea_idByCo_id(String co_id);
 
+    @Query("select u from TeaCo u where u.co_id in (:coIdList)")
+    List<TeaCo> findByCo_id(List<String> coIdList);
+
 
 }

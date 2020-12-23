@@ -82,27 +82,15 @@ public class CourseController {
     @RequestMapping("/getByStu")
     public @ResponseBody
     AjaxResponse getAlternativeCourse(@RequestBody GetCourse getCourse, HttpServletRequest httpServletRequest) {
-        authorityCheckService.checkStudentAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
+        //authorityCheckService.checkStudentAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
         String stu_id = getCourse.getStu_id();
         String major_id = courseSelectionService.getMajor_id(stu_id);
-
-        Map<String, String> chosenCoId_TeaId = courseSelectionService.getChosenCoId_TeaId(stu_id);  //在stu_co表里获取学生 已经选择 的课程和老师，co_id和tea_id;
-
+        List<StuCo> stuCos = stuCoRepository.getStu_coByStu_id(stu_id);
         if (getCourse.getOption() == 1) {    //查询已选课程
-
-            //chosenCoId_TeaId转化为name
-            return AjaxResponse.success(courseSelectionService.getIdAndName(chosenCoId_TeaId));
+            return AjaxResponse.success(courseSelectionService.getChosenCoId_TeaId(stuCos));
         }
-        else if (getCourse.getOption() == 0) {
-            ArrayList<String> allCourse_id = courseSelectionService.getAllCourse_id(major_id);  //在course表里获取专业major_id对应的全部课程co_id
-            Map<String, String> allCoId_TeaId = courseSelectionService.getAllCoId_TeaId(allCourse_id);  //在tea_co类中 全部课程 获取tea_id，与co_id(地址)对应成map
-
-            Set<String> chosenCourseList = new HashSet<>(chosenCoId_TeaId.keySet());    //不能去掉HashSet（但是本身里面也不可能有重复的） 原理？？？
-            Set<String> alternativeCourseList = allCoId_TeaId.keySet();
-            alternativeCourseList.removeAll(chosenCourseList);       //执行removeAll时用的是equals方法
-
-            //allCoId_TeaId转化为name
-            return AjaxResponse.success(courseSelectionService.getIdAndName(allCoId_TeaId));
+        else if (getCourse.getOption() == 0) { //查询未选择课程
+            return AjaxResponse.success(courseSelectionService.getUnChooesCoId_TeaId(stuCos, major_id));
         }
         throw new CustomException(CustomExceptionType.USER_INPUT_ERROR, "选项错误");
     }
@@ -119,6 +107,12 @@ public class CourseController {
         authorityCheckService.checkTeacherAuthority(httpServletRequest.getSession().getAttribute("userInfo"));
         String tea_id = JSON.parseObject(str).get("tea_id").toString();
         String co_id = JSON.parseObject(str).get("co_id").toString();
+        if (tea_id == "") {
+            AjaxResponse.error(new CustomException(CustomExceptionType.USER_INPUT_ERROR, "tea_id is null"));
+        }
+        if (co_id == "") {
+            AjaxResponse.error(new CustomException(CustomExceptionType.USER_INPUT_ERROR, "co_id is null"));
+        }
         TeaCo teaCo = new TeaCo();
         teaCo.setCo_id(co_id);
         teaCo.setTea_id(tea_id);
