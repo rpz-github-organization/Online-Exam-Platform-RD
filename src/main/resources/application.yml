@@ -14,7 +14,7 @@ spring:
       ddl-auto: validate
 #      ddl-auto: update
     database: mysql
-    show-sql: true
+    show-sql: false
   mail:
     host: smtp.qq.com #发送邮件服务器
     username: 3530077842@qq.com #QQ邮箱
