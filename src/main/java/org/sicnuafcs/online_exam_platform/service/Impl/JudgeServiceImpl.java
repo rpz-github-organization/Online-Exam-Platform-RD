@@ -297,7 +297,7 @@ public class JudgeServiceImpl implements JudgeService {
 
     public void deleteFile(Long question_id) {
         ArrayList<String> fileNames = getFileNames(question_id);
-        String path = "/home/user/ojSystemSvr/test_cases/" + question_id;   //文件夹路径
+        String path = "/home/user/ojSystem/test_cases/" + question_id;   //文件夹路径
         for (String fileName : fileNames) {
             String path1 = path + "/" + fileName;
             File file = new File(path1);
